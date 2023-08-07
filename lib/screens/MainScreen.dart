@@ -394,6 +394,7 @@ class _FormCardState extends State<FormCard> {
               'title': key,
               'value': _formValues[key],
               'answerDataType': widget.formFields.firstWhere((field) => field['title'] == key)['answerDataType'],
+              'hasRequiredDescription': widget.formFields.firstWhere((field) => field['title'] == key)['hasRequiredDescription'],
               'id': widget.formFields.firstWhere((field) => field['title'] == key)['_id'],
               'group': widget.formFields.firstWhere((field) => field['title'] == key)['group']['_id'],
               'form': widget.formFields.firstWhere((field) => field['title'] == key)['form'],
@@ -957,6 +958,8 @@ class DriverProfileScreen extends StatelessWidget {
   }
 
   void _uploadData(BuildContext context) async {
+    await DriverService.createNewDriver(driverData: results);
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -1064,7 +1067,7 @@ class DriverProfileScreen extends StatelessWidget {
                           ListTile(
                             leading: Icon(Icons.location_city),
                             title: Text('Location'),
-                            subtitle: Text(data['location']),
+                            subtitle: Text("${data['locations'].join(', ')}"),
                           ),
                           ListTile(
                             leading: Icon(Icons.local_taxi),
@@ -1075,6 +1078,16 @@ class DriverProfileScreen extends StatelessWidget {
                             leading: Icon(Icons.access_time),
                             title: Text('Shift'),
                             subtitle: Text("${data['day']}  -  ${data['period']}"),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.error),
+                            title: Text('Violations'),
+                            subtitle: Text("${data['trafficViolations']}"),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.date_range),
+                            title: Text('Date'),
+                            subtitle: Text("${data['date']}"),
                           ),
                         ],
                       ),
@@ -1107,18 +1120,26 @@ class DriverProfileScreen extends StatelessWidget {
                         subtitle: Text('File: ${entry['value']}'),
                       ),
                     if (entry['answerDataType'] == 'image')
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Image.file(
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Icon(Icons.image,color: Colors.black38,),
+                                Text(entry['title'])
+                              ],
+                            ),
+                            Image.file(
                               File(entry['value']),
                               height: 150,
                               width: 150,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     Divider(),
                   ],

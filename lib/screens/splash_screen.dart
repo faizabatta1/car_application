@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:car_app/helpers/theme_helper.dart';
 import 'package:car_app/screens/LoginScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -30,7 +31,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Theme.of(context).primaryColor,
+        color: ThemeHelper.buttonPrimaryColor,
         alignment: Alignment.center,
         child: Image.asset('assets/logo.png'),
       ),

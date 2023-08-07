@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -46,7 +47,6 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
     }
   }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -127,6 +127,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                         'boardNumber': widget.selectedCarNumber,
                         'privateNumber': widget.selectedPrivateNumber,
                         'trafficViolations': trafficViolations,
+                        'date': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())
                       };
 
                       SharedPreferences shared = await SharedPreferences.getInstance();
@@ -204,7 +205,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                 style: TextStyle(fontSize: 18),
               )
                   : Text(
-                selectedZones.join(', '),
+                selectedZones.join(','),
                 style: TextStyle(fontSize: 18),
               ),
             ),
@@ -215,59 +216,90 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
     );
   }
 
-  void _showMultiSelectZoneOptionsDialog() {
-    showDialog(
+  void _showMultiSelectZoneOptionsDialog() async{
+    await showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Choose Zones'),
-        content: SingleChildScrollView(
-          child: Column(
-            children: zones.map((zone) {
-              bool isSelected = selectedZones.contains(zone);
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (isSelected) {
-                      selectedZones.remove(zone);
-                    } else {
-                      selectedZones.add(zone);
-                    }
-                  });
+      builder: (context) => StatefulBuilder(
+        builder: (context,setState){
+          return AlertDialog(
+            title: Text('Choose Zones'),
+            content: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: selectedZones.map((zone) {
+                      return Chip(
+                        label: Text(zone),
+                        onDeleted: () {
+                          setState(() {
+                            selectedZones.remove(zone);
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
+                  SizedBox(height: 16),
+                  Divider(),
+                  SizedBox(height: 16),
+                  ...zones.map((zone) {
+                    bool isSelected = selectedZones.contains(zone);
+                    return GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          if (isSelected) {
+                            selectedZones.remove(zone);
+                          } else {
+                            if(!selectedZones.contains(zone)){
+                              selectedZones.add(zone);
+                            }
+                          }
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        decoration: BoxDecoration(
+                          border: Border(bottom: BorderSide(color: Colors.grey)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              zone,
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            Icon(
+                              isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+                              color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
                 },
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    border: Border(bottom: BorderSide(color: Colors.grey)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        zone,
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      Icon(
-                        isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-                        color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Text('Done'),
-          ),
-        ],
+                child: Text('Done'),
+              ),
+            ],
+          );
+        },
       ),
     );
+
+    setState(() {});
   }
+
+
+
 
   Widget buildDayOfWeekButtons() {
     return Wrap(
@@ -335,6 +367,4 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
       }).toList(),
     );
   }
-
-// ... Other methods ...
 }
