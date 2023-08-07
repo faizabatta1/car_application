@@ -1,3 +1,4 @@
+import 'package:car_app/helpers/theme_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -172,7 +173,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor,
+                    backgroundColor: ThemeHelper.buttonPrimaryColor,
                   ),
                   child: Text(
                     'Submit',
@@ -272,7 +273,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                             ),
                             Icon(
                               isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-                              color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
+                              color: isSelected ? ThemeHelper.buttonPrimaryColor : Colors.grey,
                             ),
                           ],
                         ),
@@ -318,7 +319,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
             });
           },
           style: ElevatedButton.styleFrom(
-            primary: selectedDay == day ? Theme.of(context).primaryColor : Colors.grey,
+            primary: selectedDay == day ? ThemeHelper.buttonPrimaryColor : Colors.grey,
           ),
           child: Text(day),
         );
@@ -327,44 +328,29 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
   }
 
   Widget buildPeriodButtons() {
+    List<String> availableShifts = selectedDay == 'Saturday' || selectedDay == 'Sunday'
+        ? ['Weekend', 'Day', 'Night']
+        : ['Day', 'Night'];
+
     return Wrap(
       spacing: 8.0,
       runSpacing: 8.0,
       children: periods.map((period) {
-        if (selectedDay == 'Saturday' || selectedDay == 'Sunday') {
-          if (period == 'Weekend') {
-            return ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  selectedPeriod = period;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                primary: selectedPeriod == period ? Theme.of(context).primaryColor : Colors.grey,
-              ),
-              child: Text(period),
-            );
-          } else {
-            return SizedBox.shrink();
-          }
+        if (availableShifts.contains(period)) {
+          return ElevatedButton(
+            onPressed: () {
+              setState(() {
+                selectedPeriod = period;
+              });
+            },
+            style: ElevatedButton.styleFrom(
+              primary: selectedPeriod == period ? ThemeHelper.buttonPrimaryColor : Colors.grey,
+            ),
+            child: Text(period),
+          );
         } else {
-          if (period != 'Weekend') {
-            return ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  selectedPeriod = period;
-                });
-              },
-              style: ElevatedButton.styleFrom(
-                primary: selectedPeriod == period ? Theme.of(context).primaryColor : Colors.grey,
-              ),
-              child: Text(period),
-            );
-          } else {
-            return SizedBox.shrink();
-          }
+          return SizedBox.shrink();
         }
       }).toList(),
     );
-  }
-}
+  }}
