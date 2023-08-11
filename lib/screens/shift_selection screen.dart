@@ -23,8 +23,8 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
   List<String> selectedZones = [];
   int trafficViolations = 0;
   List<String> zones = [];
-  List<String> daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  List<String> periods = ['Day', 'Night', 'Weekend'];
+  List<String> daysOfWeek = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag ', 'Fredag', 'Lørdag', 'Søndag'];
+  List<String> periods = ['Dag', 'Natt', 'helg'];
 
   @override
   void initState() {
@@ -34,7 +34,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
 
   Future<void> getZoneData() async {
     try {
-      var response = await http.get(Uri.parse('https://carapp-1f4w.onrender.com/api/locations'));
+      var response = await http.get(Uri.parse('https://nordic.bilsjekk.in/api/locations'));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         setState(() {
@@ -50,11 +50,8 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: Container(
+        alignment: Alignment.center,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: SingleChildScrollView(
@@ -62,19 +59,19 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Selected Car',
+                  'Valgt bil',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 8),
                 Row(
                   children: [
                     Text(
-                      "board: ${widget.selectedCarNumber}",
+                      "Borde: ${widget.selectedCarNumber}",
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(width: 20.0,),
                     Text(
-                      'private: ${widget.selectedPrivateNumber}',
+                      'Bilnummer: ${widget.selectedPrivateNumber}',
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   ],
@@ -83,14 +80,14 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                 buildMultiSelectZoneDropdown(),
                 SizedBox(height: 20),
                 Text(
-                  'Choose Day of the Week:',
+                  'Velg ukedag:',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 8),
                 buildDayOfWeekButtons(),
                 SizedBox(height: 20),
                 Text(
-                  'Choose Period:',
+                  'Velg vakt:',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 8),
@@ -105,12 +102,12 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter the number of traffic violations.';
+                      return 'Vennligst skriv inn antall K.S.';
                     }
                     return null;
                   },
                   decoration: InputDecoration(
-                    labelText: 'Number Of Violations',
+                    labelText: 'Antall K.S',
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -122,7 +119,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                         selectedPeriod.isNotEmpty &&
                         trafficViolations > 0) {
                       Map data = {
-                        'locations': selectedZones,
+                        'locations': selectedZones.join(','),
                         'day': selectedDay,
                         'period': selectedPeriod,
                         'boardNumber': widget.selectedCarNumber,
@@ -158,8 +155,8 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                       showDialog(
                         context: context,
                         builder: (context) => AlertDialog(
-                          title: Text('Error'),
-                          content: Text('Please choose at least one zone, the day of the week, period, and enter the number of traffic violations.'),
+                          title: Text('Feil'),
+                          content: Text('Velg minst én sone, ukedag, periode, og skriv inn antall K.S.'),
                           actions: [
                             TextButton(
                               onPressed: () {
@@ -194,7 +191,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey),
+          border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.circular(4),
         ),
         child: Row(
@@ -202,7 +199,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
             Expanded(
               child: selectedZones.isEmpty
                   ? Text(
-                'Choose Zone',
+                'Velg rute',
                 style: TextStyle(fontSize: 18),
               )
                   : Text(
@@ -223,7 +220,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context,setState){
           return AlertDialog(
-            title: Text('Choose Zones'),
+            title: Text('Velg rute'),
             content: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -262,7 +259,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                       child: Container(
                         padding: EdgeInsets.symmetric(vertical: 16),
                         decoration: BoxDecoration(
-                          border: Border(bottom: BorderSide(color: Colors.grey)),
+                          border: Border(bottom: BorderSide(color: Colors.black)),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -273,7 +270,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                             ),
                             Icon(
                               isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-                              color: isSelected ? ThemeHelper.buttonPrimaryColor : Colors.grey,
+                              color: isSelected ? ThemeHelper.buttonPrimaryColor : Colors.black,
                             ),
                           ],
                         ),
@@ -288,7 +285,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: Text('Done'),
+                child: Text('Ferdig'),
               ),
             ],
           );
@@ -311,15 +308,15 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
           onPressed: () {
             setState(() {
               selectedDay = day;
-              if (day == 'Saturday' || day == 'Sunday') {
-                selectedPeriod = 'Weekend';
+              if (day == 'Lørdag' || day == 'Søndag') {
+                selectedPeriod = 'helg';
               } else {
                 selectedPeriod = '';
               }
             });
           },
           style: ElevatedButton.styleFrom(
-            primary: selectedDay == day ? ThemeHelper.buttonPrimaryColor : Colors.grey,
+            primary: selectedDay == day ? ThemeHelper.buttonPrimaryColor : Colors.black54,
           ),
           child: Text(day),
         );
@@ -328,9 +325,9 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
   }
 
   Widget buildPeriodButtons() {
-    List<String> availableShifts = selectedDay == 'Saturday' || selectedDay == 'Sunday'
-        ? ['Weekend', 'Day', 'Night']
-        : ['Day', 'Night'];
+    List<String> availableShifts = selectedDay == 'Lørdag' || selectedDay == 'Søndag'
+        ? ['helg', 'Dag', 'Natt']
+        : ['Dag', 'Natt'];
 
     return Wrap(
       spacing: 8.0,
@@ -344,7 +341,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
               });
             },
             style: ElevatedButton.styleFrom(
-              primary: selectedPeriod == period ? ThemeHelper.buttonPrimaryColor : Colors.grey,
+              primary: selectedPeriod == period ? ThemeHelper.buttonPrimaryColor : Colors.black54,
             ),
             child: Text(period),
           );
@@ -354,3 +351,6 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
       }).toList(),
     );
   }}
+
+
+

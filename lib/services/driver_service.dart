@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DriverService {
-  static String baseUrl = "https://carapp-1f4w.onrender.com";
+  static String baseUrl = "https://nordic.bilsjekk.in";
 
   static Future<void> createNewDriver({required List<Map<String, dynamic>> driverData}) async {
     try {
@@ -34,6 +34,7 @@ class DriverService {
       }
 
       var response = await request.send();
+      print(response.statusCode);
       if (response.statusCode == 200) {
         // Handle success response if needed
         print('Data and files/images uploaded successfully');
@@ -48,7 +49,7 @@ class DriverService {
 
   static Future<List> getFormFields({ required String formName }) async{
     try{
-      final Uri uri = Uri.parse('https://carapp-1f4w.onrender.com/api/formFields/form/$formName');
+      final Uri uri = Uri.parse('https://nordic.bilsjekk.in/api/formFields/form/$formName');
       http.Response response = await http.get(uri);
 
       if(response.statusCode == 200){

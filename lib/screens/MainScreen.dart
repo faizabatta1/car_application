@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:car_app/helpers/theme_helper.dart';
 import 'package:car_app/screens/car_number_choice.dart';
 import 'package:car_app/screens/splash_screen.dart';
+import 'package:car_app/screens/swipper_switch.dart';
 import 'package:car_app/services/driver_service.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -21,164 +22,190 @@ class MainScreen extends StatelessWidget {
       backgroundColor: Color(0xFFEEEEEE),
       body: Container(
         padding: EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Stack(
           children: [
-            Image.asset(
-                'assets/home.png',
-              width: 200,
-              height: 200,
-              fit: BoxFit.cover,
-            ),
-
-            FutureBuilder(
-              future: SharedPreferences.getInstance(),
-              builder: (BuildContext context, AsyncSnapshot<SharedPreferences> snapshot) {
-                if(snapshot.connectionState == ConnectionState.waiting){
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-
-                if(snapshot.hasError){
-                  return Center(
-                    child: Text("Something Went Wrong"),
-                  );
-                }
-
-                if(snapshot.data != null){
-                  return Text(
-                    'Hei ${snapshot.data!.getString('user')}',
-                    style: TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  );
-                }
-
-                return Container();
-              },
-            ),
-            SizedBox(height: 10),
-            Text(
-              'Du skal alltid se over bilen og forsikre deg om at den er iht. Reglement før du kjører ut. Det erdu som sjåfør som er ansvarlig for at bilen du kjører er I forsvalig stand.Blir du stoppet av politi / bilsakkyndig I bil som ikke er I forsvarlig stand, er det du som sjåførsom blir holdt ansvarlig',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-            SizedBox(height: 20,),
-            Row(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Expanded(
-                  flex: 3,
-                  child: ElevatedButton.icon(
-                    onPressed: () async{
-                      if(await canLaunchUrl(Uri.parse('https://skademelding.naf.no/opprett'))){
-                        launchUrl(Uri.parse('https://skademelding.naf.no/opprett'));
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ThemeHelper.buttonPrimaryColor
-                    ),
-                    icon: Icon(Icons.web),
-                    label: Text('Skademelding'),
+                Image.asset(
+                    'assets/bil.png',
+                  width: 220,
+                  height: 220,
+                ),
+
+                FutureBuilder(
+                  future: SharedPreferences.getInstance(),
+                  builder: (BuildContext context, AsyncSnapshot<SharedPreferences> snapshot) {
+                    if(snapshot.connectionState == ConnectionState.waiting){
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    if(snapshot.hasError){
+                      return Center(
+                        child: Text("Noe gikk galt"),
+                      );
+                    }
+
+                    if(snapshot.data != null){
+                      return Center(
+                        child: Text(
+                          'Hei ${snapshot.data!.getString('user')}',
+                          style: TextStyle(
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    }
+
+                    return Container();
+                  },
+                ),
+                SizedBox(height: 10),
+                Container(
+                  height: 200,
+                  alignment: Alignment.center,
+                  padding: EdgeInsets.all(4.0),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFECE9E9),
+                    borderRadius: BorderRadius.circular(12.0)
+                  ),
+                  child: Text(
+                    'Du skal alltid se over bilen og forsikre deg om at den er iht. Reglement før du kjører ut. Det erdu som sjåfør som er ansvarlig for at bilen du kjører er I forsvalig stand.Blir du stoppet av politi / bilsakkyndig I bil som ikke er I forsvarlig stand, er det du som sjåførsom blir holdt ansvarlig',
+                    textAlign: TextAlign.justify,
+                    textWidthBasis: TextWidthBasis.parent,
+                    style: TextStyle(fontSize: 18, fontFamily:'Birco',color: Colors.black,fontWeight: FontWeight.w400),
                   ),
                 ),
-                SizedBox(width: 12.0,),
-                Expanded(
-                  flex: 2,
-                  child: ElevatedButton.icon(
-                    onPressed: () async{
-                      if(await canLaunchUrl(Uri.parse('tel:+4747931499'))){
-                        launchUrl(Uri.parse('tel:+4747931499'));
-                      }
-                    },
-                    icon: Icon(Icons.phone),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ThemeHelper.buttonPrimaryColor
-                    ),
-                    label: Text('Heshmet'),
+                SizedBox(height: 10,),
+                SizedBox(
+                  height: 60,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            // Navigate to Form 1 screen to fill the form
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (context, animation, secondaryAnimation) {
+                                  return CarNumberChoiceScreen();
+                                },
+                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                  return FadeTransition(
+                                    opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                                      CurvedAnimation(
+                                        parent: animation,
+                                        curve: Curves.easeInOut,
+                                      ),
+                                    ),
+                                    child: child,
+                                  );
+                                },
+                                transitionDuration: Duration(seconds: 1),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: 60,
+                            width: 80,
+                            alignment: Alignment.center,
+                            color: ThemeHelper.buttonPrimaryColor,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.drive_eta,color: Colors.white,),
+                                Text('Car',style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white
+                                ),)
+                              ],
+                            ),
+                          ),
+
+                        ),
+                      ),
+
+                      SizedBox(width: 10,),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () async{
+                            if(await canLaunchUrl(Uri.parse('https://skademelding.naf.no/opprett'))){
+                              launchUrl(Uri.parse('https://skademelding.naf.no/opprett'));
+                            }
+                          },
+                          child: Container(
+                            height: 60,
+                              color: ThemeHelper.buttonPrimaryColor,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.web,color: Colors.white,),
+                                  SizedBox(width: 8.0,),
+                                  Text('Website',style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold
+                                  ),)
+                                ],
+                              )
+                          ),
+                        ),
+                      ),
+
+                    ],
                   ),
-                ),
+                )
               ],
             ),
-            SizedBox(height: 10,),
-            ElevatedButton.icon(
-              onPressed: () {
-                // Navigate to Form 1 screen to fill the form
-                Navigator.push(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) {
-                      return CarNumberChoiceScreen();
-                    },
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                      return FadeTransition(
-                        opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                          CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.easeInOut,
+
+            Align(
+              alignment: Alignment.bottomLeft,
+              child:                   GestureDetector(
+                onTap: () async{
+                  SharedPreferences shared = await SharedPreferences.getInstance();
+                  if (shared.containsKey('token')) await shared.remove('token');
+
+                  Navigator.pushReplacement(
+                    context,
+                    PageRouteBuilder(
+                      pageBuilder: (context, animation, secondaryAnimation) {
+                        return SplashScreen(token: null);
+                      },
+                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                        return FadeTransition(
+                          opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeInOut,
+                            ),
                           ),
-                        ),
-                        child: child,
-                      );
-                    },
-                    transitionDuration: Duration(seconds: 1),
+                          child: child,
+                        );
+                      },
+                      transitionDuration: Duration(seconds: 1),
+                    ),
+                  );
+                },
+                child: Container(
+                  height: 60,
+                  width: 60,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.logout,color: Colors.white,),
+                    ],
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity,40),
-                backgroundColor: ThemeHelper.buttonPrimaryColor
-
+                  color: Colors.red,
+                ),
               ),
-              icon: Icon(Icons.drive_eta),
-              label: Text(
-                'Fylle ut skjemaet',
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
 
-            SizedBox(height: 10,),
-            ElevatedButton.icon(
-              onPressed: () async{
-                SharedPreferences shared = await SharedPreferences.getInstance();
-                if (shared.containsKey('token')) await shared.remove('token');
-
-                Navigator.pushReplacement(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) {
-                      return SplashScreen(token: null);
-                    },
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                      return FadeTransition(
-                        opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                          CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.easeInOut,
-                          ),
-                        ),
-                        child: child,
-                      );
-                    },
-                    transitionDuration: Duration(seconds: 1),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                  minimumSize: Size(double.infinity,40),
-                  backgroundColor: Colors.red
-
-              ),
-              icon: Icon(Icons.logout),
-              label: Text(
-                'Logg ut',
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
+            )
           ],
         ),
       ),
@@ -200,10 +227,7 @@ class _Form1ScreenState extends State<Form1Screen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFEEEEEE),
-      appBar: AppBar(
-        title: Text('First Form'),
-        backgroundColor: ThemeHelper.buttonPrimaryColor,
-      ),
+
       body: FutureBuilder(
         future: DriverService.getFormFields(formName: 'First'), builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
           if(snapshot.connectionState == ConnectionState.waiting){
@@ -218,7 +242,7 @@ class _Form1ScreenState extends State<Form1Screen> {
                     backgroundColor: ThemeHelper.buttonPrimaryColor,
                   ),
                   SizedBox(height: 12.0,),
-                  Text('Loading First Form',style: TextStyle(
+                  Text('Laster inn bilskjema',style: TextStyle(
                     fontSize: 20
                   ),)
                 ],
@@ -228,7 +252,7 @@ class _Form1ScreenState extends State<Form1Screen> {
 
           if(snapshot.hasError){
             return Center(
-              child: Text("Something Went Wrong"),
+              child: Text("Noe gikk galt"),
             );
           }
 
@@ -287,10 +311,6 @@ class _Form2ScreenState extends State<Form2Screen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFEEEEEE),
-      appBar: AppBar(
-        title: Text('Second Form'),
-        backgroundColor: ThemeHelper.buttonPrimaryColor,
-      ),
       body: FutureBuilder(
         future: DriverService.getFormFields(formName: 'Second'), builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
           if(snapshot.connectionState == ConnectionState.waiting){
@@ -305,7 +325,7 @@ class _Form2ScreenState extends State<Form2Screen> {
                     backgroundColor: ThemeHelper.buttonPrimaryColor,
                   ),
                   SizedBox(height: 12.0,),
-                  Text('Loading Second Form',style: TextStyle(
+                  Text('Laster inn dagenskjema',style: TextStyle(
                       fontSize: 20
                   ),)
                 ],
@@ -315,7 +335,7 @@ class _Form2ScreenState extends State<Form2Screen> {
 
           if(snapshot.hasError){
             return Center(
-              child: Text("Something Went Wrong"),
+              child: Text("Noe gikk galt"),
             );
           }
 
@@ -414,6 +434,24 @@ class _FormCardState extends State<FormCard> {
   }
 
   PageController _pageController = PageController();
+  Color primaryColor = Color(0xFF3498db);
+  Color accentColor = Color(0xFF2ecc71);
+  Color backgroundColor = Colors.white;
+  TextStyle titleStyle = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.bold,
+  );
+
+  TextStyle labelTextStyle = TextStyle(
+    fontSize: 18,
+    color: Colors.grey,
+  );
+
+  TextStyle buttonTextStyle = TextStyle(
+    fontSize: 18,
+    color: Colors.white,
+  );
+
 
   @override
   Widget build(BuildContext context) {
@@ -432,16 +470,17 @@ class _FormCardState extends State<FormCard> {
                 if (currentIndex > 0)
                   ElevatedButton(
                     child: Text('Tilbake'.toUpperCase(),style: TextStyle(
-                      fontSize: 18
+                      fontSize: 18,
                     ),),
                     onPressed: previousPage,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: ThemeHelper.buttonPrimaryColor
+                      backgroundColor: primaryColor
                     ),
                   ),
                   ElevatedButton(
                     child: Text('Neste'.toUpperCase(),style: TextStyle(
-                      fontSize: 18
+                      fontSize: 18,
+                      color: Colors.white
                     ),),
                     onPressed: (){
                       if(_formKey!.currentState!.validate()){
@@ -449,7 +488,11 @@ class _FormCardState extends State<FormCard> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: ThemeHelper.buttonPrimaryColor,
+                      backgroundColor: primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0)
+                      ),
+
                     ),
                   ),
                 // if (currentIndex == widget.formFields.length - 1)
@@ -460,453 +503,309 @@ class _FormCardState extends State<FormCard> {
               ],
             ),
           )),
-      body: PageView(
-        controller: _pageController,
-        physics: NeverScrollableScrollPhysics(),
-        children: widget.formFields.map((field){
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if(widget.formFields.isNotEmpty)
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(field['title'],style: TextStyle(
-                            fontSize: 20
-                        ),),
-                        SizedBox(height: 20,),
-                        if (field['answerDataType'] == 'text')
-                          TextFormField(
-                            onChanged: (value) {
-                              _formValues[field['title']] = value;
-                            },
-                            validator: (val){
-                              if(val!.isEmpty){
-                                return "Please Enter Something";
-                              }
-
-                              return null;
-                            },
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            decoration: InputDecoration(
-                                labelText: 'Type Text Here',
-                                hintText: field['requiredDescription'],
-                                border: OutlineInputBorder()
-                            ),
-                          ),
-                        if (field['answerDataType'] == 'number')
-                          TextFormField(
-                            onChanged: (value) {
-                              _formValues[field['title']] = value;
-                            },
-                            autovalidateMode: AutovalidateMode.onUserInteraction,
-                            validator: (val){
-                              return null;
-                            },
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                                labelText: 'Type Number Here',
-                                hintText: field['requiredDescription'],
-                                border: OutlineInputBorder()
-                            ),
-                          ),
-                        if (field['answerDataType'] == 'yes_no')
-                          Column(
-                            children: [
+      body: Stack(
+        children: [
+          PageView(
+            controller: _pageController,
+            physics: NeverScrollableScrollPhysics(),
+            children: widget.formFields.map((field){
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    if(widget.formFields.isNotEmpty)
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if(field['answerDataType'] == 'yes_no')
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  ElevatedButton(
-                                    child: Text('Ja',style: TextStyle(
-                                        fontSize: 18
-                                    ),),
-                                    onPressed: () {
-                                      if(field['hasRequiredDescription']){
-                                        setState(() {
-                                          _showYesFields[field['title']] = true;
-                                        });
-                                      }else{
-                                        _formValues[field['title']] = 'Ja';
-                                        nextPage();
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: ThemeHelper.buttonPrimaryColor,
-                                        minimumSize: Size(100,40)
-                                    ),
-                                  ),
-                                  SizedBox(width: 20,),
-                                  ElevatedButton(
-                                    child: Text('Nei',style: TextStyle(
-                                        fontSize: 18
-                                    ),),
-                                    onPressed: () {
-                                      setState(() {
-                                        _formValues[field['title']] = 'Nei';
-                                        nextPage();
-                                      });
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: ThemeHelper.buttonPrimaryColor,
-                                        minimumSize: Size(100,40)
-                                    ),
-                                  )
+                                  Icon(Icons.check, size: 30, color: accentColor),
+                                  Text(' -- ', style: TextStyle(fontSize: 30, color: Colors.black)),
+                                  Icon(Icons.close, color: Colors.red),
                                 ],
                               ),
-                              SizedBox(height: 20,),
-                              if(showYesField)
-                                TextFormField(
-                                  onChanged: (value) {
-                                    _formValues[field['title']] = value;
-                                  },
-                                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                                  validator: (val){
-                                    if(val!.isEmpty){
-                                      return "Enter Something";
-                                    }
-
-                                    return null;
-                                  },
-                                  maxLines: 4,
-                                  decoration: InputDecoration(
-                                      labelText: 'Type It Here',
-                                      hintText: field['requiredDescription'],
-                                      border: OutlineInputBorder()
-                                  ),
-                                )
-                            ],
-                          ),
-                        if (field['answerDataType'] == 'file')
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () async {
-                                  FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-                                  if (result != null && result.files.isNotEmpty) {
-                                    String? filePath = result.files.single.path;
-                                    _formValues[field['title']] = filePath;
-                                    setState(() {
-                                      _readFileName = result.files.single.name;
-                                      _readFilePath = result.files.single.path;
-                                    });
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: ThemeHelper.buttonPrimaryColor
-                                ),
-                                child: Text('Select File'.toUpperCase(),style: TextStyle(
-                                    fontSize: 18
-                                ),),
+                            if(field['answerDataType'] == 'image')
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Icon(Icons.image_outlined,size: 30,),
                               ),
-                              Text(_readFileName),
-                              // if(_readFilePath != null)
-                              //   Container(
-                              //     width: double.infinity,
-                              //     height: 100,
-                              //     color: Colors.red,
-                              //   )
-                            ],
-
-                          ),
-                        if (field['answerDataType'] == 'image')
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () async {
-                                  final picker = ImagePicker();
-                                  final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-                                  if (pickedImage != null) {
-                                    setState(() {
-                                      _imageFilePath = pickedImage.path;
-                                      _formValues[field['title']] = _imageFilePath;
-                                    });
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: ThemeHelper.buttonPrimaryColor
-                                ),
-                                child: Text('Select Image'.toUpperCase(),style: TextStyle( fontSize: 18 ),),
+                            if(field['answerDataType'] == 'text')
+                              Container(
+                                alignment: Alignment.centerLeft,
+                                child: Icon(Icons.text_fields,size: 30,),
                               ),
-                              SizedBox(height: 20,),
-                              if (_imageFilePath != null)
-                                Container(
-                                  width: double.infinity,
-                                  height: 160,
-                                  decoration: BoxDecoration(
-                                      image: DecorationImage(
-                                        image: Image.file(
-                                          File(_imageFilePath!),
-                                          fit: BoxFit.cover,
-                                        ).image,
+                            SizedBox(height: 20),
+                            Text(
+                              field['title'],
+                              style: titleStyle,
+                            ),
+                            SizedBox(height: 20),
+                            if (field['answerDataType'] == 'text')
+                              TextFormField(
+                                onChanged: (value) {
+                                  _formValues[field['title']] = value;
+                                },
+                                validator: (val) {
+                                  if (val!.isEmpty) {
+                                    return "Vennligst skriv inn noe";
+                                  }
+                                  return null;
+                                },
+                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                decoration: InputDecoration(
+                                  labelText: 'Skriv inn tekst her',
+                                  hintText: field['requiredDescription'],
+                                  border: OutlineInputBorder(),
+                                  fillColor: backgroundColor,
+                                ),
+                              ),
+                            if (field['answerDataType'] == 'number')
+                              TextFormField(
+                                onChanged: (value) {
+                                  _formValues[field['title']] = value;
+                                },
+                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                validator: (val) {
+                                  // Add your number validation logic here
+                                  return null; // Return null or an error message based on validation result
+                                },
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                  labelText: 'Skriv nummer her',
+                                  hintText: field['requiredDescription'],
+                                  border: OutlineInputBorder(),
+                                  fillColor: backgroundColor,
+                                ),
+                              ),
+                            if (field['answerDataType'] == 'yes_no')
+                              Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      ElevatedButton(
+                                        child: Text('Ja', style: buttonTextStyle),
+                                        onPressed: () {
+                                          if (field['hasRequiredDescription']) {
+                                            setState(() {
+                                              _showYesFields[field['title']] = true;
+                                            });
+                                          } else {
+                                            _formValues[field['title']] = 'Ja';
+                                            nextPage();
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: primaryColor,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                          ),
+                                        ),
                                       ),
-                                      borderRadius: BorderRadius.circular(12.0)
+                                      SizedBox(width: 20),
+                                      ElevatedButton(
+                                        child: Text('Nei', style: buttonTextStyle),
+                                        onPressed: () {
+                                          setState(() {
+                                            _formValues[field['title']] = 'Nei';
+                                            nextPage();
+                                          });
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: primaryColor,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                            ],
-                          ),
-
-                        if (field['answerDataType'] == 'date')
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Text(
-                                field['title'],
-                                style: TextStyle(fontSize: 20),
+                                  SizedBox(height: 20),
+                                  if (showYesField)
+                                    TextFormField(
+                                      onChanged: (value) {
+                                        _formValues[field['title']] = value;
+                                      },
+                                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                                      validator: (val) {
+                                        if (val!.isEmpty) {
+                                          return "Skriv inn noe";
+                                        }
+                                        return null;
+                                      },
+                                      maxLines: 4,
+                                      decoration: InputDecoration(
+                                        labelText: 'Skriv det her',
+                                        hintText: field['requiredDescription'],
+                                        border: OutlineInputBorder(),
+                                        fillColor: backgroundColor,
+                                      ),
+                                    ),
+                                ],
                               ),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  DateTime? selectedDate = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime(2000),
-                                    lastDate: DateTime(2100),
-                                  );
-
-                                  if (selectedDate != null) {
-                                    setState(() {
-                                      _formValues[field['title']] = selectedDate.toString();
-                                    });
-                                  }
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: ThemeHelper.buttonPrimaryColor,
-                                ),
-                                child: Text(
-                                  'Select Date',
-                                  style: TextStyle(fontSize: 18),
-                                ),
+                            if (field['answerDataType'] == 'file')
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      // Add your file picking logic here
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: accentColor,
+                                    ),
+                                    child: Text(
+                                      'Velg Fil'.toUpperCase(),
+                                      style: buttonTextStyle,
+                                    ),
+                                  ),
+                                  Text(_readFileName),
+                                  // Add file display or preview here if needed
+                                ],
                               ),
-                              SizedBox(height: 20),
-                              if (_formValues[field['title']] != null)
-                                Text(
-                                  'Selected Date: ${DateTime.parse(_formValues[field['title']]).toLocal()}',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                            ],
-                          ),
+                            if (field['answerDataType'] == 'image')
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      await showModalBottomSheet(
+                                        context: context,
+                                        builder: (context) {
+                                          return Container(
+                                            padding: EdgeInsets.all(16.0),
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+                                            ),
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                ListTile(
+                                                  leading: Icon(Icons.camera),
+                                                  title: Text("Take A Picture"),
+                                                  onTap: () async{
+                                                    final picker = ImagePicker();
+                                                    final pickedImage = await picker.pickImage(source: ImageSource.camera);
+                                                    if (pickedImage != null) {
+                                                      setState(() {
+                                                        _imageFilePath = pickedImage.path;
+                                                        _formValues[field['title']] = _imageFilePath;
+                                                      });
+                                                    }
+                                                    // Implement the logic for taking a picture
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                Divider(),
+                                                ListTile(
+                                                  leading: Icon(Icons.photo_library),
+                                                  title: Text("Choose from Gallery"),
+                                                  onTap: () async{
+                                                    final picker = ImagePicker();
+                                                    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
+                                                    if (pickedImage != null) {
+                                                      setState(() {
+                                                        _imageFilePath = pickedImage.path;
+                                                        _formValues[field['title']] = _imageFilePath;
+                                                      });
+                                                    }
+                                                    Navigator.pop(context);
+                                                  },
+                                                ),
+                                                SizedBox(height: 16.0),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text("Cancel", style: TextStyle(color: Colors.red)),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      );
 
-
-                        SizedBox(height: 16),
-                      ],
-                    ),
-                  ),
-                // ElevatedButton(
-                //   onPressed: () {
-                //     // Store the form values in the results list when the form is submitted
-                //     widget.results.clear();
-                //     for (var key in _formValues.keys) {
-                //       widget.results.add({
-                //         'title': key,
-                //         'value': _formValues[key],
-                //         'answerDataType': widget.formFields.firstWhere((field) => field['title'] == key)['answerDataType'],
-                //         'id': widget.formFields.firstWhere((field) => field['title'] == key)['_id'],
-                //         'group': widget.formFields.firstWhere((field) => field['title'] == key)['group']['_id'],
-                //         'form': widget.formFields.firstWhere((field) => field['title'] == key)['form'],
-                //       });
-                //     }
-                //
-                //     // Call the onFormSubmitted callback
-                //     widget.onFormSubmitted();
-                //   },
-                //   style: ElevatedButton.styleFrom(
-                //     backgroundColor: ThemeHelper.buttonPrimaryColor,
-                //   ),
-                //   child: Text(
-                //     'Submit',
-                //     style: TextStyle(fontSize: 20),
-                //   ),
-                // ),
-              ],
-            ),
-          );
-        }).toList(),
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: primaryColor,
+                                    ),
+                                    child: Text(
+                                      'Velg Bilde'.toUpperCase(),
+                                      style: buttonTextStyle,
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  if (_imageFilePath != null)
+                                    Container(
+                                      width: double.infinity,
+                                      height: 160,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: Image.file(
+                                            File(_imageFilePath!),
+                                            fit: BoxFit.cover,
+                                          ).image,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12.0),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            if (field['answerDataType'] == 'date')
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Text(
+                                    field['title'],
+                                    style: titleStyle,
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      // Add your date picking logic here
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: accentColor,
+                                    ),
+                                    child: Text(
+                                      'Velg Dato',
+                                      style: buttonTextStyle,
+                                    ),
+                                  ),
+                                  SizedBox(height: 20),
+                                  if (_formValues[field['title']] != null)
+                                    Text(
+                                      'Valgt dato: ${DateTime.parse(_formValues[field['title']]).toLocal()}',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                ],
+                              ),
+                            SizedBox(height: 16),
+                          ],
+                        ),
+                      )
+                    ,
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
+          Positioned(
+            child: Image.asset('assets/bil.png',width: 100,height: 100,),
+            top: 10,
+            left: 10,
+          )
+        ],
       ),
     );
   }
 }
-// class FormCard extends StatefulWidget {
-//   final List formFields;
-//   final List<Map<String, dynamic>> results;
-//   final VoidCallback onFormSubmitted;
-//
-//
-//
-//
-//
-//   FormCard({required this.formFields, required this.results, required this.onFormSubmitted});
-//
-//   @override
-//   _FormCardState createState() => _FormCardState();
-// }
-//
-// class _FormCardState extends State<FormCard> {
-//   Map<String, dynamic> _formValues = {};
-//   String? _imageFilePath;
-//
-//   String _readFileName = "";
-//
-//
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Card(
-//       margin: EdgeInsets.all(16),
-//       child: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.stretch,
-//           children: [
-//             for (var field in widget.formFields)
-//                 Column(
-//                   crossAxisAlignment: CrossAxisAlignment.stretch,
-//                   children: [
-//                     if (field['answerDataType'] == 'text')
-//                       TextFormField(
-//                         onChanged: (value) {
-//                           _formValues[field['title']] = value;
-//                         },
-//                         decoration: InputDecoration(
-//                           labelText: field['title'],
-//                           hintText: field['requiredDescription'],
-//                         ),
-//                       ),
-//                     if (field['answerDataType'] == 'number')
-//                       TextFormField(
-//                         onChanged: (value) {
-//                           _formValues[field['title']] = value;
-//                         },
-//                         keyboardType: TextInputType.number,
-//                         decoration: InputDecoration(
-//                           labelText: field['title'],
-//                           hintText: field['requiredDescription'],
-//                         ),
-//                       ),
-//                     if (field['answerDataType'] == 'yes_no')
-//                       Row(
-//                         crossAxisAlignment: CrossAxisAlignment.center,
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           Text(
-//                             field['title'],
-//                             style: TextStyle(
-//                               fontSize: 16,
-//                               fontWeight: FontWeight.bold,
-//                             ),
-//                           ),
-//                           Checkbox(
-//                             value: _formValues[field['title']] == 'Yes',
-//                             onChanged: (value) {
-//                               setState(() {
-//                                 _formValues[field['title']] = value != null ? 'Yes' : 'No';
-//                               });
-//                             },
-//                           ),
-//                         ],
-//                       ),
-//                     if (field['answerDataType'] == 'file')
-//                       Column(
-//                         crossAxisAlignment: CrossAxisAlignment.stretch,
-//                         children: [
-//                           Text(field['title'],style: TextStyle(
-//                             fontSize: 20
-//                           ),),
-//                           ElevatedButton(
-//                             onPressed: () async {
-//                               FilePickerResult? result = await FilePicker.platform.pickFiles();
-//
-//                               if (result != null && result.files.isNotEmpty) {
-//                                 String? filePath = result.files.single.path;
-//                                 _formValues[field['title']] = filePath;
-//                                 setState(() {
-//                                   _readFileName = result.files.single.name;
-//                                 });
-//                               }
-//                             },
-//                             style: ElevatedButton.styleFrom(
-//                               backgroundColor: ThemeHelper.buttonPrimaryColor
-//                             ),
-//                             child: Text('Select File'),
-//                           ),
-//                           Text(_readFileName)
-//                         ],
-//
-//                       ),
-//                     if (field['answerDataType'] == 'image')
-//                       Column(
-//                         crossAxisAlignment: CrossAxisAlignment.stretch,
-//                         children: [
-//                           Text(field['title']),
-//                           ElevatedButton(
-//                             onPressed: () async {
-//                               final picker = ImagePicker();
-//                               final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-//                               if (pickedImage != null) {
-//                                 setState(() {
-//                                   _imageFilePath = pickedImage.path;
-//                                   _formValues[field['title']] = _imageFilePath;
-//                                 });
-//                               }
-//                             },
-//                             style: ElevatedButton.styleFrom(
-//                                 backgroundColor: ThemeHelper.buttonPrimaryColor
-//                             ),
-//                             child: Text('Select Image',style: TextStyle( fontSize: 18 ),),
-//                           ),
-//                           if (_imageFilePath != null)
-//                             Padding(
-//                               padding: const EdgeInsets.symmetric(vertical: 8.0),
-//                               child: Image.file(
-//                                 File(_imageFilePath!),
-//                                 height: 150,
-//                                 width: 150,
-//                               ),
-//                             ),
-//                         ],
-//                       ),
-//                     SizedBox(height: 16),
-//                   ],
-//                 ),
-//             ElevatedButton(
-//               onPressed: () {
-//                 // Store the form values in the results list when the form is submitted
-//                 widget.results.clear();
-//                 for (var key in _formValues.keys) {
-//                   widget.results.add({
-//                     'title': key,
-//                     'value': _formValues[key],
-//                     'answerDataType': widget.formFields.firstWhere((field) => field['title'] == key)['answerDataType'],
-//                     'id': widget.formFields.firstWhere((field) => field['title'] == key)['_id'],
-//                     'group': widget.formFields.firstWhere((field) => field['title'] == key)['group']['_id'],
-//                     'form': widget.formFields.firstWhere((field) => field['title'] == key)['form'],
-//                   });
-//                 }
-//
-//                 // Call the onFormSubmitted callback
-//                 widget.onFormSubmitted();
-//               },
-//               style: ElevatedButton.styleFrom(
-//                 backgroundColor: ThemeHelper.buttonPrimaryColor,
-//               ),
-//               child: Text(
-//                 'Submit',
-//                 style: TextStyle(fontSize: 20),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 
 
 class DriverProfileScreen extends StatelessWidget {
@@ -979,61 +878,12 @@ class DriverProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet: Padding(
+      bottomSheet: Container(
         padding: const EdgeInsets.all(8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ElevatedButton.icon(
-              onPressed: () async {
-                _uploadData(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ThemeHelper.buttonPrimaryColor,
-                minimumSize: Size(160, 35),
-              ),
-              icon: Icon(Icons.upload),
-              label: Text('Legge til', style: TextStyle(fontSize: 18)),
-            ),
-            SizedBox(width: 12.0,),
-            ElevatedButton.icon(
-              onPressed: () async {
-                SharedPreferences shared = await SharedPreferences.getInstance();
-                if (shared.containsKey('token')) await shared.remove('token');
-
-                Navigator.pushReplacement(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) {
-                      return SplashScreen(token: null);
-                    },
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                      return FadeTransition(
-                        opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                          CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.easeInOut,
-                          ),
-                        ),
-                        child: child,
-                      );
-                    },
-                    transitionDuration: Duration(seconds: 1),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(160, 35),
-                backgroundColor: Colors.red,
-              ),
-              icon: Icon(Icons.logout),
-              label: Text(
-                'Logg ut',
-                style: TextStyle(fontSize: 18),
-              ),
-            )
-          ],
+        child: SwipeToUnlockSwitch(
+          onSwipeEnd: (){
+            _uploadData(context);
+          },
         ),
       ),
       body: Padding(
@@ -1053,7 +903,7 @@ class DriverProfileScreen extends StatelessWidget {
 
                   if(snapshot.hasError){
                     return Center(
-                      child: Text("Something Went Wrong"),
+                      child: Text("Noe gikk galt"),
                     );
                   }
 
@@ -1066,27 +916,27 @@ class DriverProfileScreen extends StatelessWidget {
                         children: [
                           ListTile(
                             leading: Icon(Icons.location_city),
-                            title: Text('Location'),
-                            subtitle: Text("${data['locations'].join(', ')}"),
+                            title: Text('plassering'),
+                            subtitle: Text("${data['locations']}"),
                           ),
                           ListTile(
                             leading: Icon(Icons.local_taxi),
-                            title: Text('Car'),
+                            title: Text('Bil'),
                             subtitle: Text("${data['boardNumber']}  -  ${data['privateNumber']}"),
                           ),
                           ListTile(
                             leading: Icon(Icons.access_time),
-                            title: Text('Shift'),
+                            title: Text('Skifte'),
                             subtitle: Text("${data['day']}  -  ${data['period']}"),
                           ),
                           ListTile(
                             leading: Icon(Icons.error),
-                            title: Text('Violations'),
+                            title: Text('K.S'),
                             subtitle: Text("${data['trafficViolations']}"),
                           ),
                           ListTile(
                             leading: Icon(Icons.date_range),
-                            title: Text('Date'),
+                            title: Text('Dato'),
                             subtitle: Text("${data['date']}"),
                           ),
                         ],

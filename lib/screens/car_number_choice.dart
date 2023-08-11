@@ -22,8 +22,8 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
 
   Future<void> getCarData() async {
     try {
-      // Replace 'https://carapp-1f4w.onrender.com/api/cars' with your API endpoint
-      var response = await http.get(Uri.parse('https://carapp-1f4w.onrender.com/api/cars'));
+      // Replace 'https://nordic.bilsjekk.in/api/cars' with your API endpoint
+      var response = await http.get(Uri.parse('https://nordic.bilsjekk.in/api/cars'));
       if (response.statusCode == 200) {
         // Parse the response body and update the carDataList
         List<dynamic> data = jsonDecode(response.body);
@@ -42,25 +42,25 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Choose Car Number'),
-        backgroundColor: ThemeHelper.buttonPrimaryColor,
-        elevation: 0,
-      ),
       body: Container(
-        color: ThemeHelper.buttonPrimaryColor,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(12.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: 16),
               Expanded(
-                child: ListView.builder(
-                  itemCount: carDataList.length,
-                  itemBuilder: (context, index) {
-                    return buildCarCard(carDataList[index], context);
+                child: RefreshIndicator(
+                  onRefresh: () async{
+                    setState(() {
+
+                    });
                   },
+                  child: ListView.builder(
+                    itemCount: carDataList.length,
+                    itemBuilder: (context, index) {
+                      return buildCarCard(carDataList[index], context);
+                    },
+                  ),
                 ),
               ),
             ],
@@ -101,7 +101,7 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
         margin: EdgeInsets.only(bottom: 16),
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: ThemeHelper.buttonPrimaryColor,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -119,12 +119,12 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Car Number',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  'Bilnummer',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 Text(
                   carData['boardNumber']!,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color:  Colors.white),
                 ),
               ],
             ),
@@ -132,12 +132,12 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Private Number',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  'Tjenestebilnummer',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 Text(
                   carData['privateNumber']!,
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 20,color: Colors.white),
                 ),
               ],
             ),

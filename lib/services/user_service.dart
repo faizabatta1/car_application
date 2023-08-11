@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserServices{
-  static final String baseUrl = 'https://carapp-1f4w.onrender.com/api';
+  static final String baseUrl = 'https://nordic.bilsjekk.in/api';
 
   static Future login({ required String email, required String password }) async{
     try{

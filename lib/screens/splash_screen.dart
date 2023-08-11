@@ -5,7 +5,6 @@ import 'package:car_app/screens/LoginScreen.dart';
 import 'package:flutter/material.dart';
 
 import 'MainScreen.dart';
-import 'home_screen.dart';
 
 
 class SplashScreen extends StatefulWidget {

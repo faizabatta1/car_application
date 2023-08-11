@@ -6,7 +6,7 @@ class ThemeHelper{
 
   static Color scaffoldColor = Colors.black12;
 
-  static Color buttonPrimaryColor = const Color(0xFF123456);
+  static Color buttonPrimaryColor = Color(0xFF3498db);
   static TextStyle primaryButtonTextStyle = const TextStyle(
     fontSize: 20
   );

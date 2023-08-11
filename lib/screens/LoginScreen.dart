@@ -1,5 +1,4 @@
 import 'package:car_app/screens/MainScreen.dart';
-import 'package:car_app/screens/RegisterScreen.dart';
 import 'package:car_app/services/user_service.dart';
 import 'package:flutter/material.dart';
 
