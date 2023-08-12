@@ -857,7 +857,7 @@ class DriverProfileScreen extends StatelessWidget {
   }
 
   void _uploadData(BuildContext context) async {
-    await DriverService.createNewDriver(driverData: results);
+    // await DriverService.createNewDriver(driverData: results);
 
     showDialog(
       context: context,

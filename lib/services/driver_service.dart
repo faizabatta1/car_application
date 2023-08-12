@@ -31,6 +31,7 @@ class DriverService {
         final String? token = sharedPreferences.getString('token');
         request.headers['token'] = token ?? '';
         request.headers['data'] = sharedPreferences.getString('data') ?? '';
+        request.headers['Content-Type'] = 'application/json; charset=utf-8';
       }
 
       var response = await request.send();

@@ -23,7 +23,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
   List<String> selectedZones = [];
   int trafficViolations = 0;
   List<String> zones = [];
-  List<String> daysOfWeek = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag ', 'Fredag', 'Lørdag', 'Søndag'];
+  List<String> daysOfWeek = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag ', 'Fredag', 'Lordag', 'Sondag'];
   List<String> periods = ['Dag', 'Natt', 'helg'];
 
   @override
@@ -120,11 +120,11 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                         trafficViolations > 0) {
                       Map data = {
                         'locations': selectedZones.join(','),
-                        'day': selectedDay,
+                        'day': 'selectedDay',
                         'period': selectedPeriod,
                         'boardNumber': widget.selectedCarNumber,
                         'privateNumber': widget.selectedPrivateNumber,
-                        'trafficViolations': trafficViolations,
+                        'trafficViolations': trafficViolations.toString(),
                         'date': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())
                       };
 
@@ -308,7 +308,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
           onPressed: () {
             setState(() {
               selectedDay = day;
-              if (day == 'Lørdag' || day == 'Søndag') {
+              if (day == 'Lordag' || day == 'Sondag') {
                 selectedPeriod = 'helg';
               } else {
                 selectedPeriod = '';
@@ -325,7 +325,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
   }
 
   Widget buildPeriodButtons() {
-    List<String> availableShifts = selectedDay == 'Lørdag' || selectedDay == 'Søndag'
+    List<String> availableShifts = selectedDay == 'Lordag' || selectedDay == 'Sondag'
         ? ['helg', 'Dag', 'Natt']
         : ['Dag', 'Natt'];
 
