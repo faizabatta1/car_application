@@ -2,6 +2,11 @@ import 'package:car_app/helpers/theme_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:multi_select_flutter/bottom_sheet/multi_select_bottom_sheet.dart';
+import 'package:multi_select_flutter/chip_display/multi_select_chip_display.dart';
+import 'package:multi_select_flutter/dialog/mult_select_dialog.dart';
+import 'package:multi_select_flutter/util/multi_select_item.dart';
+import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -214,87 +219,122 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
     );
   }
 
-  void _showMultiSelectZoneOptionsDialog() async{
-    await showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context,setState){
-          return AlertDialog(
-            title: Text('Velg rute'),
-            content: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: selectedZones.map((zone) {
-                      return Chip(
-                        label: Text(zone),
-                        onDeleted: () {
-                          setState(() {
-                            selectedZones.remove(zone);
-                          });
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  SizedBox(height: 16),
-                  Divider(),
-                  SizedBox(height: 16),
-                  ...zones.map((zone) {
-                    bool isSelected = selectedZones.contains(zone);
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          if (isSelected) {
-                            selectedZones.remove(zone);
-                          } else {
-                            if(!selectedZones.contains(zone)){
-                              selectedZones.add(zone);
-                            }
-                          }
-                        });
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 16),
-                        decoration: BoxDecoration(
-                          border: Border(bottom: BorderSide(color: Colors.black)),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              zone,
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            Icon(
-                              isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-                              color: isSelected ? ThemeHelper.buttonPrimaryColor : Colors.black,
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('Ferdig'),
-              ),
-            ],
-          );
-        },
-      ),
-    );
+  // void _showMultiSelectZoneOptionsDialog() async{
+  //   await showDialog(
+  //     context: context,
+  //     builder: (context) => StatefulBuilder(
+  //       builder: (context,setState){
+  //         return AlertDialog(
+  //           title: Text('Velg rute'),
+  //           content: SingleChildScrollView(
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.stretch,
+  //               children: [
+  //                 Wrap(
+  //                   spacing: 8,
+  //                   runSpacing: 8,
+  //                   children: selectedZones.map((zone) {
+  //                     return Chip(
+  //                       label: Text(zone),
+  //                       onDeleted: () {
+  //                         setState(() {
+  //                           selectedZones.remove(zone);
+  //                         });
+  //                       },
+  //                     );
+  //                   }).toList(),
+  //                 ),
+  //                 SizedBox(height: 16),
+  //                 Divider(),
+  //                 SizedBox(height: 16),
+  //                 ...zones.map((zone) {
+  //                   bool isSelected = selectedZones.contains(zone);
+  //                   return GestureDetector(
+  //                     onTap: () {
+  //                       setState(() {
+  //                         if (isSelected) {
+  //                           selectedZones.remove(zone);
+  //                         } else {
+  //                           if(!selectedZones.contains(zone)){
+  //                             selectedZones.add(zone);
+  //                           }
+  //                         }
+  //                       });
+  //                     },
+  //                     child: Container(
+  //                       padding: EdgeInsets.symmetric(vertical: 16),
+  //                       decoration: BoxDecoration(
+  //                         border: Border(bottom: BorderSide(color: Colors.black)),
+  //                       ),
+  //                       child: Row(
+  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                         children: [
+  //                           Text(
+  //                             zone,
+  //                             style: TextStyle(fontSize: 18),
+  //                           ),
+  //                           Icon(
+  //                             isSelected ? Icons.check_box : Icons.check_box_outline_blank,
+  //                             color: isSelected ? ThemeHelper.buttonPrimaryColor : Colors.black,
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   );
+  //                 }).toList(),
+  //               ],
+  //             ),
+  //           ),
+  //           actions: [
+  //             TextButton(
+  //               onPressed: () {
+  //                 Navigator.pop(context);
+  //               },
+  //               child: Text('Ferdig'),
+  //             ),
+  //           ],
+  //         );
+  //       },
+  //     ),
+  //   );
+  //
+  //   setState(() {});
+  // }
 
-    setState(() {});
+  void _showMultiSelectZoneOptionsDialog() async {
+    List<String> initialSelectedZones = List.from(selectedZones);
+
+    await showModalBottomSheet(
+      context: context,
+      enableDrag: true,
+      builder: (context) {
+        return MultiSelectChipDisplay(
+          items: zones.cast()
+              .map((zone) => MultiSelectItem<String>(zone, zone))
+              .toList(),
+          textStyle: TextStyle(
+            color: Colors.white
+          ),
+          onTap: (value){
+            if(selectedZones.contains(value)){
+              selectedZones.remove(value);
+
+              setState(() {
+
+              });
+            }else{
+              selectedZones.add(value);
+              setState(() {
+
+              });
+            }
+          },
+          chipColor: Theme.of(context).primaryColor, // Set the default chip color
+        );
+      },
+    );
   }
+
 
 
 

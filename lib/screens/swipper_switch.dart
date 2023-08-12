@@ -62,6 +62,7 @@ class _SwipeToUnlockSwitchState extends State<SwipeToUnlockSwitch> {
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
                       Icons.upload,
