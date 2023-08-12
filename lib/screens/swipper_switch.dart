@@ -11,8 +11,8 @@ class SwipeToUnlockSwitch extends StatefulWidget {
 }
 
 class _SwipeToUnlockSwitchState extends State<SwipeToUnlockSwitch> {
-  double _xOffset = 0;
-  double _maxXOffset = 350;
+  double _xOffset = 10;
+  double _maxXOffset = 300;
   bool _unlocked = false;
 
   @override
@@ -24,7 +24,7 @@ class _SwipeToUnlockSwitchState extends State<SwipeToUnlockSwitch> {
         setState(() {
           _xOffset += details.delta.dx;
           if (_xOffset < 0) {
-            _xOffset = 0;
+            _xOffset = 10;
           } else if (_xOffset > _maxXOffset) {
             _xOffset = _maxXOffset;
             _unlocked = true;
@@ -38,7 +38,7 @@ class _SwipeToUnlockSwitchState extends State<SwipeToUnlockSwitch> {
           if (!_unlocked) {
             _xOffset = 0;
           }
-          if (_xOffset == 0) {
+          if (_xOffset <= 0) {
             _unlocked = false;
           }
         });
@@ -49,14 +49,14 @@ class _SwipeToUnlockSwitchState extends State<SwipeToUnlockSwitch> {
           alignment: Alignment.centerLeft,
           children: [
             Container(
-              height: 50,
+              height: 80,
               width: double.infinity,
               decoration: BoxDecoration(
                 color: _unlocked ? Colors.green : ThemeHelper.buttonPrimaryColor,
-                borderRadius: BorderRadius.circular(borderRadius), // Use the dynamic border radius
+                borderRadius: BorderRadius.circular(borderRadius * 4), // Use the dynamic border radius
               ),
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   children: [
                     Icon(
@@ -79,8 +79,8 @@ class _SwipeToUnlockSwitchState extends State<SwipeToUnlockSwitch> {
               duration: Duration(milliseconds: 100),
               left: _xOffset,
               child: Container(
-                height: 50,
-                width: 50,
+                height: 60,
+                width: 60,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
