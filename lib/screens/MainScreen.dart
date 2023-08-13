@@ -119,7 +119,7 @@ class MainScreen extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(Icons.drive_eta,color: Colors.white,),
-                                Text('Car',style: TextStyle(
+                                Text('Skjema',style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white
@@ -147,7 +147,7 @@ class MainScreen extends StatelessWidget {
                                 children: [
                                   Icon(Icons.web,color: Colors.white,),
                                   SizedBox(width: 8.0,),
-                                  Text('Website',style: TextStyle(
+                                  Text('Skademelding',style: TextStyle(
                                     fontSize: 18,
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold
@@ -677,6 +677,9 @@ class _FormCardState extends State<FormCard> {
                                   ElevatedButton(
                                     onPressed: () async {
                                       await showModalBottomSheet(
+                                        enableDrag: true,
+                                        showDragHandle: true,
+
                                         context: context,
                                         builder: (context) {
                                           return Container(
@@ -857,7 +860,7 @@ class DriverProfileScreen extends StatelessWidget {
   }
 
   void _uploadData(BuildContext context) async {
-    // await DriverService.createNewDriver(driverData: results);
+    await DriverService.createNewDriver(driverData: results);
 
     showDialog(
       context: context,

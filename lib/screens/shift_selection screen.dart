@@ -27,9 +27,11 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
   String selectedPeriod = '';
   List<String> selectedZones = [];
   int trafficViolations = 0;
-  List<String> zones = [];
-  List<String> daysOfWeek = ['Mandag', 'Tirsdag', 'Onsdag', 'Torsdag ', 'Fredag', 'Lordag', 'Sondag'];
-  List<String> periods = ['Dag', 'Natt', 'helg'];
+  List<Map<String, dynamic>> zones = [];
+  List<String> daysOfWeek = ['monday', 'tuesday', 'thursday', 'wednesday', 'Friday', 'sunday', 'saturday'];
+  List<String> periods = ['Day','Evening','Night'];
+
+  List<Map<String,dynamic>> filteredZones = [];
 
   @override
   void initState() {
@@ -43,7 +45,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         setState(() {
-          zones = data.map((zoneData) => zoneData['location']).cast<String>().toList();
+          zones = List<Map<String,dynamic>>.from(data);
         });
       } else {
         print('Failed to fetch zone data. Status code: ${response.statusCode}');
@@ -56,9 +58,8 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        alignment: Alignment.center,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(8.0),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -82,8 +83,6 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                   ],
                 ),
                 SizedBox(height: 20),
-                buildMultiSelectZoneDropdown(),
-                SizedBox(height: 20),
                 Text(
                   'Velg ukedag:',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -97,6 +96,12 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                 ),
                 SizedBox(height: 8),
                 buildPeriodButtons(),
+                SizedBox(height: 20),
+                Text('Choose Location',style: TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.bold
+                ),),
+                SizedBox(height: 20),
+                buildMultiSelectZoneDropdown(),
                 SizedBox(height: 20),
                 TextFormField(
                   keyboardType: TextInputType.number,
@@ -125,7 +130,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                         trafficViolations > 0) {
                       Map data = {
                         'locations': selectedZones.join(','),
-                        'day': 'selectedDay',
+                        'day': selectedDay,
                         'period': selectedPeriod,
                         'boardNumber': widget.selectedCarNumber,
                         'privateNumber': widget.selectedPrivateNumber,
@@ -191,31 +196,57 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
   }
 
   Widget buildMultiSelectZoneDropdown() {
-    return GestureDetector(
-      onTap: _showMultiSelectZoneOptionsDialog,
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: selectedZones.isEmpty
-                  ? Text(
-                'Velg rute',
-                style: TextStyle(fontSize: 18),
-              )
-                  : Text(
-                selectedZones.join(','),
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
-            Icon(Icons.arrow_drop_down),
-          ],
-        ),
-      ),
+    // return GestureDetector(
+    //   onTap: _showMultiSelectZoneOptionsDialog,
+    //   child: Container(
+    //     padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    //     decoration: BoxDecoration(
+    //       border: Border.all(color: Colors.black),
+    //       borderRadius: BorderRadius.circular(4),
+    //     ),
+    //     child: Row(
+    //       children: [
+    //         Expanded(
+    //           child: selectedZones.isEmpty
+    //               ? Text(
+    //             'Velg rute',
+    //             style: TextStyle(fontSize: 18),
+    //           )
+    //               : Text(
+    //             selectedZones.join(','),
+    //             style: TextStyle(fontSize: 18),
+    //           ),
+    //         ),
+    //         Icon(Icons.arrow_drop_down),
+    //       ],
+    //     ),
+    //   ),
+    // );
+    return filteredZones.isEmpty ? Container(
+      alignment: Alignment.center,
+      child: Text("This Day Has No Locations",style: TextStyle(
+          fontSize: 18, fontWeight: FontWeight.bold,color:  Colors.red
+      ),),
+    ) : Wrap(
+      spacing: 2.0,
+      children: filteredZones.map((e){
+        return ElevatedButton(
+          onPressed: () {
+            setState(() {
+              if(selectedZones.contains(e['location'])){
+                selectedZones.remove(e['location']);
+              }else{
+                selectedZones.add(e['location']);
+              }
+            });
+          },
+          style: ElevatedButton.styleFrom(
+            primary: selectedZones.contains(e['location'])? ThemeHelper.buttonPrimaryColor : Colors.black54,
+              minimumSize: Size(90,30)
+          ),
+          child: Text(e['location']),
+        );
+      }).toList(),
     );
   }
 
@@ -310,7 +341,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
       builder: (context) {
         return MultiSelectChipDisplay(
           items: zones.cast()
-              .map((zone) => MultiSelectItem<String>(zone, zone))
+              .map((zone) => MultiSelectItem<String>(zone['location'], zone['location']))
               .toList(),
           textStyle: TextStyle(
             color: Colors.white
@@ -341,22 +372,25 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
 
   Widget buildDayOfWeekButtons() {
     return Wrap(
-      spacing: 8.0,
-      runSpacing: 8.0,
+      spacing: 4.0,
       children: daysOfWeek.map((day) {
         return ElevatedButton(
           onPressed: () {
             setState(() {
               selectedDay = day;
-              if (day == 'Lordag' || day == 'Sondag') {
-                selectedPeriod = 'helg';
-              } else {
-                selectedPeriod = '';
-              }
+              selectedPeriod = '';
+              selectedZones.clear();
+              filteredZones = zones.where((zone) {
+                List<String> zoneDays = List<String>.from(zone['days']);
+                print(zoneDays);
+                bool containsDay = zoneDays.contains(selectedDay.toLowerCase());
+                return containsDay;
+              }).toList();
             });
           },
           style: ElevatedButton.styleFrom(
             primary: selectedDay == day ? ThemeHelper.buttonPrimaryColor : Colors.black54,
+            minimumSize: Size(40,30)
           ),
           child: Text(day),
         );
@@ -365,29 +399,46 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
   }
 
   Widget buildPeriodButtons() {
-    List<String> availableShifts = selectedDay == 'Lordag' || selectedDay == 'Sondag'
-        ? ['helg', 'Dag', 'Natt']
-        : ['Dag', 'Natt'];
 
     return Wrap(
       spacing: 8.0,
-      runSpacing: 8.0,
       children: periods.map((period) {
-        if (availableShifts.contains(period)) {
-          return ElevatedButton(
-            onPressed: () {
+        return ElevatedButton(
+          onPressed: () {
+            if(selectedDay == ''){
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text('Feil'),
+                  content: Text('Choose Day First'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            }else{
               setState(() {
                 selectedPeriod = period;
+
+                filteredZones = zones.where((zone){
+                  return (zone['shifts'] as List).contains(selectedPeriod.toLowerCase())
+                      && (zone['days'] as List).contains(selectedDay.toLowerCase());
+                }).toList();
               });
-            },
-            style: ElevatedButton.styleFrom(
+            }
+          },
+          style: ElevatedButton.styleFrom(
               primary: selectedPeriod == period ? ThemeHelper.buttonPrimaryColor : Colors.black54,
-            ),
-            child: Text(period),
-          );
-        } else {
-          return SizedBox.shrink();
-        }
+              minimumSize: Size(50, 30)
+          ),
+          child: Text(period),
+        );
+
       }).toList(),
     );
   }}
