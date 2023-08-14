@@ -56,138 +56,140 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Valgt bil',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8),
-                Row(
-                  children: [
-                    Text(
-                      "Borde: ${widget.selectedCarNumber}",
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(width: 20.0,),
-                    Text(
-                      'Bilnummer: ${widget.selectedPrivateNumber}',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'Velg ukedag:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8),
-                buildDayOfWeekButtons(),
-                SizedBox(height: 20),
-                Text(
-                  'Velg vakt:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8),
-                buildPeriodButtons(),
-                SizedBox(height: 20),
-                Text('Choose Location',style: TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.bold
-                ),),
-                SizedBox(height: 20),
-                buildMultiSelectZoneDropdown(),
-                SizedBox(height: 20),
-                TextFormField(
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) {
-                    setState(() {
-                      trafficViolations = int.tryParse(value) ?? 0;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Vennligst skriv inn antall K.S.';
-                    }
-                    return null;
-                  },
-                  decoration: InputDecoration(
-                    labelText: 'Antall K.S',
-                    border: OutlineInputBorder(),
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Valgt bil',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                ),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (selectedZones.isNotEmpty &&
-                        selectedDay.isNotEmpty &&
-                        selectedPeriod.isNotEmpty &&
-                        trafficViolations > 0) {
-                      Map data = {
-                        'locations': selectedZones.join(','),
-                        'day': selectedDay,
-                        'period': selectedPeriod,
-                        'boardNumber': widget.selectedCarNumber,
-                        'privateNumber': widget.selectedPrivateNumber,
-                        'trafficViolations': trafficViolations.toString(),
-                        'date': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())
-                      };
+                  SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Text(
+                        "Borde: ${widget.selectedCarNumber}",
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(width: 20.0,),
+                      Text(
+                        'Bilnummer: ${widget.selectedPrivateNumber}',
+                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Velg ukedag:',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  buildDayOfWeekButtons(),
+                  SizedBox(height: 20),
+                  Text(
+                    'Velg vakt:',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 8),
+                  buildPeriodButtons(),
+                  SizedBox(height: 20),
+                  Text('Choose Location',style: TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold
+                  ),),
+                  SizedBox(height: 20),
+                  buildMultiSelectZoneDropdown(),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    keyboardType: TextInputType.number,
+                    onChanged: (value) {
+                      setState(() {
+                        trafficViolations = int.tryParse(value) ?? 0;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Vennligst skriv inn antall K.S.';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Antall K.S',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (selectedZones.isNotEmpty &&
+                          selectedDay.isNotEmpty &&
+                          selectedPeriod.isNotEmpty &&
+                          trafficViolations > 0) {
+                        Map data = {
+                          'locations': selectedZones.join(','),
+                          'day': selectedDay,
+                          'period': selectedPeriod,
+                          'boardNumber': widget.selectedCarNumber,
+                          'privateNumber': widget.selectedPrivateNumber,
+                          'trafficViolations': trafficViolations.toString(),
+                          'date': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())
+                        };
 
-                      SharedPreferences shared = await SharedPreferences.getInstance();
-                      await shared.setString('data', jsonEncode(data));
+                        SharedPreferences shared = await SharedPreferences.getInstance();
+                        await shared.setString('data', jsonEncode(data));
 
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) {
-                            return Form1Screen();
-                          },
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                            return FadeTransition(
-                              opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                                CurvedAnimation(
-                                  parent: animation,
-                                  curve: Curves.easeInOut,
+                        Navigator.push(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation, secondaryAnimation) {
+                              return Form1Screen();
+                            },
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              return FadeTransition(
+                                opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                                  CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.easeInOut,
+                                  ),
                                 ),
+                                child: child,
+                              );
+                            },
+                            transitionDuration: Duration(seconds: 1),
+                          ),
+                        );
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: Text('Feil'),
+                            content: Text('Velg minst én sone, ukedag, periode, og skriv inn antall K.S.'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Text('OK'),
                               ),
-                              child: child,
-                            );
-                          },
-                          transitionDuration: Duration(seconds: 1),
-                        ),
-                      );
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text('Feil'),
-                          content: Text('Velg minst én sone, ukedag, periode, og skriv inn antall K.S.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ThemeHelper.buttonPrimaryColor,
+                            ],
+                          ),
+                        );
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ThemeHelper.buttonPrimaryColor,
+                    ),
+                    child: Text(
+                      'Submit',
+                      style: TextStyle(fontSize: 18),
+                    ),
                   ),
-                  child: Text(
-                    'Submit',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

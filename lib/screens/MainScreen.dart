@@ -404,6 +404,7 @@ class _FormCardState extends State<FormCard> {
   void nextPage() {
     if (currentIndex < widget.formFields.length - 1) {
       currentIndex++;
+      _formKey = null;
       setState(() {});
       _pageController.nextPage(duration: Duration(milliseconds: 1000), curve: Curves.easeInOut);
     }else{
@@ -593,7 +594,7 @@ class _FormCardState extends State<FormCard> {
                                       ElevatedButton(
                                         child: Text('Ja', style: buttonTextStyle),
                                         onPressed: () {
-                                          if (field['hasRequiredDescription']) {
+                                          if (field['hasRequiredDescription'] && field['whenToGetDescription'] == true) {
                                             setState(() {
                                               _showYesFields[field['title']] = true;
                                             });
@@ -614,8 +615,12 @@ class _FormCardState extends State<FormCard> {
                                         child: Text('Nei', style: buttonTextStyle),
                                         onPressed: () {
                                           setState(() {
-                                            _formValues[field['title']] = 'Nei';
-                                            nextPage();
+                                            if(field['whenToGetDescription'] == false){
+                                              _showYesFields[field['title']] = true;
+                                            }else{
+                                              _formValues[field['title']] = 'Nei';
+                                              nextPage();
+                                            }
                                           });
                                         },
                                         style: ElevatedButton.styleFrom(
