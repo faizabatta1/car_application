@@ -496,11 +496,6 @@ class _FormCardState extends State<FormCard> {
 
                     ),
                   ),
-                // if (currentIndex == widget.formFields.length - 1)
-                  // ElevatedButton(
-                  //   child: Text('Go Profile'),
-                  //   onTap: getDetailAPi,
-                  // ),
               ],
             ),
           )),
