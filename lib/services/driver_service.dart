@@ -9,7 +9,10 @@ class DriverService {
   static Future<void> createNewDriver({required List<Map<String, dynamic>> driverData}) async {
     try {
       final Uri uri = Uri.parse("$baseUrl/api/drivers");
-      var request = http.MultipartRequest('POST', uri);
+      var requestHeaders = {
+        'Content-Type': 'multipart/form-data; charset=utf-8',
+      };
+      var request = http.MultipartRequest('POST', uri)..headers.addAll(requestHeaders);;
 
       for (final entry in driverData) {
         if (entry['answerDataType'] == 'file' || entry['answerDataType'] == 'image') {
@@ -20,7 +23,7 @@ class DriverService {
             request.files.add(await http.MultipartFile.fromPath(fieldName, filePath));
           } else if (entry['answerDataType'] == 'image') {
             // Assuming image files, modify content type if required for other file types
-            request.files.add(await http.MultipartFile.fromPath(fieldName, filePath));
+            request.files.add(await http.MultipartFile.fromPath(Uri.encodeComponent(fieldName), filePath));
           }
         } else {
           // Add non-file data to the request as fields
