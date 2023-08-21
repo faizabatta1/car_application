@@ -74,6 +74,7 @@ class _SwipeToUnlockSwitchState extends State<SwipeToUnlockSwitch> {
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
+                        fontSize: 20
                       ),
                     ),
                   ],

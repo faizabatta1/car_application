@@ -28,8 +28,8 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
   List<String> selectedZones = [];
   int trafficViolations = 0;
   List<Map<String, dynamic>> zones = [];
-  List<String> daysOfWeek = ['monday', 'tuesday', 'thursday', 'wednesday', 'Friday', 'sunday', 'saturday'];
-  List<String> periods = ['Day','Evening','Night'];
+  List<String> daysOfWeek = ['mandag', 'tirsdag', 'torsdag', 'onsdag', 'fredag', 'søndag', 'lørdag'];
+  List<String> periods = ['dag','kveld','natt'];
 
   List<Map<String,dynamic>> filteredZones = [];
 

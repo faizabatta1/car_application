@@ -9,21 +9,24 @@ class DriverService {
   static Future<void> createNewDriver({required List<Map<String, dynamic>> driverData}) async {
     try {
       final Uri uri = Uri.parse("$baseUrl/api/drivers");
-      var requestHeaders = {
-        'Content-Type': 'multipart/form-data; charset=utf-8',
-      };
-      var request = http.MultipartRequest('POST', uri)..headers.addAll(requestHeaders);;
+
+      var request = http.MultipartRequest('POST', uri);
+      print("Yes Am Here");
 
       for (final entry in driverData) {
         if (entry['answerDataType'] == 'file' || entry['answerDataType'] == 'image') {
-          String fieldName = entry['title'];
-          String filePath = entry['value'];
 
           if (entry['answerDataType'] == 'file') {
+            String fieldName = entry['title'];
+            String filePath = entry['value'];
             request.files.add(await http.MultipartFile.fromPath(fieldName, filePath));
           } else if (entry['answerDataType'] == 'image') {
+            String fieldName = entry['title'];
+            List filePath = entry['value'];
             // Assuming image files, modify content type if required for other file types
-            request.files.add(await http.MultipartFile.fromPath(Uri.encodeComponent(fieldName), filePath));
+            for(String path in filePath){
+              request.files.add(await http.MultipartFile.fromPath(Uri.encodeComponent(fieldName), path));
+            }
           }
         } else {
           // Add non-file data to the request as fields
@@ -34,6 +37,8 @@ class DriverService {
         final String? token = sharedPreferences.getString('token');
         request.headers['token'] = token ?? '';
         String data = sharedPreferences.getString('data') ?? '';
+        Map d = jsonDecode(data);
+        print(d['date']);
         String full = Uri.encodeComponent(data);
         request.headers['data'] = full;
       }

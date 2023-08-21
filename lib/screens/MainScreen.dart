@@ -395,6 +395,7 @@ class FormCard extends StatefulWidget {
 class _FormCardState extends State<FormCard> {
   Map<String, dynamic> _formValues = {};
   String? _imageFilePath;
+  List _imageFilePaths = [];
 
   String _readFileName = "";
   String? _readFilePath;
@@ -710,17 +711,20 @@ class _FormCardState extends State<FormCard> {
                                                 ListTile(
                                                   leading: Icon(Icons.photo_library),
                                                   title: Text("Choose from Gallery"),
-                                                  onTap: () async{
+                                                  onTap: () async {
                                                     final picker = ImagePicker();
-                                                    final pickedImage = await picker.pickImage(source: ImageSource.gallery);
-                                                    if (pickedImage != null) {
+                                                    final pickedImages = await picker.pickMultiImage();
+                                                    if (pickedImages.isNotEmpty) {
                                                       setState(() {
-                                                        _imageFilePath = pickedImage.path;
-                                                        _formValues[field['title']] = _imageFilePath;
+                                                        for (var pickedImage in pickedImages) {
+                                                          _imageFilePaths.add(pickedImage.path);
+                                                          _formValues[field['title']] = _imageFilePaths;
+                                                        }
                                                       });
+
                                                     }
-                                                    Navigator.pop(context);
-                                                  },
+                                                          Navigator.pop(context);
+                                                    },
                                                 ),
                                                 SizedBox(height: 16.0),
                                                 TextButton(
@@ -745,18 +749,29 @@ class _FormCardState extends State<FormCard> {
                                     ),
                                   ),
                                   SizedBox(height: 20),
-                                  if (_imageFilePath != null)
-                                    Container(
-                                      width: double.infinity,
-                                      height: 160,
-                                      decoration: BoxDecoration(
-                                        image: DecorationImage(
-                                          image: Image.file(
-                                            File(_imageFilePath!),
-                                            fit: BoxFit.cover,
-                                          ).image,
+                                  if (_imageFilePaths.isNotEmpty)
+                                    SizedBox(
+                                      height:200,
+                                      child: GridView(
+
+                                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: _imageFilePaths.length > 3 ? 3 : _imageFilePaths.length
                                         ),
-                                        borderRadius: BorderRadius.circular(12.0),
+                                        children: _imageFilePaths.map((e){
+                                          return Container(
+                                            width: double.infinity,
+                                            height: 160,
+                                            decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                image: Image.file(
+                                                  File(e!),
+                                                  fit: BoxFit.cover,
+                                                ).image,
+                                              ),
+                                              borderRadius: BorderRadius.circular(12.0),
+                                            ),
+                                          );
+                                        }).toList(),
                                       ),
                                     ),
                                 ],
@@ -859,24 +874,47 @@ class DriverProfileScreen extends StatelessWidget {
     );
   }
 
-  void _uploadData(BuildContext context) async {
-    await DriverService.createNewDriver(driverData: results);
-
+  void _showErrorPopup(BuildContext context, dynamic error) {
     showDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => Center(
-        child: CircularProgressIndicator(),
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text('An error occurred: $error'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close the dialog
+            },
+            child: Text('OK'),
+          ),
+        ],
       ),
     );
-
-    // Simulate API call or any asynchronous task
-    await Future.delayed(Duration(seconds: 2));
-
-    Navigator.pop(context); // Hide the loading indicator
-
-    _showSuccessPopup(context);
   }
+
+  void _uploadData(BuildContext context) async {
+    try {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+      await DriverService.createNewDriver(driverData: results);
+
+      // Hide the loading indicator whether the operation succeeds or fails
+      Navigator.pop(context);
+
+      _showSuccessPopup(context);
+    } catch (error) {
+      // Handle the error if the createNewDriver function throws an exception
+      Navigator.pop(context); // Close the loading dialog
+      _showErrorPopup(context, error); // Show an error popup or handle the error
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -986,10 +1024,18 @@ class DriverProfileScreen extends StatelessWidget {
                                 Text(entry['title'])
                               ],
                             ),
-                            Image.file(
-                              File(entry['value']),
-                              height: 150,
-                              width: 150,
+                            Row(
+                              children: (entry['value'] as List).map((e){
+                                print(e);
+                                return Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Image.file(
+                                      File(e),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
                             ),
                           ],
                         ),
