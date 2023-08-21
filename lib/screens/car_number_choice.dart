@@ -1,5 +1,6 @@
 import 'package:car_app/helpers/theme_helper.dart';
 import 'package:car_app/screens/MainScreen.dart';
+import 'package:car_app/screens/qrcode_scanner.dart';
 import 'package:car_app/screens/shift_selection%20screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -12,6 +13,8 @@ class CarNumberChoiceScreen extends StatefulWidget {
 
 class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
   List<dynamic> carDataList = [];
+
+  bool _isToggled = false;
 
   @override
   void initState() {
@@ -41,29 +44,49 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: () async{
-                    setState(() {
+    return SafeArea(
+      child: Scaffold(
+        body: Container(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: 12,),
+                Expanded(
+                  child: _isToggled ? QrCodeScanner() : RefreshIndicator(
+                    onRefresh: () async{
+                      setState(() {
 
-                    });
-                  },
-                  child: ListView.builder(
-                    itemCount: carDataList.length,
-                    itemBuilder: (context, index) {
-                      return buildCarCard(carDataList[index], context);
+                      });
                     },
+                    child: ListView.builder(
+                      itemCount: carDataList.length,
+                      itemBuilder: (context, index) {
+                        return buildCarCard(carDataList[index], context);
+                      },
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
+          ),
+        ),
+
+        bottomSheet: Container(
+          color: Colors.black12,
+          height: 50,
+          alignment: Alignment.center,
+          child: TextButton(
+            onPressed: (){
+              setState(() {
+                _isToggled = !_isToggled;
+              });
+            },
+            child: Text(_isToggled ? 'Choose Manually' : 'Scan QrCode Instead',style: TextStyle(
+                fontSize: 18,
+              color: ThemeHelper.buttonPrimaryColor
+            ),),
           ),
         ),
       ),
