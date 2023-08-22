@@ -15,8 +15,9 @@ import 'MainScreen.dart';
 class ShiftChoiceScreen extends StatefulWidget {
   final String selectedCarNumber;
   final String selectedPrivateNumber;
+  int? kilometers;
 
-  ShiftChoiceScreen({required this.selectedCarNumber, required this.selectedPrivateNumber});
+  ShiftChoiceScreen({required this.selectedCarNumber, required this.selectedPrivateNumber,this.kilometers});
 
   @override
   _ShiftChoiceScreenState createState() => _ShiftChoiceScreenState();
@@ -83,6 +84,14 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                       ),
                     ],
                   ),
+
+                  if(widget.kilometers != null)
+                    SizedBox(height: 20),
+                  if(widget.kilometers != null)
+                    Text(
+                      'Kilometers: ${widget.kilometers}',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                   SizedBox(height: 20),
                   Text(
                     'Velg ukedag:',
@@ -136,6 +145,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                           'boardNumber': widget.selectedCarNumber,
                           'privateNumber': widget.selectedPrivateNumber,
                           'trafficViolations': trafficViolations.toString(),
+                          'kilometers':widget.kilometers,
                           'date': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())
                         };
 

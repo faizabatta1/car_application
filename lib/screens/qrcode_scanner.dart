@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:car_app/screens/kilometers.dart';
+import 'package:car_app/screens/shift_selection%20screen.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,20 +25,18 @@ class _QrCodeScannerState extends State<QrCodeScanner> {
         allowDuplicates: false,
         onDetect: (barcode, args) async {
           if (barcode.rawValue == null) {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("")));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Couldn't Scan Qr Code")));
           } else {
-            final String url = barcode.rawValue!;
-            await _launchUrl(url);
+            final String raw = barcode.rawValue!;
+            final Map data = jsonDecode(raw);
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => KilometerScreen(
+                selectedCarNumber: data['boardNumber'],
+                selectedPrivateNumber: data['privateNumber'],
+              ))
+            );
           }
         }
     );
-  }
-
-  Future<void> _launchUrl(url) async {
-    final Uri _url = Uri.parse(url);
-
-    if (!await launchUrl(_url)) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('invalid QrCode Url')));
-    }
   }
 }

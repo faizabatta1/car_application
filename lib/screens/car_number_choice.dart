@@ -1,5 +1,6 @@
 import 'package:car_app/helpers/theme_helper.dart';
 import 'package:car_app/screens/MainScreen.dart';
+import 'package:car_app/screens/kilometers.dart';
 import 'package:car_app/screens/qrcode_scanner.dart';
 import 'package:car_app/screens/shift_selection%20screen.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +76,7 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
 
         bottomSheet: Container(
           color: Colors.black12,
-          height: 50,
+          height: 70,
           alignment: Alignment.center,
           child: TextButton(
             onPressed: (){
@@ -83,7 +84,7 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
                 _isToggled = !_isToggled;
               });
             },
-            child: Text(_isToggled ? 'Choose Manually' : 'Scan QrCode Instead',style: TextStyle(
+            child: Text(_isToggled ? 'pickup Manually' : 'Scan QrCode',style: TextStyle(
                 fontSize: 18,
               color: ThemeHelper.buttonPrimaryColor
             ),),
@@ -100,9 +101,9 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
           context,
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) {
-              return ShiftChoiceScreen(
-                selectedCarNumber: carData['boardNumber']!,
-                selectedPrivateNumber: carData['privateNumber']!,
+              return KilometerScreen(
+                selectedCarNumber: carData['boardNumber'],
+                selectedPrivateNumber: carData['privateNumber'],
               );
             },
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
