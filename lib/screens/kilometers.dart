@@ -7,11 +7,12 @@ import '../helpers/theme_helper.dart';
 class KilometerScreen extends StatelessWidget {
   final String selectedCarNumber;
   final String selectedPrivateNumber;
+  final String carId;
 
   KilometerScreen({
     Key? key,
     required this.selectedCarNumber,
-    required this.selectedPrivateNumber,
+    required this.selectedPrivateNumber, required this.carId,
   }) : super(key: key);
 
   final TextEditingController _kilometerController = TextEditingController();
@@ -20,113 +21,138 @@ class KilometerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomSheet: Container(
-        color: Colors.black12,
-        height: 70,
-        alignment: Alignment.center,
-        child: TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) {
-                  return ShiftChoiceScreen(
-                    selectedCarNumber: selectedCarNumber,
-                    selectedPrivateNumber: selectedPrivateNumber,
-                  );
-                },
-                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                  return FadeTransition(
-                    opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                      CurvedAnimation(
-                        parent: animation,
-                        curve: Curves.easeInOut,
-                      ),
-                    ),
-                    child: child,
-                  );
-                },
-                transitionDuration: Duration(seconds: 1),
-              ),
-            );
-          },
-          child: Text(
-            'Skip',
-            style: TextStyle(
-              fontSize: 20,
-              color: ThemeHelper.buttonPrimaryColor,
-            ),
-          ),
-        ),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                controller: _kilometerController,
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value != null) {
-                    if (value.isEmpty) {
-                      return "Enter something first";
-                    }
-                  }
-                  return null;
-                },
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Enter kilometers",
-                ),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) {
-                          return ShiftChoiceScreen(
-                            selectedCarNumber: selectedCarNumber,
-                            selectedPrivateNumber: selectedPrivateNumber,
-                            kilometers: int.parse(_kilometerController.text),
-                          );
-                        },
-                        transitionsBuilder:
-                            (context, animation, secondaryAnimation, child) {
-                          return FadeTransition(
-                            opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                              CurvedAnimation(
-                                parent: animation,
-                                curve: Curves.easeInOut,
-                              ),
-                            ),
-                            child: child,
-                          );
-                        },
-                        transitionDuration: Duration(seconds: 1),
-                      ),
-                    );
-                  }
-                },
-                icon: Icon(Icons.arrow_forward),
-                label: Text('Submit'),
-                style: ElevatedButton.styleFrom(
-                  primary: ThemeHelper.buttonPrimaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+        child: Stack(
+          children: [
+            Positioned(
+              child: Image.asset('assets/bil.png',width: 100,height: 100,),
+              top: 10,
+              left: 10,
+            ),
+            Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Servicekilometer',style: TextStyle(
+                    fontSize: 24
+                  ),),
+                  SizedBox(height: 12.0,),
+                  TextFormField(
+                    controller: _kilometerController,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value != null) {
+                        if (value.isEmpty) {
+                          return "Skriv inn noe først";
+                        }
+                      }
+                      return null;
+                    },
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: "Angi kilometer",
+                    ),
                   ),
-                ),
+                  SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            Navigator.push(
+                              context,
+                              PageRouteBuilder(
+                                pageBuilder: (context, animation, secondaryAnimation) {
+                                  return ShiftChoiceScreen(
+                                    selectedCarNumber: selectedCarNumber,
+                                    selectedPrivateNumber: selectedPrivateNumber,
+                                    carId: carId,
+                                    kilometers: int.parse(_kilometerController.text),
+                                  );
+                                },
+                                transitionsBuilder:
+                                    (context, animation, secondaryAnimation, child) {
+                                  return FadeTransition(
+                                    opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                                      CurvedAnimation(
+                                        parent: animation,
+                                        curve: Curves.easeInOut,
+                                      ),
+                                    ),
+                                    child: child,
+                                  );
+                                },
+                                transitionDuration: Duration(seconds: 1),
+                              ),
+                            );
+                          }
+                        },
+                        icon: Icon(Icons.arrow_forward),
+                        label: Text('Sende inn'),
+                        style: ElevatedButton.styleFrom(
+                          primary: ThemeHelper.buttonPrimaryColor,
+                          textStyle: TextStyle(
+                              fontSize: 20
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 12,),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder: (context, animation, secondaryAnimation) {
+                                return ShiftChoiceScreen(
+                                    selectedCarNumber: selectedCarNumber,
+                                    selectedPrivateNumber: selectedPrivateNumber,
+                                    carId:carId
+                                );
+                              },
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                return FadeTransition(
+                                  opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                                    CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeInOut,
+                                    ),
+                                  ),
+                                  child: child,
+                                );
+                              },
+                              transitionDuration: Duration(seconds: 1),
+                            ),
+                          );
+                        },
+                        icon: Icon(Icons.skip_next),
+                        label: Text('Hopp over'),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.green,
+                          textStyle: TextStyle(
+                            fontSize: 20
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

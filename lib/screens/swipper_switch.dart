@@ -70,7 +70,7 @@ class _SwipeToUnlockSwitchState extends State<SwipeToUnlockSwitch> {
                     ),
                     SizedBox(width: 5),
                     Text(
-                      _unlocked ? 'Uploaded' : 'Swipe to Upload',
+                      _unlocked ? 'Lastet opp' : 'Sveip for å laste opp',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

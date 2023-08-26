@@ -21,7 +21,7 @@ class MainScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Color(0xFFEEEEEE),
       body: Container(
-        padding: EdgeInsets.all(12.0),
+        padding: EdgeInsets.all(8.0),
         child: Stack(
           children: [
             Column(
@@ -66,8 +66,7 @@ class MainScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 Container(
-                  height: 200,
-                  alignment: Alignment.center,
+                  height: 240,
                   padding: EdgeInsets.all(4.0),
                   decoration: BoxDecoration(
                     color: Color(0xFFECE9E9),
@@ -120,7 +119,7 @@ class MainScreen extends StatelessWidget {
                               children: [
                                 Icon(Icons.drive_eta,color: Colors.white,),
                                 Text('Skjema',style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white
                                 ),)
@@ -131,7 +130,7 @@ class MainScreen extends StatelessWidget {
                         ),
                       ),
 
-                      SizedBox(width: 10,),
+                      SizedBox(width: 8,),
                       Expanded(
                         child: GestureDetector(
                           onTap: () async{
@@ -148,7 +147,7 @@ class MainScreen extends StatelessWidget {
                                   Icon(Icons.web,color: Colors.white,),
                                   SizedBox(width: 8.0,),
                                   Text('Skademelding',style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold
                                   ),)
@@ -693,14 +692,14 @@ class _FormCardState extends State<FormCard> {
                                               children: [
                                                 ListTile(
                                                   leading: Icon(Icons.camera),
-                                                  title: Text("Take A Picture"),
+                                                  title: Text("Ta et bilde"),
                                                   onTap: () async{
                                                     final picker = ImagePicker();
                                                     final pickedImage = await picker.pickImage(source: ImageSource.camera);
                                                     if (pickedImage != null) {
                                                       setState(() {
-                                                        _imageFilePath = pickedImage.path;
-                                                        _formValues[field['title']] = _imageFilePath;
+                                                        _imageFilePaths.add(pickedImage.path);
+                                                        _formValues[field['title']] = _imageFilePaths;
                                                       });
                                                     }
                                                     // Implement the logic for taking a picture
@@ -710,7 +709,7 @@ class _FormCardState extends State<FormCard> {
                                                 Divider(),
                                                 ListTile(
                                                   leading: Icon(Icons.photo_library),
-                                                  title: Text("Choose from Gallery"),
+                                                  title: Text("Velg fra Galleri"),
                                                   onTap: () async {
                                                     final picker = ImagePicker();
                                                     final pickedImages = await picker.pickMultiImage();
@@ -731,7 +730,7 @@ class _FormCardState extends State<FormCard> {
                                                   onPressed: () {
                                                     Navigator.pop(context);
                                                   },
-                                                  child: Text("Cancel", style: TextStyle(color: Colors.red)),
+                                                  child: Text("Avbryt", style: TextStyle(color: Colors.red)),
                                                 ),
                                               ],
                                             ),
@@ -837,16 +836,19 @@ class DriverProfileScreen extends StatelessWidget {
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Takk! Skjemaet er sendt.'),
+          title: Text('ved å klikke ok blir du logget ut.'),
           actions: [
             TextButton(
-              onPressed: () {
+              onPressed: () async{
                 Navigator.pop(context);
+                SharedPreferences shared = await SharedPreferences.getInstance();
+                if (shared.containsKey('token')) await shared.remove('token');
+
                 Navigator.pushReplacement(
                   context,
                   PageRouteBuilder(
                     pageBuilder: (context, animation, secondaryAnimation) {
-                      return MainScreen();
+                      return SplashScreen(token: null);
                     },
                     transitionsBuilder: (context, animation, secondaryAnimation, child) {
                       return FadeTransition(
@@ -878,8 +880,8 @@ class DriverProfileScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Error'),
-        content: Text('An error occurred: $error'),
+        title: Text('Feil'),
+        content: Text('En feil oppstod: $error'),
         actions: [
           TextButton(
             onPressed: () {
@@ -1008,7 +1010,7 @@ class DriverProfileScreen extends StatelessWidget {
                       ListTile(
                         leading: Icon(Icons.attach_file),
                         title: Text(entry['title']),
-                        subtitle: Text('File: ${entry['value']}'),
+                        subtitle: Text('Fil: ${entry['value']}'),
                       ),
                     if (entry['answerDataType'] == 'image')
                       Padding(
@@ -1043,6 +1045,8 @@ class DriverProfileScreen extends StatelessWidget {
                     Divider(),
                   ],
                 ),
+
+              SizedBox(height: 30,)
             ],
           ),
         ),

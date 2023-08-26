@@ -1,5 +1,6 @@
 import 'package:car_app/helpers/theme_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:multi_select_flutter/bottom_sheet/multi_select_bottom_sheet.dart';
@@ -16,8 +17,9 @@ class ShiftChoiceScreen extends StatefulWidget {
   final String selectedCarNumber;
   final String selectedPrivateNumber;
   int? kilometers;
+  final String carId;
 
-  ShiftChoiceScreen({required this.selectedCarNumber, required this.selectedPrivateNumber,this.kilometers});
+  ShiftChoiceScreen({required this.selectedCarNumber, required this.selectedPrivateNumber,this.kilometers, required this.carId});
 
   @override
   _ShiftChoiceScreenState createState() => _ShiftChoiceScreenState();
@@ -27,10 +29,10 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
   String selectedDay = '';
   String selectedPeriod = '';
   List<String> selectedZones = [];
-  int trafficViolations = 0;
+  String trafficViolations = "";
   List<Map<String, dynamic>> zones = [];
-  List<String> daysOfWeek = ['mandag', 'tirsdag', 'torsdag', 'onsdag', 'fredag', 'søndag', 'lørdag'];
-  List<String> periods = ['dag','kveld','natt'];
+  List<String> daysOfWeek = ['Mandag', 'Tirsdag', 'Torsdag', 'Onsdag', 'Fredag', 'Søndag', 'Lørdag'];
+  List<String> periods = ['Dag','Kveld','Natt'];
 
   List<Map<String,dynamic>> filteredZones = [];
 
@@ -72,15 +74,16 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                   ),
                   SizedBox(height: 8),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         "Borde: ${widget.selectedCarNumber}",
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(width: 20.0,),
                       Text(
                         'Bilnummer: ${widget.selectedPrivateNumber}',
-                        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -107,7 +110,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                   SizedBox(height: 8),
                   buildPeriodButtons(),
                   SizedBox(height: 20),
-                  Text('Choose Location',style: TextStyle(
+                  Text('Velg Sted',style: TextStyle(
                       fontSize: 18, fontWeight: FontWeight.bold
                   ),),
                   SizedBox(height: 20),
@@ -117,7 +120,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
                       setState(() {
-                        trafficViolations = int.tryParse(value) ?? 0;
+                        trafficViolations = value;
                       });
                     },
                     validator: (value) {
@@ -136,16 +139,16 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                     onPressed: () async {
                       if (selectedZones.isNotEmpty &&
                           selectedDay.isNotEmpty &&
-                          selectedPeriod.isNotEmpty &&
-                          trafficViolations > 0) {
+                          selectedPeriod.isNotEmpty) {
                         Map data = {
                           'locations': selectedZones.join(','),
                           'day': selectedDay,
                           'period': selectedPeriod,
                           'boardNumber': widget.selectedCarNumber,
                           'privateNumber': widget.selectedPrivateNumber,
-                          'trafficViolations': trafficViolations.toString(),
+                          'trafficViolations': trafficViolations,
                           'kilometers':widget.kilometers,
+                          'carId':widget.carId,
                           'date': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())
                         };
 
@@ -194,7 +197,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                       backgroundColor: ThemeHelper.buttonPrimaryColor,
                     ),
                     child: Text(
-                      'Submit',
+                      'Sende inn',
                       style: TextStyle(fontSize: 18),
                     ),
                   ),
@@ -234,9 +237,15 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
     //     ),
     //   ),
     // );
-    return filteredZones.isEmpty ? Container(
+    return selectedDay.isEmpty ? Container(
       alignment: Alignment.center,
-      child: Text("This Day Has No Locations",style: TextStyle(
+      child: Text("Ingen valgt dag ennå",style: TextStyle(
+          fontSize: 18, fontWeight: FontWeight.bold,color:  Colors.red
+      ),),
+    ):
+    (filteredZones.isEmpty ? Container(
+      alignment: Alignment.center,
+      child: Text("Denne dagen har ingen plasseringer",style: TextStyle(
           fontSize: 18, fontWeight: FontWeight.bold,color:  Colors.red
       ),),
     ) : Wrap(
@@ -253,13 +262,13 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
             });
           },
           style: ElevatedButton.styleFrom(
-            primary: selectedZones.contains(e['location'])? ThemeHelper.buttonPrimaryColor : Colors.black54,
+              primary: selectedZones.contains(e['location'])? ThemeHelper.buttonPrimaryColor : Colors.black54,
               minimumSize: Size(90,30)
           ),
           child: Text(e['location']),
         );
       }).toList(),
-    );
+    ));
   }
 
   // void _showMultiSelectZoneOptionsDialog() async{
@@ -422,7 +431,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                 context: context,
                 builder: (context) => AlertDialog(
                   title: Text('Feil'),
-                  content: Text('Choose Day First'),
+                  content: Text('Velg Dag først'),
                   actions: [
                     TextButton(
                       onPressed: () {

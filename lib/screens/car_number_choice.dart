@@ -47,49 +47,61 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: Container(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(height: 12,),
-                Expanded(
-                  child: _isToggled ? QrCodeScanner() : RefreshIndicator(
-                    onRefresh: () async{
-                      setState(() {
+        body: Stack(
+          children: [
+            Container(
+              child: Padding(
+                padding: _isToggled ?  EdgeInsets.all(0) : EdgeInsets.all(12.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      child: _isToggled ? QrCodeScanner() : RefreshIndicator(
+                        onRefresh: () async{
+                          setState(() {
 
-                      });
-                    },
-                    child: ListView.builder(
-                      itemCount: carDataList.length,
-                      itemBuilder: (context, index) {
-                        return buildCarCard(carDataList[index], context);
-                      },
+                          });
+                        },
+                        child: ListView.builder(
+                          itemCount: carDataList.length,
+                          itemBuilder: (context, index) {
+                            return buildCarCard(carDataList[index], context);
+                          },
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                height: 70,
+                padding: EdgeInsets.all(12.0),
+                child: ElevatedButton.icon(
+                  onPressed: (){
+                    setState(() {
+                      _isToggled = !_isToggled;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      minimumSize: Size(120,50),
+                      backgroundColor: Colors.amber
+                  ),
+                  icon: Icon(_isToggled ? Icons.car_repair : Icons.qr_code,size: 30,color: Colors.black,),
+                  label: Text(_isToggled ? 'hentes manuelt' : 'Skann QR kode',style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black
+                  ),),
+                ),
+              ),
+            )
+          ],
         ),
 
-        bottomSheet: Container(
-          color: Colors.black12,
-          height: 70,
-          alignment: Alignment.center,
-          child: TextButton(
-            onPressed: (){
-              setState(() {
-                _isToggled = !_isToggled;
-              });
-            },
-            child: Text(_isToggled ? 'pickup Manually' : 'Scan QrCode',style: TextStyle(
-                fontSize: 18,
-              color: ThemeHelper.buttonPrimaryColor
-            ),),
-          ),
-        ),
+
       ),
     );
   }
@@ -104,6 +116,7 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
               return KilometerScreen(
                 selectedCarNumber: carData['boardNumber'],
                 selectedPrivateNumber: carData['privateNumber'],
+                carId:carData['_id']
               );
             },
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -122,8 +135,8 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
         );
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: 16),
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        margin: EdgeInsets.only(bottom: 12),
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         decoration: BoxDecoration(
           color: ThemeHelper.buttonPrimaryColor,
           borderRadius: BorderRadius.circular(12),
@@ -136,40 +149,60 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
             ),
           ],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  'Bilnummer',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Bilnummer',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    Text(
+                      carData['boardNumber']!,
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color:  Colors.white),
+                    ),
+                  ],
                 ),
-                Text(
-                  carData['boardNumber']!,
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color:  Colors.white),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Tjeneste',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                    Text(
+                      carData['privateNumber']!,
+                      style: TextStyle(fontSize: 14,color: Colors.white),
+                    ),
+                  ],
+                ),
+                Icon(
+                  Icons.arrow_forward,
+                  color: ThemeHelper.buttonPrimaryColor,
+                  size: 24,
                 ),
               ],
             ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Tjenestebilnummer',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-                Text(
-                  carData['privateNumber']!,
-                  style: TextStyle(fontSize: 20,color: Colors.white),
-                ),
+                if(carData['kilometers'] != null)
+                Text("Kilometers: ${carData['kilometers'].toString()}",style: TextStyle(
+                  color: Colors.white
+                ),),
+
+                if(carData['kilometers'] != null)
+                Text("drevet: ${carData['currentKilometers'].toString()}",style: TextStyle(
+                    color: Colors.white
+                ),),
               ],
-            ),
-            Icon(
-              Icons.arrow_forward,
-              color: ThemeHelper.buttonPrimaryColor,
-              size: 24,
-            ),
+            )
           ],
         ),
       ),

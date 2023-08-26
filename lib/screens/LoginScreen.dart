@@ -82,7 +82,7 @@ class SignInScreen extends StatelessWidget {
       );
     }else{
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed To Login'))
+          SnackBar(content: Text('Kunne ikke logge på'))
       );
     }
   }
