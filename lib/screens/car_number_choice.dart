@@ -16,6 +16,7 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
   List<dynamic> carDataList = [];
 
   bool _isToggled = false;
+  bool _isInfoToggled = false;
 
   @override
   void initState() {
@@ -26,8 +27,8 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
 
   Future<void> getCarData() async {
     try {
-      // Replace 'https://nordic.bilsjekk.in/api/cars' with your API endpoint
-      var response = await http.get(Uri.parse('https://nordic.bilsjekk.in/api/cars'));
+      // Replace 'https://test.bilsjekk.in/api/cars' with your API endpoint
+      var response = await http.get(Uri.parse('https://test.bilsjekk.in/api/cars'));
       if (response.statusCode == 200) {
         // Parse the response body and update the carDataList
         List<dynamic> data = jsonDecode(response.body);
@@ -55,6 +56,48 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    Align(
+                      alignment:Alignment.centerLeft,
+                      child: IconButton(
+                        onPressed: (){
+                          setState(() {
+                            _isInfoToggled = !_isInfoToggled;
+                          });
+                        },
+                        icon: Icon(Icons.info_outline,size: 30,),
+                      ),
+                    ),
+
+                    AnimatedContainer(
+                      duration: Duration(milliseconds: 500),
+                      height: _isInfoToggled ? 70 : 0,
+                      child: AnimatedOpacity(
+                        duration: Duration(milliseconds: 500),
+                        opacity: _isInfoToggled ? 1 : 0,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Container(
+                                child: Text(
+                                  'Velg bilen din eller skann QR-koden for å fortsette',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.grey[600],
+                                    fontStyle: FontStyle.italic,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: 'Birco', // Replace with your custom font's name
+                                    letterSpacing: 1.2,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 0),
+                            ],
+                          ),
+                        )
+                      ),
+                    ),
+                    SizedBox(height: 8,),
                     Expanded(
                       child: _isToggled ? QrCodeScanner() : RefreshIndicator(
                         onRefresh: () async{

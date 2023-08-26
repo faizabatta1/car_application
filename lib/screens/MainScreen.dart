@@ -416,6 +416,7 @@ class _FormCardState extends State<FormCard> {
               'value': _formValues[key],
               'answerDataType': widget.formFields.firstWhere((field) => field['title'] == key)['answerDataType'],
               'hasRequiredDescription': widget.formFields.firstWhere((field) => field['title'] == key)['hasRequiredDescription'],
+              'whenToGetDescription': widget.formFields.firstWhere((field) => field['title'] == key)['whenToGetDescription'],
               'id': widget.formFields.firstWhere((field) => field['title'] == key)['_id'],
               'group': widget.formFields.firstWhere((field) => field['title'] == key)['group']['_id'],
               'form': widget.formFields.firstWhere((field) => field['title'] == key)['form'],
@@ -836,7 +837,10 @@ class DriverProfileScreen extends StatelessWidget {
       barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('ved å klikke ok blir du logget ut.'),
+          title: Text('Takk skjemaet er sendt.'),
+          content: Text('ved å klikke ok blir du logget ut.',style: TextStyle(
+            backgroundColor: ThemeHelper.buttonPrimaryColor
+          ),),
           actions: [
             TextButton(
               onPressed: () async{
