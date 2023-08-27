@@ -62,6 +62,8 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
     }
   }
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -155,57 +157,25 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                   SizedBox(height: 20),
                   buildMultiSelectZoneDropdown(),
                   SizedBox(height: 20),
-                  FutureBuilder(
-                    future: DataService.getInformationData(part: 'violation'),
-                    builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
-                      if(snapshot.connectionState == ConnectionState.waiting){
-                        return Center(
-                          child: Container(),
-                        );
-                      }
-
-                      if(snapshot.hasError){
-                        return Center(
-                          child: Text('Something Went Wrong'),
-                        );
-                      }
-
-                      if(snapshot.data != null){
-                        return Container(
-                          child: Text(
-                            '${snapshot.data}',
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontStyle: FontStyle.italic,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: 'Birco', // Replace with your custom font's name
-                              letterSpacing: 1.2,
-                            ),
-                          ),
-                        );
-                      }
-
-                      return Container();
-                    },
-                  ),
-                  SizedBox(height: 8),
-                  TextFormField(
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      setState(() {
-                        trafficViolations = value;
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Vennligst skriv inn antall K.S.';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Antall K.S',
-                      border: OutlineInputBorder(),
+                  Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) {
+                        setState(() {
+                          trafficViolations = value;
+                        });
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Vennligst skriv inn antall K.S.';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Antall K.S',
+                        border: OutlineInputBorder(),
+                      ),
                     ),
                   ),
                   SizedBox(height: 20),
@@ -213,7 +183,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                     onPressed: () async {
                       if (selectedZones.isNotEmpty &&
                           selectedDay.isNotEmpty &&
-                          selectedPeriod.isNotEmpty) {
+                          selectedPeriod.isNotEmpty && _formKey.currentState!.validate()) {
                         Map data = {
                           'locations': selectedZones.join(','),
                           'day': selectedDay,

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:car_app/helpers/theme_helper.dart';
+import 'package:car_app/screens/LoginScreen.dart';
 import 'package:car_app/screens/car_number_choice.dart';
 import 'package:car_app/screens/splash_screen.dart';
 import 'package:car_app/screens/swipper_switch.dart';
@@ -861,25 +862,32 @@ class DriverProfileScreen extends StatelessWidget {
                 SharedPreferences shared = await SharedPreferences.getInstance();
                 if (shared.containsKey('token')) await shared.remove('token');
 
-                Navigator.pushReplacement(
-                  context,
-                  PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) {
-                      return SplashScreen(token: null);
-                    },
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                      return FadeTransition(
-                        opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                          CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.easeInOut,
-                          ),
-                        ),
-                        child: child,
-                      );
-                    },
-                    transitionDuration: Duration(seconds: 1),
-                  ),
+                // Navigator.pushReplacement(
+                //   context,
+                //   PageRouteBuilder(
+                //     pageBuilder: (context, animation, secondaryAnimation) {
+                //       return SplashScreen(token: null);
+                //     },
+                //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                //       return FadeTransition(
+                //         opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                //           CurvedAnimation(
+                //             parent: animation,
+                //             curve: Curves.easeInOut,
+                //           ),
+                //         ),
+                //         child: child,
+                //       );
+                //     },
+                //     transitionDuration: Duration(seconds: 1),
+                //   ),
+                // );
+
+                // Navigator.of(context).popUntil((route) => route.isFirst);
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (BuildContext context) => SignInScreen()),
+                        (Route<dynamic> route) => false
                 );
               },
               child: Text('OK'),

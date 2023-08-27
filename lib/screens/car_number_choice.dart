@@ -93,6 +93,7 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 30,)
                   ],
                 ),
               ),
