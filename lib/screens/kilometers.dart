@@ -40,6 +40,20 @@ class KilometerScreen extends StatelessWidget {
                     fontSize: 24
                   ),),
                   SizedBox(height: 12.0,),
+                  Container(
+                    child: Text(
+                      'Velg bilen din eller skann QR-koden for å fortsette',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontStyle: FontStyle.italic,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Birco', // Replace with your custom font's name
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 12.0,),
                   TextFormField(
                     controller: _kilometerController,
                     autovalidateMode: AutovalidateMode.onUserInteraction,

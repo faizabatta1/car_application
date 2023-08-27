@@ -543,6 +543,20 @@ class _FormCardState extends State<FormCard> {
                               field['title'],
                               style: titleStyle,
                             ),
+                            SizedBox(height: 8),
+                            Container(
+                              child: Text(
+                                field['requiredDescription'],
+                                style: TextStyle(
+                                  color: Colors.grey[600],
+                                  fontStyle: FontStyle.italic,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: 'Birco', // Replace with your custom font's name
+                                  letterSpacing: 1.2,
+                                ),
+                              ),
+                            ),
                             SizedBox(height: 20),
                             if (field['answerDataType'] == 'text')
                               TextFormField(

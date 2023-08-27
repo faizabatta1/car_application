@@ -96,26 +96,100 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                   SizedBox(height: 20),
-                  Text(
-                    'Velg ukedag:',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Row(
+                    children: [
+                      Text(
+                        'Velg ukedag',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(width: 8,),
+                      Tooltip(
+                        message: "Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse",
+                        triggerMode: TooltipTriggerMode.tap,
+                        showDuration: Duration(seconds: 10),
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.9),
+                          borderRadius: const BorderRadius.all(Radius.circular(4)),
+                        ),
+                        textStyle: TextStyle(color: Colors.white),
+                        preferBelow: false,
+                        verticalOffset: 20,
+                        child: Icon(Icons.info_outline,size: 30,),
+                      )
+                    ],
                   ),
                   SizedBox(height: 8),
                   buildDayOfWeekButtons(),
                   SizedBox(height: 20),
-                  Text(
-                    'Velg vakt:',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  Row(
+                    children: [
+                      Text(
+                        'Velg vakt',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(width: 8,),
+                      Tooltip(
+                        message: "Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse",
+                        triggerMode: TooltipTriggerMode.tap,
+                        showDuration: Duration(seconds: 10),
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.9),
+                          borderRadius: const BorderRadius.all(Radius.circular(4)),
+                        ),
+                        textStyle: TextStyle(color: Colors.white),
+                        preferBelow: false,
+                        verticalOffset: 20,
+                        child: Icon(Icons.info_outline,size: 30,),
+                      )
+                    ],
                   ),
                   SizedBox(height: 8),
                   buildPeriodButtons(),
                   SizedBox(height: 20),
-                  Text('Velg Sted',style: TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold
-                  ),),
+                  Row(
+                    children: [
+                      Text('Velg Sted',style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold
+                      ),),
+                      SizedBox(width: 8,),
+                      Tooltip(
+                        message: "Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse",
+                        triggerMode: TooltipTriggerMode.tap,
+                        showDuration: Duration(seconds: 10),
+                        padding: EdgeInsets.all(8),
+                        margin: EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withOpacity(0.9),
+                          borderRadius: const BorderRadius.all(Radius.circular(4)),
+                        ),
+                        textStyle: TextStyle(color: Colors.white),
+                        preferBelow: false,
+                        verticalOffset: 20,
+                        child: Icon(Icons.info_outline,size: 30,),
+                      )
+                    ],
+                  ),
                   SizedBox(height: 20),
                   buildMultiSelectZoneDropdown(),
                   SizedBox(height: 20),
+                  Container(
+                    child: Text(
+                      'Velg bilen din eller skann QR-koden for å fortsette',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontStyle: FontStyle.italic,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Birco', // Replace with your custom font's name
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 8),
                   TextFormField(
                     keyboardType: TextInputType.number,
                     onChanged: (value) {
