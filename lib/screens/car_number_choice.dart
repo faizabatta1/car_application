@@ -48,6 +48,14 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: (){},
+          child: Icon(Icons.info_outline,size: 30,color: Colors.black,),
+          backgroundColor: Colors.amber,
+        ),
+
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+        floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
         body: Stack(
           children: [
             Container(
@@ -56,48 +64,6 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Align(
-                      alignment:Alignment.centerLeft,
-                      child: IconButton(
-                        onPressed: (){
-                          setState(() {
-                            _isInfoToggled = !_isInfoToggled;
-                          });
-                        },
-                        icon: Icon(Icons.info_outline,size: 30,),
-                      ),
-                    ),
-
-                    AnimatedContainer(
-                      duration: Duration(milliseconds: 500),
-                      height: _isInfoToggled ? 70 : 0,
-                      child: AnimatedOpacity(
-                        duration: Duration(milliseconds: 500),
-                        opacity: _isInfoToggled ? 1 : 0,
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Container(
-                                child: Text(
-                                  'Velg bilen din eller skann QR-koden for å fortsette',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontStyle: FontStyle.italic,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: 'Birco', // Replace with your custom font's name
-                                    letterSpacing: 1.2,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 0),
-                            ],
-                          ),
-                        )
-                      ),
-                    ),
-                    SizedBox(height: 8,),
                     Expanded(
                       child: _isToggled ? QrCodeScanner() : RefreshIndicator(
                         onRefresh: () async{
@@ -119,25 +85,23 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
             ),
             Align(
               alignment: Alignment.bottomRight,
-              child: Container(
-                height: 70,
-                padding: EdgeInsets.all(12.0),
-                child: ElevatedButton.icon(
-                  onPressed: (){
-                    setState(() {
-                      _isToggled = !_isToggled;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      minimumSize: Size(120,50),
-                      backgroundColor: Colors.amber
+              child: GestureDetector(
+                onTap: (){
+                  setState(() {
+                    _isToggled = !_isToggled;
+                  });
+                },
+                child: Container(
+                  margin: EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: Colors.amber,
+                    borderRadius: BorderRadius.circular(70)
                   ),
-                  icon: Icon(_isToggled ? Icons.car_repair : Icons.qr_code,size: 30,color: Colors.black,),
-                  label: Text(_isToggled ? 'hentes manuelt' : 'Skann QR kode',style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black
-                  ),),
+                  alignment: Alignment.center,
+                  height: 60,
+                  width: 60,
+                  padding: EdgeInsets.all(12.0),
+                  child: Icon(_isToggled ? Icons.car_repair : Icons.qr_code,size: 30,color: Colors.black,),
                 ),
               ),
             )

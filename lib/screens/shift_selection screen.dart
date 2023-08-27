@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:car_app/helpers/theme_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +14,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'MainScreen.dart';
+import 'info_dialog.dart';
 
 class ShiftChoiceScreen extends StatefulWidget {
   final String selectedCarNumber;
@@ -61,6 +64,23 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: (){
+            showDialog(
+              context: context,
+              barrierColor: Colors.black.withOpacity(0.7),
+              barrierDismissible: false,
+              builder: (context) => BackdropFilter(
+                child: InfoDialog(),
+                filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+              ), // Show the custom info dialog
+            );
+          },
+          child: Icon(Icons.info_outline,size:30,color: Colors.black,),
+          backgroundColor: Colors.amber,
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+        floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
         body: Container(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -103,21 +123,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(width: 8,),
-                      Tooltip(
-                        message: "Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse",
-                        triggerMode: TooltipTriggerMode.tap,
-                        showDuration: Duration(seconds: 10),
-                        padding: EdgeInsets.all(8),
-                        margin: EdgeInsets.symmetric(horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.9),
-                          borderRadius: const BorderRadius.all(Radius.circular(4)),
-                        ),
-                        textStyle: TextStyle(color: Colors.white),
-                        preferBelow: false,
-                        verticalOffset: 20,
-                        child: Icon(Icons.info_outline,size: 30,),
-                      )
+
                     ],
                   ),
                   SizedBox(height: 8),
@@ -130,21 +136,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(width: 8,),
-                      Tooltip(
-                        message: "Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse",
-                        triggerMode: TooltipTriggerMode.tap,
-                        showDuration: Duration(seconds: 10),
-                        padding: EdgeInsets.all(8),
-                        margin: EdgeInsets.symmetric(horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.9),
-                          borderRadius: const BorderRadius.all(Radius.circular(4)),
-                        ),
-                        textStyle: TextStyle(color: Colors.white),
-                        preferBelow: false,
-                        verticalOffset: 20,
-                        child: Icon(Icons.info_outline,size: 30,),
-                      )
+
                     ],
                   ),
                   SizedBox(height: 8),
@@ -156,21 +148,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                           fontSize: 18, fontWeight: FontWeight.bold
                       ),),
                       SizedBox(width: 8,),
-                      Tooltip(
-                        message: "Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse Nødvendig beskrivelse",
-                        triggerMode: TooltipTriggerMode.tap,
-                        showDuration: Duration(seconds: 10),
-                        padding: EdgeInsets.all(8),
-                        margin: EdgeInsets.symmetric(horizontal: 20),
-                        decoration: BoxDecoration(
-                          color: Colors.blue.withOpacity(0.9),
-                          borderRadius: const BorderRadius.all(Radius.circular(4)),
-                        ),
-                        textStyle: TextStyle(color: Colors.white),
-                        preferBelow: false,
-                        verticalOffset: 20,
-                        child: Icon(Icons.info_outline,size: 30,),
-                      )
+
                     ],
                   ),
                   SizedBox(height: 20),
@@ -182,7 +160,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontStyle: FontStyle.italic,
-                        fontSize: 18,
+                        fontSize: 12,
                         fontWeight: FontWeight.w500,
                         fontFamily: 'Birco', // Replace with your custom font's name
                         letterSpacing: 1.2,
