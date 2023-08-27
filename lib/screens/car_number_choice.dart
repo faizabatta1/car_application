@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:car_app/helpers/theme_helper.dart';
 import 'package:car_app/screens/MainScreen.dart';
 import 'package:car_app/screens/kilometers.dart';
@@ -6,6 +8,8 @@ import 'package:car_app/screens/shift_selection%20screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'info_dialog.dart';
 
 class CarNumberChoiceScreen extends StatefulWidget {
   @override
@@ -49,7 +53,17 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
     return SafeArea(
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
-          onPressed: (){},
+          onPressed: (){
+            showDialog(
+              context: context,
+              barrierColor: Colors.black.withOpacity(0.7),
+              barrierDismissible: false,
+              builder: (context) => BackdropFilter(
+                child: InfoDialog(part: 'car',),
+                filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+              ), // Show the custom info dialog
+            );
+          },
           child: Icon(Icons.info_outline,size: 30,color: Colors.black,),
           backgroundColor: Colors.amber,
         ),

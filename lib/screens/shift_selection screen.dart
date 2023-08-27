@@ -13,6 +13,7 @@ import 'package:multi_select_flutter/util/multi_select_list_type.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../services/data_service.dart';
 import 'MainScreen.dart';
 import 'info_dialog.dart';
 
@@ -71,7 +72,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
               barrierColor: Colors.black.withOpacity(0.7),
               barrierDismissible: false,
               builder: (context) => BackdropFilter(
-                child: InfoDialog(),
+                child: InfoDialog(part: 'shift',),
                 filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               ), // Show the custom info dialog
             );
@@ -154,18 +155,39 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                   SizedBox(height: 20),
                   buildMultiSelectZoneDropdown(),
                   SizedBox(height: 20),
-                  Container(
-                    child: Text(
-                      'Velg bilen din eller skann QR-koden for å fortsette',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                        fontStyle: FontStyle.italic,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Birco', // Replace with your custom font's name
-                        letterSpacing: 1.2,
-                      ),
-                    ),
+                  FutureBuilder(
+                    future: DataService.getInformationData(part: 'violation'),
+                    builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+                      if(snapshot.connectionState == ConnectionState.waiting){
+                        return Center(
+                          child: Container(),
+                        );
+                      }
+
+                      if(snapshot.hasError){
+                        return Center(
+                          child: Text('Something Went Wrong'),
+                        );
+                      }
+
+                      if(snapshot.data != null){
+                        return Container(
+                          child: Text(
+                            '${snapshot.data}',
+                            style: TextStyle(
+                              color: Colors.grey[600],
+                              fontStyle: FontStyle.italic,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Birco', // Replace with your custom font's name
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                        );
+                      }
+
+                      return Container();
+                    },
                   ),
                   SizedBox(height: 8),
                   TextFormField(

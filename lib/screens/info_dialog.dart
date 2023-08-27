@@ -1,7 +1,11 @@
 import 'package:car_app/helpers/theme_helper.dart';
+import 'package:car_app/services/data_service.dart';
 import 'package:flutter/material.dart';
 
 class InfoDialog extends StatelessWidget {
+  final String part;
+  const InfoDialog({ required this.part });
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -34,7 +38,12 @@ class InfoDialog extends StatelessWidget {
           SizedBox(height: 20,),
           Align(
             alignment: Alignment.centerRight,
-            child: Icon(Icons.close,size: 40,color: ThemeHelper.buttonPrimaryColor,),
+            child: GestureDetector(
+              onTap: (){
+                Navigator.pop(context);
+              },
+              child: Icon(Icons.close,size: 40,color: ThemeHelper.buttonPrimaryColor,),
+            ),
           ),
           SizedBox(height: 20,),
           Text(
@@ -46,13 +55,34 @@ class InfoDialog extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16),
-          Text(
-            'This is the shift choice screen. Here you can select the day, period, and location for your shift. Make sure to fill in all required information before submitting.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white
-            ),
+          FutureBuilder(
+              future: DataService.getInformationData(part: part),
+            builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+               if(snapshot.connectionState == ConnectionState.waiting){
+                 return Center(
+                   child: CircularProgressIndicator(),
+                 );
+               }
+
+               if(snapshot.hasError){
+                 return Center(
+                   child: Text('Something Went Wrong'),
+                 );
+               }
+
+               if(snapshot.data != null){
+                 return Text(
+                   snapshot.data.toString(),
+                   textAlign: TextAlign.center,
+                   style: TextStyle(
+                       fontSize: 16,
+                       color: Colors.white
+                   ),
+                 );
+               }
+
+               return Container();
+            },
           ),
           SizedBox(height: 24),
           // ElevatedButton(
