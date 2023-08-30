@@ -1,3 +1,4 @@
+import 'package:car_app/screens/accident_question.dart';
 import 'package:car_app/screens/shift_selection%20screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -106,11 +107,10 @@ class KilometerScreen extends StatelessWidget {
                               context,
                               PageRouteBuilder(
                                 pageBuilder: (context, animation, secondaryAnimation) {
-                                  return ShiftChoiceScreen(
-                                    selectedCarNumber: selectedCarNumber,
-                                    selectedPrivateNumber: selectedPrivateNumber,
-                                    carId: carId,
-                                    kilometers: int.parse(_kilometerController.text),
+                                  return AccidentQuestion(
+                                      selectedCarNumber: selectedCarNumber,
+                                      selectedPrivateNumber: selectedPrivateNumber,
+                                      carId:carId
                                   );
                                 },
                                 transitionsBuilder:
@@ -149,7 +149,7 @@ class KilometerScreen extends StatelessWidget {
                             context,
                             PageRouteBuilder(
                               pageBuilder: (context, animation, secondaryAnimation) {
-                                return ShiftChoiceScreen(
+                                return AccidentQuestion(
                                     selectedCarNumber: selectedCarNumber,
                                     selectedPrivateNumber: selectedPrivateNumber,
                                     carId:carId

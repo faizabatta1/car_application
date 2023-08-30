@@ -848,7 +848,7 @@ class DriverProfileScreen extends StatelessWidget {
   void _showSuccessPopup(BuildContext context) {
     showAnimatedDialog(
       context: context,
-      barrierDismissible: true,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Takk skjemaet er sendt.'),
@@ -862,28 +862,6 @@ class DriverProfileScreen extends StatelessWidget {
                 SharedPreferences shared = await SharedPreferences.getInstance();
                 if (shared.containsKey('token')) await shared.remove('token');
 
-                // Navigator.pushReplacement(
-                //   context,
-                //   PageRouteBuilder(
-                //     pageBuilder: (context, animation, secondaryAnimation) {
-                //       return SplashScreen(token: null);
-                //     },
-                //     transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                //       return FadeTransition(
-                //         opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                //           CurvedAnimation(
-                //             parent: animation,
-                //             curve: Curves.easeInOut,
-                //           ),
-                //         ),
-                //         child: child,
-                //       );
-                //     },
-                //     transitionDuration: Duration(seconds: 1),
-                //   ),
-                // );
-
-                // Navigator.of(context).popUntil((route) => route.isFirst);
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (BuildContext context) => SignInScreen()),
@@ -929,12 +907,14 @@ class DriverProfileScreen extends StatelessWidget {
         ),
       );
 
-      await DriverService.createNewDriver(driverData: results);
+      await DriverService.createNewDriver(driverData: results).then((value) {
+        // Hide the loading indicator whether the operation succeeds or fails
+        Navigator.pop(context);
 
-      // Hide the loading indicator whether the operation succeeds or fails
-      Navigator.pop(context);
-
-      _showSuccessPopup(context);
+        _showSuccessPopup(context);
+      }).catchError((onError){
+        _showErrorPopup(context, onError.toString());
+      });
     } catch (error) {
       // Handle the error if the createNewDriver function throws an exception
       Navigator.pop(context); // Close the loading dialog
