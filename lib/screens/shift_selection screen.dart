@@ -21,10 +21,9 @@ class ShiftChoiceScreen extends StatefulWidget {
   final String selectedCarNumber;
   final String selectedPrivateNumber;
   int? kilometers;
-  final int accidents;
   final String carId;
 
-  ShiftChoiceScreen({required this.accidents,required this.selectedCarNumber, required this.selectedPrivateNumber,this.kilometers, required this.carId});
+  ShiftChoiceScreen({required this.selectedCarNumber, required this.selectedPrivateNumber,this.kilometers, required this.carId});
 
   @override
   _ShiftChoiceScreenState createState() => _ShiftChoiceScreenState();
@@ -49,7 +48,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
 
   Future<void> getZoneData() async {
     try {
-      var response = await http.get(Uri.parse('https://test.bilsjekk.in/api/locations'));
+      var response = await http.get(Uri.parse('https://nordic.bilsjekk.in/api/locations'));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         setState(() {
@@ -192,7 +191,6 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                           'boardNumber': widget.selectedCarNumber,
                           'privateNumber': widget.selectedPrivateNumber,
                           'trafficViolations': trafficViolations,
-                          'accidents':widget.accidents,
                           'kilometers':widget.kilometers,
                           'carId':widget.carId,
                           'date': DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now())

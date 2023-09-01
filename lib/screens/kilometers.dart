@@ -107,11 +107,11 @@ class KilometerScreen extends StatelessWidget {
                               context,
                               PageRouteBuilder(
                                 pageBuilder: (context, animation, secondaryAnimation) {
-                                  return AccidentQuestion(
-                                      selectedCarNumber: selectedCarNumber,
-                                      selectedPrivateNumber: selectedPrivateNumber,
-                                      carId:carId
-                                  );
+                                  return ShiftChoiceScreen(
+                                    selectedCarNumber: selectedCarNumber,
+                                    selectedPrivateNumber: selectedPrivateNumber,
+                                    carId:carId,
+                                  );;
                                 },
                                 transitionsBuilder:
                                     (context, animation, secondaryAnimation, child) {
@@ -149,10 +149,10 @@ class KilometerScreen extends StatelessWidget {
                             context,
                             PageRouteBuilder(
                               pageBuilder: (context, animation, secondaryAnimation) {
-                                return AccidentQuestion(
-                                    selectedCarNumber: selectedCarNumber,
-                                    selectedPrivateNumber: selectedPrivateNumber,
-                                    carId:carId
+                                return ShiftChoiceScreen(
+                                  selectedCarNumber: selectedCarNumber,
+                                  selectedPrivateNumber: selectedPrivateNumber,
+                                  carId:carId,
                                 );
                               },
                               transitionsBuilder: (context, animation, secondaryAnimation, child) {
