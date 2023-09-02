@@ -848,7 +848,7 @@ class DriverProfileScreen extends StatelessWidget {
   void _showSuccessPopup(BuildContext context) {
     showAnimatedDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Takk skjemaet er sendt.'),

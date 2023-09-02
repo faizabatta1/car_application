@@ -111,6 +111,7 @@ class KilometerScreen extends StatelessWidget {
                                     selectedCarNumber: selectedCarNumber,
                                     selectedPrivateNumber: selectedPrivateNumber,
                                     carId:carId,
+                                    kilometers: int.parse(_kilometerController.text),
                                   );;
                                 },
                                 transitionsBuilder:
