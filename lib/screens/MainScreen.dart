@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:car_app/helpers/theme_helper.dart';
 import 'package:car_app/screens/LoginScreen.dart';
 import 'package:car_app/screens/car_number_choice.dart';
+import 'package:car_app/screens/notifications_screen.dart';
 import 'package:car_app/screens/splash_screen.dart';
 import 'package:car_app/screens/swipper_switch.dart';
 import 'package:car_app/screens/violations_details.dart';
@@ -254,6 +255,38 @@ class MainScreen extends StatelessWidget {
                 ),
               ),
 
+            ),
+
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: IconButton(
+                  onPressed: (){
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) {
+                          return NotificationsScreen();
+                        },
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          return FadeTransition(
+                            opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                              CurvedAnimation(
+                                parent: animation,
+                                curve: Curves.easeInOut,
+                              ),
+                            ),
+                            child: child,
+                          );
+                        },
+                        transitionDuration: Duration(seconds: 1),
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.notifications,size: 40,color: ThemeHelper.secondaryColor,),
+                ),
+              ),
             )
           ],
         ),
