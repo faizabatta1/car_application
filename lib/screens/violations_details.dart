@@ -1,3 +1,4 @@
+import 'package:car_app/helpers/theme_helper.dart';
 import 'package:car_app/screens/upload_violation_image.dart';
 import 'package:flutter/material.dart';
 
@@ -134,8 +135,24 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
                         ),
                       );
                     }else{
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Missing required fields'))
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        barrierLabel: 'Thi slAFD',
+                        builder: (context) => AlertDialog(
+                          title: Text('Feil'),
+                          content: Text('Velg minst én sone, ukedag, periode, og skriv inn antall K.S.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('OK',style: TextStyle(
+                                color: ThemeHelper.buttonPrimaryColor
+                              ),),
+                            ),
+                          ],
+                        ),
                       );
                     }
                   },
