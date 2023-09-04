@@ -6,6 +6,7 @@ import 'package:car_app/screens/LoginScreen.dart';
 import 'package:car_app/screens/car_number_choice.dart';
 import 'package:car_app/screens/splash_screen.dart';
 import 'package:car_app/screens/swipper_switch.dart';
+import 'package:car_app/screens/violations_details.dart';
 import 'package:car_app/services/driver_service.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -67,7 +68,7 @@ class MainScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 10),
                 Container(
-                  height: 240,
+                  height: 170,
                   padding: EdgeInsets.all(4.0),
                   decoration: BoxDecoration(
                     color: Color(0xFFECE9E9),
@@ -159,6 +160,54 @@ class MainScreen extends StatelessWidget {
                       ),
 
                     ],
+                  ),
+                ),
+                SizedBox(height: 10,),
+                SizedBox(
+                  height: 60,
+                  width: double.infinity,
+                  child: GestureDetector(
+                    onTap: () {
+                      // Navigate to Form 1 screen to fill the form
+                      Navigator.push(
+                        context,
+                        PageRouteBuilder(
+                          pageBuilder: (context, animation, secondaryAnimation) {
+                            return ViolationsDetails();
+                          },
+                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            return FadeTransition(
+                              opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                                CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeInOut,
+                                ),
+                              ),
+                              child: child,
+                            );
+                          },
+                          transitionDuration: Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: 60,
+                      width: 80,
+                      alignment: Alignment.center,
+                      color: ThemeHelper.buttonPrimaryColor,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.traffic,color: Colors.white,),
+                          Text('Violations',style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white
+                          ),)
+                        ],
+                      ),
+                    ),
+
                   ),
                 )
               ],

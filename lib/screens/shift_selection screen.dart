@@ -48,7 +48,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
 
   Future<void> getZoneData() async {
     try {
-      var response = await http.get(Uri.parse('https://test.bilsjekk.in/api/locations'));
+      var response = await http.get(Uri.parse('https://nordic.bilsjekk.in/api/locations'));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         setState(() {
