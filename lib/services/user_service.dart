@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserServices{
-  static final String baseUrl = 'https://nordic.bilsjekk.in/api';
+  static final String baseUrl = 'https://test.bilsjekk.in/api';
 
   static Future login({ required String email, required String password }) async{
     try{
@@ -27,6 +27,7 @@ class UserServices{
         await sharedPreferences.setString('user', dec['user']);
         return true;
       } else {
+        print(response.body);
         return false;
       }
     }catch(error){

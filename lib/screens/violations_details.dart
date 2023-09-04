@@ -11,13 +11,16 @@ class ViolationsDetails extends StatefulWidget {
 
 class _ViolationsDetailsState extends State<ViolationsDetails> {
   TextEditingController reasonController = TextEditingController();
-  TextEditingController kilometersDrivenController = TextEditingController();
+  TextEditingController violationNumberController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  final TextEditingController pnidController = TextEditingController();
 
   @override
   void dispose() {
     reasonController.dispose();
-    kilometersDrivenController.dispose();
+    violationNumberController.dispose();
+    pnidController.dispose();
     super.dispose();
   }
 
@@ -33,11 +36,85 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
             children: [
               SizedBox(height: 32),
               Text(
+                'Violation Number',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              SizedBox(height: 8),
+              TextFormField(
+                controller: violationNumberController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value){
+                  if(value != null){
+                    if(value.isEmpty){
+                      return "Enter something";
+                    }
+
+                    return null;
+                  }
+
+                  return null;
+                },
+                keyboardType: TextInputType.number,
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'Enter violation number',
+                  hintStyle: TextStyle(color: Colors.white),
+                  filled: true,
+                  fillColor: Colors.black.withOpacity(0.5),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Employee Pnid',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              SizedBox(height: 8),
+              TextFormField(
+                controller: pnidController,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value){
+                  if(value != null){
+                    if(value.isEmpty){
+                      return "Enter something";
+                    }
+
+                    return null;
+                  }
+
+                  return null;
+                },
+                keyboardType: TextInputType.number,
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'Enter kilometers driven',
+                  hintStyle: TextStyle(color: Colors.white),
+                  filled: true,
+                  fillColor: Colors.black.withOpacity(0.5),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide.none,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              SizedBox(height: 12),
+              Text(
                 'Why do you want to send it?',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black87,
                 ),
               ),
               SizedBox(height: 8),
@@ -67,43 +144,6 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
                   ),
                 ),
               ),
-              SizedBox(height: 16),
-              Text(
-                'Kilometers Driven by Car',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(height: 8),
-              TextFormField(
-                controller: kilometersDrivenController,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value){
-                  if(value != null){
-                    if(value.isEmpty){
-                      return "Enter something";
-                    }
-
-                    return null;
-                  }
-
-                  return null;
-                },
-                keyboardType: TextInputType.number,
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: 'Enter kilometers driven',
-                  hintStyle: TextStyle(color: Colors.white),
-                  filled: true,
-                  fillColor: Colors.black.withOpacity(0.5),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
               SizedBox(height: 20,),
               Align(
                 alignment: Alignment.centerRight,
@@ -111,7 +151,7 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
                   onPressed: () {
                     // Handle the "Next" button click
                     String reason = reasonController.text;
-                    String kilometers = kilometersDrivenController.text;
+                    String kilometers = violationNumberController.text;
 
                     if(_formKey.currentState!.validate()){
                       Navigator.push(
