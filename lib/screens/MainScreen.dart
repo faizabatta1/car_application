@@ -7,6 +7,7 @@ import 'package:car_app/screens/car_number_choice.dart';
 import 'package:car_app/screens/notifications_screen.dart';
 import 'package:car_app/screens/splash_screen.dart';
 import 'package:car_app/screens/swipper_switch.dart';
+import 'package:car_app/screens/test_screen.dart';
 import 'package:car_app/screens/violations_details.dart';
 import 'package:car_app/services/driver_service.dart';
 import 'package:flutter/material.dart';
@@ -31,10 +32,17 @@ class MainScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Image.asset(
-                    'assets/bil.png',
-                  width: 220,
-                  height: 220,
+                GestureDetector(
+                  onTap: (){
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => TestScreen())
+                    );
+                  },
+                  child: Image.asset(
+                      'assets/bil.png',
+                    width: 220,
+                    height: 220,
+                  ),
                 ),
 
                 FutureBuilder(

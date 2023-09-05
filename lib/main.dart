@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 
@@ -81,7 +82,7 @@ Future<void> requestNotificationPermission() async {
 
 Future initializeSocketNotificationChannel() async{
   // Connect to the WebSocket server
-  IO.Socket socket = IO.io('http://62.72.18.83:9090/',<String, dynamic>{
+  IO.Socket socket = IO.io('https://test.bilsjekk.in',<String, dynamic>{
     'autoConnect': false,
     'transports': ['websocket'],
   }); // Replace with your server address
@@ -94,17 +95,23 @@ Future initializeSocketNotificationChannel() async{
   socket.onError((err) => print(err));
 
   // Listen for messages from the server
-  socket.on('message', (data) async{
+  socket.on('devices', (data) async{
     String? identifier =await UniqueIdentifier.serial;
+    print(identifier);
+    Map decoded = jsonDecode(data);
+    if((decoded['imeis'] as List).contains(identifier)){
+      await showFlutterNotification(decoded['title'], decoded['body']);
+    }
     await showFlutterNotification('Nordic Parking', identifier!);
   });
 
-  socket.on('single',(data) async{
-
+  socket.on('users',(data) async{
+    Map decoded = jsonDecode(data);
+    await showFlutterNotification(decoded['title'], decoded['body']);
   });
 
-  socket.on('multi',(data) async{
-
+  socket.on('zones',(data) async{
+    print('zones data ${data}');
   });
 
 }
