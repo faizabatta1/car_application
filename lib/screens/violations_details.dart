@@ -151,14 +151,19 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
                   onPressed: () {
                     // Handle the "Next" button click
                     String reason = reasonController.text;
-                    String kilometers = violationNumberController.text;
+                    String number = violationNumberController.text;
+                    String pnid = pnidController.text;
 
                     if(_formKey.currentState!.validate()){
                       Navigator.push(
                         context,
                         PageRouteBuilder(
                           pageBuilder: (context, animation, secondaryAnimation) {
-                            return UploadViolationImage();
+                            return UploadViolationImage(
+                              pnid: pnid,
+                              number: number,
+                              reason: reason,
+                            );
                           },
                           transitionsBuilder: (context, animation, secondaryAnimation, child) {
                             return FadeTransition(

@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:car_app/helpers/theme_helper.dart';
+import 'package:car_app/services/map_service.dart';
+import 'package:car_app/services/zones_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -11,20 +14,108 @@ class TestScreen extends StatefulWidget {
 }
 
 class _TestScreenState extends State<TestScreen> {
+  bool _chosedZone = false;
+  Map? zone;
+  late Future future;
+
+  @override
+  void initState() {
+    future = ZoneService.getAllZones();
+    super.initState();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
-    return MapSample();
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 30,),
+            Text('Select Zone First',style: TextStyle(
+              fontSize: 20
+            ),),
+            SizedBox(height: 12,),
+            FutureBuilder(
+              future: future,
+              builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                if(snapshot.hasError){
+                  return Center(
+                    child: Text('Something Went wrong'),
+                  );
+                }
+
+                if(snapshot.data != null){
+                  List zones = snapshot.data;
+                  if(zones.isEmpty){
+                    return Center(
+                      child: Text('No Zones Yet'),
+                    );
+                  }
+
+                  return Wrap(
+                      spacing: 8.0,
+                      runSpacing: 8.0,
+                    children: zones.map((e){
+                      return ElevatedButton(
+                        onPressed: (){
+                          setState(() {
+                            _chosedZone = true;
+                            zone = e;
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ThemeHelper.buttonPrimaryColor,
+                          minimumSize: Size(110, 30),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0)
+                          )
+                        ),
+                        child: Text(e['name'],style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold
+                        ),),
+                      );
+                    }).toList(),
+                  );
+                }
+
+                return Container();
+
+              },
+            ),
+
+            if(_chosedZone)
+              Expanded(
+                  child: MapSample(zone: zone)
+              )
+          ],
+        ),
+      ),
+    );
   }
 }
 
 class MapSample extends StatefulWidget {
-  const MapSample({super.key});
+  final Map? zone;
+  const MapSample({super.key, required this.zone});
 
   @override
   State<MapSample> createState() => MapSampleState();
 }
 
 class MapSampleState extends State<MapSample> {
+  late Future future;
+
+  @override
+  void initState() {
+    super.initState();
+    print(widget.zone!);
+    future = MapService.downloadMapFeatures(widget.zone!['_id']);
+  }
   final Completer<GoogleMapController> _controller =
   Completer<GoogleMapController>();
 
@@ -41,24 +132,37 @@ class MapSampleState extends State<MapSample> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GoogleMap(
-        mapType: MapType.hybrid,
-        initialCameraPosition: _kGooglePlex,
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-        },
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _goToTheLake,
-        label: const Text('To the lake!'),
-        icon: const Icon(Icons.directions_boat),
-      ),
-    );
-  }
+    return FutureBuilder(
+        future: future,
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          if(snapshot.hasError){
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          }
+          if(snapshot.data != null){
+            print(snapshot.data.toString());
+            return GoogleMap(
+              mapType: MapType.hybrid,
+              initialCameraPosition: _kGooglePlex,
+              onMapCreated: (GoogleMapController controller) {
+                _controller.complete(controller);
+              },
+            );
+          }else{
+            return Center(
+              child: Text(
+                'There is no available map for this zone',
+                style: TextStyle(
+                  fontSize: 26,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            );
+          }
 
-  Future<void> _goToTheLake() async {
-    final GoogleMapController controller = await _controller.future;
-    await controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
+          return Container();
+      },
+    );
   }
 }

@@ -1,9 +1,15 @@
 import 'dart:io';
+import 'package:car_app/screens/MainScreen.dart';
+import 'package:car_app/screens/splash_screen.dart';
+import 'package:car_app/services/postal_service.dart';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:flutter/material.dart';
 
 class UploadViolationImage extends StatefulWidget {
-  const UploadViolationImage({Key? key}) : super(key: key);
+  final String number;
+  final String reason;
+  final String pnid;
+  const UploadViolationImage({Key? key,required this.number,required this.pnid,required this.reason}) : super(key: key);
 
   @override
   _UploadViolationImageState createState() => _UploadViolationImageState();
@@ -12,6 +18,8 @@ class UploadViolationImage extends StatefulWidget {
 class _UploadViolationImageState extends State<UploadViolationImage> {
   List<String>? _imagePaths;
   bool _isUploaded = false;
+
+  bool _isUploading = false;
 
 
   Future<void> _captureAndCropImages() async {
@@ -67,7 +75,28 @@ class _UploadViolationImageState extends State<UploadViolationImage> {
                 ),
               ),
             ) : ElevatedButton(
-                onPressed: (){},
+                onPressed: () async{
+                  if(_imagePaths != null && _imagePaths!.isNotEmpty){
+                    setState(() {
+                      _isUploading = true;
+                    });
+                    await PostalService.sendPostal(
+                        number: widget.number,
+                        pnid: widget.pnid,
+                        reason: widget.reason,
+                        image: _imagePaths!.first
+                    ).then((value){
+                      setState(() {
+                        _isUploading = false;
+                      });
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => MainScreen())
+                      );
+                    }).catchError((onError){
+                      print(onError.toString());
+                    });
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   primary: Colors.teal, // Button background color
                   shape: RoundedRectangleBorder(
@@ -76,7 +105,9 @@ class _UploadViolationImageState extends State<UploadViolationImage> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Text(
+                  child: _isUploading ? Center(
+                    child: CircularProgressIndicator(),
+                  ) : Text(
                       'Finish And Upload',
                     style: TextStyle(
                       fontSize: 18,
