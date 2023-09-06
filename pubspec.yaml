@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   mobile_scanner: ^2.1.0
   google_maps_flutter: ^2.5.0
+  map_launcher: ^2.5.0+1
   flutter_background_service:
   flutter_local_notifications:
   permission_handler:

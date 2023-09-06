@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
 
 import 'package:car_app/helpers/theme_helper.dart';
 import 'package:car_app/services/map_service.dart';
 import 'package:car_app/services/zones_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:map_launcher/map_launcher.dart' as MX;
 
 class TestScreen extends StatefulWidget {
   const TestScreen({Key? key}) : super(key: key);
@@ -14,7 +17,7 @@ class TestScreen extends StatefulWidget {
 }
 
 class _TestScreenState extends State<TestScreen> {
-  bool _chosedZone = false;
+  bool _chosenZone = false;
   Map? zone;
   late Future future;
 
@@ -24,8 +27,6 @@ class _TestScreenState extends State<TestScreen> {
     super.initState();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,63 +35,61 @@ class _TestScreenState extends State<TestScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 30,),
-            Text('Select Zone First',style: TextStyle(
-              fontSize: 20
-            ),),
-            SizedBox(height: 12,),
+            SizedBox(height: 30),
+            Text(
+              'Select Zone First',
+              style: TextStyle(fontSize: 20),
+            ),
+            SizedBox(height: 12),
             FutureBuilder(
               future: future,
               builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                if(snapshot.hasError){
+                if (snapshot.hasError) {
                   return Center(
                     child: Text('Something Went wrong'),
                   );
                 }
 
-                if(snapshot.data != null){
+                if (snapshot.data != null) {
                   List zones = snapshot.data;
-                  if(zones.isEmpty){
+                  if (zones.isEmpty) {
                     return Center(
                       child: Text('No Zones Yet'),
                     );
                   }
 
                   return Wrap(
-                      spacing: 8.0,
-                      runSpacing: 8.0,
-                    children: zones.map((e){
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    children: zones.map((e) {
                       return ElevatedButton(
-                        onPressed: (){
+                        onPressed: () {
                           setState(() {
-                            _chosedZone = true;
+                            _chosenZone = true;
                             zone = e;
                           });
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: ThemeHelper.buttonPrimaryColor,
-                          minimumSize: Size(110, 30),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0)
-                          )
+                            backgroundColor: ThemeHelper.buttonPrimaryColor,
+                            minimumSize: Size(110, 30),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0))),
+                        child: Text(
+                          e['name'],
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                        child: Text(e['name'],style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold
-                        ),),
                       );
                     }).toList(),
                   );
                 }
 
                 return Container();
-
               },
             ),
-
-            if(_chosedZone)
+            if (_chosenZone)
               Expanded(
-                  child: MapSample(zone: zone)
+                child: MapSample(zone: zone),
               )
           ],
         ),
@@ -108,61 +107,119 @@ class MapSample extends StatefulWidget {
 }
 
 class MapSampleState extends State<MapSample> {
-  late Future future;
+  GoogleMapController? _controller;
+  Set<Polygon> _polygons = Set<Polygon>();
 
-  @override
-  void initState() {
-    super.initState();
-    print(widget.zone!);
-    future = MapService.downloadMapFeatures(widget.zone!['_id']);
+  List<List<LatLng>> _getPointsFromGeoJSON(Map<String, dynamic> geoJson) {
+    final List<List<LatLng>> allCoordinates = [];
+    final List<dynamic> features = geoJson['features'];
+
+    for (final feature in features) {
+      final List<dynamic> coordinates = feature['geometry']['coordinates'][0];
+      final List<LatLng> polygonCoordinates = coordinates.map((coord) {
+        final lat = coord[1];
+        final lng = coord[0];
+        return LatLng(lat, lng);
+      }).toList();
+      allCoordinates.add(polygonCoordinates);
+    }
+
+    return allCoordinates;
   }
-  final Completer<GoogleMapController> _controller =
-  Completer<GoogleMapController>();
 
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
+  LatLngBounds _getPolygonBounds(Polygon polygon) {
+    final points = polygon.points;
+    double minLat = double.infinity;
+    double maxLat = -double.infinity;
+    double minLng = double.infinity;
+    double maxLng = -double.infinity;
 
-  static const CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
+    for (final point in points) {
+      if (point.latitude < minLat) minLat = point.latitude;
+      if (point.latitude > maxLat) maxLat = point.latitude;
+      if (point.longitude < minLng) minLng = point.longitude;
+      if (point.longitude > maxLng) maxLng = point.longitude;
+    }
+
+    return LatLngBounds(
+      southwest: LatLng(minLat, minLng),
+      northeast: LatLng(maxLat, maxLng),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: future,
+      future: MapService.downloadMapFeatures(widget.zone!['_id']),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          if(snapshot.hasError){
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
-          }
-          if(snapshot.data != null){
-            print(snapshot.data.toString());
-            return GoogleMap(
-              mapType: MapType.hybrid,
-              initialCameraPosition: _kGooglePlex,
-              onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
-              },
-            );
-          }else{
-            return Center(
-              child: Text(
-                'There is no available map for this zone',
-                style: TextStyle(
-                  fontSize: 26,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            );
-          }
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error.toString()),
+          );
+        }
+        if (snapshot.data != null) {
+          return GoogleMap(
+            mapType: MapType.hybrid,
+            initialCameraPosition: CameraPosition(
+                target: LatLng(double.parse(snapshot.data['latitude'].toString()),
+                    double.parse(snapshot.data['longitude'].toString())),
+                zoom: 6),
+            onMapCreated: (GoogleMapController controller) {
+              _controller = controller;
 
-          return Container();
+              final geoJsonText = snapshot.data['data'];
+              final geoJson = jsonDecode(geoJsonText);
+
+              List features = geoJson['features'];
+              print(features.length.toString());
+              for(var feature in features){
+                print('yupppppppppp');
+                var coords = feature['geometry']['coordinates'];
+                List<LatLng> points = [];
+                for(var coord in coords[0]){
+                  points.add(LatLng(coord[1],coord[0]));
+                }
+                Polygon polygon = Polygon(
+                  polygonId: PolygonId('${Random().nextInt(100000000).toString()}'),
+                  points: points,
+                  fillColor: HexColor.fromHex(feature['properties']['color']).withOpacity(0.3),
+                  strokeWidth: 0,
+                  onTap: () async{
+                    final availableMaps = await MX.MapLauncher.installedMaps;
+                    print(availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
+
+                    await availableMaps.first.showMarker(
+                      coords: MX.Coords(points[0].latitude, points[0].longitude),
+                      title: "Ocean Beach",
+                    );
+                  },
+                  consumeTapEvents: true,
+                  zIndex: 5,
+
+                );
+
+                setState(() {
+                  _polygons.add(polygon);
+                });
+              }
+
+            },
+            polygons: _polygons,
+          );
+        }
+
+        return Container();
       },
     );
+  }
+}
+
+extension HexColor on Color {
+  /// String is in the format "aabbcc" or "ffaabbcc" with an optional leading "#".
+  static Color fromHex(String hexString) {
+    final buffer = StringBuffer();
+    if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+    buffer.write(hexString.replaceFirst('#', ''));
+    return Color(int.parse(buffer.toString(), radix: 16));
   }
 }
