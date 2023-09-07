@@ -8,7 +8,7 @@ class NotificationService{
     try{
 
       String? serial = await UniqueIdentifier.serial;
-      final Uri uri = Uri.parse('https://test.bilsjekk.in/api/notifications');
+      final Uri uri = Uri.parse('https://test.bilsjekk.in/api/notifications/imei/$serial');
       final response = await http.get(uri);
 
       if(response.statusCode == 200){

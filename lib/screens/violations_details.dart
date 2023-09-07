@@ -48,29 +48,18 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
               SizedBox(height: 8),
               TextFormField(
                 controller: violationNumberController,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value){
-                  if(value != null){
-                    if(value.isEmpty){
-                      return "Enter something";
-                    }
-
-                    return null;
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return "Vennligst skriv inn noe";
                   }
-
                   return null;
                 },
-                keyboardType: TextInputType.number,
-                style: TextStyle(color: Colors.white),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
-                  hintText: 'Enter violation number',
-                  hintStyle: TextStyle(color: Colors.white),
-                  filled: true,
-                  fillColor: Colors.black.withOpacity(0.5),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  labelText: 'Number',
+                  hintText: 'Violation Number',
+                  border: OutlineInputBorder(),
+                  fillColor: ThemeHelper.buttonPrimaryColor,
                 ),
               ),
               SizedBox(height: 16),
@@ -85,29 +74,18 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
               SizedBox(height: 8),
               TextFormField(
                 controller: pnidController,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value){
-                  if(value != null){
-                    if(value.isEmpty){
-                      return "Enter something";
-                    }
-
-                    return null;
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return "Vennligst skriv inn noe";
                   }
-
                   return null;
                 },
-                keyboardType: TextInputType.number,
-                style: TextStyle(color: Colors.white),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
-                  hintText: 'Enter kilometers driven',
-                  hintStyle: TextStyle(color: Colors.white),
-                  filled: true,
-                  fillColor: Colors.black.withOpacity(0.5),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  labelText: 'Pnid',
+                  hintText: 'Employee Pnid',
+                  border: OutlineInputBorder(),
+                  fillColor: ThemeHelper.buttonPrimaryColor,
                 ),
               ),
               SizedBox(height: 12),
@@ -122,28 +100,18 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
               SizedBox(height: 8),
               TextFormField(
                 controller: reasonController,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value){
-                  if(value != null){
-                    if(value.isEmpty){
-                      return "Enter something";
-                    }
-
-                    return null;
+                validator: (val) {
+                  if (val!.isEmpty) {
+                    return "Vennligst skriv inn noe";
                   }
-
                   return null;
                 },
-                style: TextStyle(color: Colors.white),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
+                  labelText: 'Reason',
                   hintText: 'Enter the reason',
-                  hintStyle: TextStyle(color: Colors.white),
-                  filled: true,
-                  fillColor: Colors.black.withOpacity(0.5),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  border: OutlineInputBorder(),
+                  fillColor: ThemeHelper.buttonPrimaryColor,
                 ),
               ),
               SizedBox(height: 20,),
@@ -204,7 +172,7 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.teal, // Button background color
+                    primary: ThemeHelper.buttonPrimaryColor, // Button background color
                     minimumSize: Size(140,0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),

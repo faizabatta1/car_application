@@ -154,80 +154,81 @@ class MainScreen extends StatelessWidget {
               ],
             ),
 
-            Align(
-              alignment: Alignment.bottomLeft,
-              child:                   GestureDetector(
-                onTap: () async{
-                  SharedPreferences shared = await SharedPreferences.getInstance();
-                  if (shared.containsKey('token')) await shared.remove('token');
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Align(
+                alignment: Alignment.topLeft,
+                child:                   Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: () async{
+                        SharedPreferences shared = await SharedPreferences.getInstance();
+                        if (shared.containsKey('token')) await shared.remove('token');
 
-                  Navigator.pushReplacement(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (context, animation, secondaryAnimation) {
-                        return SplashScreen(token: null);
-                      },
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                        return FadeTransition(
-                          opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                            CurvedAnimation(
-                              parent: animation,
-                              curve: Curves.easeInOut,
-                            ),
+                        Navigator.pushReplacement(
+                          context,
+                          PageRouteBuilder(
+                            pageBuilder: (context, animation, secondaryAnimation) {
+                              return SplashScreen(token: null);
+                            },
+                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                              return FadeTransition(
+                                opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                                  CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.easeInOut,
+                                  ),
+                                ),
+                                child: child,
+                              );
+                            },
+                            transitionDuration: Duration(seconds: 1),
                           ),
-                          child: child,
                         );
                       },
-                      transitionDuration: Duration(seconds: 1),
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        child: Icon(Icons.logout,color: Colors.red,size: 40,),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(50)
+                        ),
+                      ),
                     ),
-                  );
-                },
-                child: Container(
-                  height: 60,
-                  width: 60,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.logout,color: Colors.white,),
-                    ],
-                  ),
-                  color: Colors.red,
-                ),
-              ),
-
-            ),
-
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: EdgeInsets.all(16.0),
-                child: IconButton(
-                  onPressed: (){
-                    Navigator.push(
-                      context,
-                      PageRouteBuilder(
-                        pageBuilder: (context, animation, secondaryAnimation) {
-                          return NotificationsScreen();
-                        },
-                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                          return FadeTransition(
-                            opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                              CurvedAnimation(
-                                parent: animation,
-                                curve: Curves.easeInOut,
-                              ),
+                    Badge(
+                      child: IconButton(
+                        onPressed: (){
+                          Navigator.push(
+                            context,
+                            PageRouteBuilder(
+                              pageBuilder: (context, animation, secondaryAnimation) {
+                                return NotificationsScreen();
+                              },
+                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                return FadeTransition(
+                                  opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                                    CurvedAnimation(
+                                      parent: animation,
+                                      curve: Curves.easeInOut,
+                                    ),
+                                  ),
+                                  child: child,
+                                );
+                              },
+                              transitionDuration: Duration(seconds: 1),
                             ),
-                            child: child,
                           );
                         },
-                        transitionDuration: Duration(seconds: 1),
+                        icon: Icon(Icons.notifications,size: 40,color: ThemeHelper.buttonPrimaryColor,),
                       ),
-                    );
-                  },
-                  icon: Icon(Icons.notifications,size: 40,color: ThemeHelper.secondaryColor,),
+                    )
+                  ],
                 ),
+
               ),
-            )
+            ),
+
           ],
         ),
       ),

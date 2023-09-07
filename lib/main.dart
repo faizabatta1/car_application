@@ -97,12 +97,10 @@ Future initializeSocketNotificationChannel() async{
   // Listen for messages from the server
   socket.on('devices', (data) async{
     String? identifier =await UniqueIdentifier.serial;
-    print(identifier);
     Map decoded = jsonDecode(data);
     if((decoded['imeis'] as List).contains(identifier)){
       await showFlutterNotification(decoded['title'], decoded['body']);
     }
-    await showFlutterNotification('Nordic Parking', identifier!);
   });
 
   socket.on('users',(data) async{
@@ -111,7 +109,12 @@ Future initializeSocketNotificationChannel() async{
   });
 
   socket.on('zones',(data) async{
-    print('zones data ${data}');
+    String? identifier =await UniqueIdentifier.serial;
+    Map decoded = jsonDecode(data);
+    print(decoded);
+    if((decoded['imeis'] as List).contains(identifier)){
+      await showFlutterNotification(decoded['title'], decoded['body']);
+    }
   });
 
 }

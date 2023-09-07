@@ -71,7 +71,7 @@ Widget _buildNotification({
 }) {
   return Card(
     elevation: 5.0,
-    color: Colors.blueGrey,
+    color: ThemeHelper.buttonPrimaryColor,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(16.0),
     ),
@@ -91,7 +91,7 @@ Widget _buildNotification({
                 Text(message),
                 SizedBox(height: 8.0),
                 Align(
-                    child: Text(time, style: TextStyle(fontSize: 12.0, color: Colors.white)),
+                    child: Text(time, style: TextStyle(fontWeight:FontWeight.bold,fontSize: 12.0, color: Colors.white)),
                   alignment: Alignment.centerRight,
                 ),
               ],
