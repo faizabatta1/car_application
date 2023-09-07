@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
@@ -82,10 +83,13 @@ Future<void> requestNotificationPermission() async {
 
 Future initializeSocketNotificationChannel() async{
   // Connect to the WebSocket server
-  IO.Socket socket = IO.io('wss://test.bilsjekk.in',<String, dynamic>{
-    'autoConnect': false,
-    'transports': ['websocket'],
-  }); // Replace with your server address
+  IO.Socket socket = IO.io(
+    'wss://test.bilsjekk.in',
+    IO.OptionBuilder()
+      .setTransports(['websocket'])
+      .enableAutoConnect()
+      .build()
+  ); // Replace with your server address
   socket.connect();
   socket.onConnect((_) {
     print('Connection established');
@@ -138,8 +142,18 @@ Future initializeService() async{
   );
 }
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  HttpOverrides.global = MyHttpOverrides();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent
   ));

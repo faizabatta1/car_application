@@ -44,7 +44,7 @@ dependencies:
   unique_identifier:
   cunning_document_scanner:
   fluttertoast:
-  socket_io_client:
+  socket_io_client: 1.0.0
   vibration: 
   intl:
   flutter_animated_dialog:
