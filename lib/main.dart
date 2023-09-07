@@ -82,7 +82,7 @@ Future<void> requestNotificationPermission() async {
 
 Future initializeSocketNotificationChannel() async{
   // Connect to the WebSocket server
-  IO.Socket socket = IO.io('https://test.bilsjekk.in',<String, dynamic>{
+  IO.Socket socket = IO.io('wss://test.bilsjekk.in',<String, dynamic>{
     'autoConnect': false,
     'transports': ['websocket'],
   }); // Replace with your server address
