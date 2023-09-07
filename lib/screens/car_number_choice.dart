@@ -12,6 +12,8 @@ import 'dart:convert';
 import 'info_dialog.dart';
 
 class CarNumberChoiceScreen extends StatefulWidget {
+  static const String route = '/cars';
+
   @override
   _CarNumberChoiceScreenState createState() => _CarNumberChoiceScreenState();
 }

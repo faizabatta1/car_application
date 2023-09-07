@@ -9,14 +9,15 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_launcher/map_launcher.dart' as MX;
 
-class TestScreen extends StatefulWidget {
-  const TestScreen({Key? key}) : super(key: key);
+class MapsScreen extends StatefulWidget {
+  static const String route = '/maps';
+  const MapsScreen({Key? key}) : super(key: key);
 
   @override
-  State<TestScreen> createState() => _TestScreenState();
+  State<MapsScreen> createState() => _MapsScreenState();
 }
 
-class _TestScreenState extends State<TestScreen> {
+class _MapsScreenState extends State<MapsScreen> {
   bool _chosenZone = false;
   Map? zone;
   late Future future;
@@ -90,6 +91,14 @@ class _TestScreenState extends State<TestScreen> {
             if (_chosenZone)
               Expanded(
                 child: MapSample(zone: zone),
+              ),
+            if(!_chosenZone)
+              Expanded(
+                child: Center(
+                  child: Text('No Map Was Selected',style: TextStyle(
+                    fontSize: 20
+                  ),),
+                ),
               )
           ],
         ),
@@ -154,7 +163,9 @@ class MapSampleState extends State<MapSample> {
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.hasError) {
           return Center(
-            child: Text(snapshot.error.toString()),
+            child: Text(snapshot.error.toString().replaceAll('"', ''),style: TextStyle(
+              fontSize: 20
+            ),),
           );
         }
         if (snapshot.data != null) {

@@ -7,9 +7,10 @@ import 'package:car_app/screens/car_number_choice.dart';
 import 'package:car_app/screens/notifications_screen.dart';
 import 'package:car_app/screens/splash_screen.dart';
 import 'package:car_app/screens/swipper_switch.dart';
-import 'package:car_app/screens/test_screen.dart';
+import 'package:car_app/screens/map_screen.dart';
 import 'package:car_app/screens/violations_details.dart';
 import 'package:car_app/services/driver_service.dart';
+import 'package:car_app/widgets/custom_bottom.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
@@ -23,7 +24,8 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFEEEEEE),
+      bottomNavigationBar: CustomBottom(),
+      backgroundColor: Colors.white,
       body: Container(
         padding: EdgeInsets.all(8.0),
         child: Stack(
@@ -32,17 +34,10 @@ class MainScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: (){
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => TestScreen())
-                    );
-                  },
-                  child: Image.asset(
-                      'assets/bil.png',
-                    width: 220,
-                    height: 220,
-                  ),
+                Image.asset(
+                    'assets/bil.png',
+                  width: 220,
+                  height: 220,
                 ),
 
                 FutureBuilder(
@@ -99,25 +94,9 @@ class MainScreen extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {
                             // Navigate to Form 1 screen to fill the form
-                            Navigator.push(
+                            Navigator.pushNamed(
                               context,
-                              PageRouteBuilder(
-                                pageBuilder: (context, animation, secondaryAnimation) {
-                                  return CarNumberChoiceScreen();
-                                },
-                                transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                  return FadeTransition(
-                                    opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                                      CurvedAnimation(
-                                        parent: animation,
-                                        curve: Curves.easeInOut,
-                                      ),
-                                    ),
-                                    child: child,
-                                  );
-                                },
-                                transitionDuration: Duration(seconds: 1),
-                              ),
+                              CarNumberChoiceScreen.route,
                             );
                           },
                           child: Container(
@@ -172,53 +151,6 @@ class MainScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 10,),
-                SizedBox(
-                  height: 60,
-                  width: double.infinity,
-                  child: GestureDetector(
-                    onTap: () {
-                      // Navigate to Form 1 screen to fill the form
-                      Navigator.push(
-                        context,
-                        PageRouteBuilder(
-                          pageBuilder: (context, animation, secondaryAnimation) {
-                            return ViolationsDetails();
-                          },
-                          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                            return FadeTransition(
-                              opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                                CurvedAnimation(
-                                  parent: animation,
-                                  curve: Curves.easeInOut,
-                                ),
-                              ),
-                              child: child,
-                            );
-                          },
-                          transitionDuration: Duration(seconds: 1),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      height: 60,
-                      width: 80,
-                      alignment: Alignment.center,
-                      color: ThemeHelper.buttonPrimaryColor,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.traffic,color: Colors.white,),
-                          Text('Violations',style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white
-                          ),)
-                        ],
-                      ),
-                    ),
-
-                  ),
-                )
               ],
             ),
 

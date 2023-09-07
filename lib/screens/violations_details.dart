@@ -3,6 +3,8 @@ import 'package:car_app/screens/upload_violation_image.dart';
 import 'package:flutter/material.dart';
 
 class ViolationsDetails extends StatefulWidget {
+  static const String route = '/postal';
+
   const ViolationsDetails({Key? key}) : super(key: key);
 
   @override

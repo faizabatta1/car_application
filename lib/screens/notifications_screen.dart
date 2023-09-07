@@ -1,3 +1,4 @@
+import 'package:car_app/services/notification_service.dart';
 import 'package:flutter/material.dart';
 
 import '../helpers/theme_helper.dart';
@@ -10,29 +11,53 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-  List<Map<String,dynamic>> dummyData = List.generate(20, (index) => {
-    'title': 'New Assignment',
-    'message': 'You have a new assignment to grade.',
-    'time': '10 min ago',
-  });
+
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: ListView.builder(
-          padding: EdgeInsets.all(8.0),
-          itemCount: dummyData.length, // Replace with your desired number of items
-          itemBuilder: (context, index) {
+        body: RefreshIndicator(
+          onRefresh: () async{
+            setState(() {
 
-
-            final notification = dummyData[index];
-            return _buildNotification(
-              title: notification['title'],
-              message: notification['message'],
-              time: notification['time'],
-            );
+            });
           },
+          child: FutureBuilder(
+            future: NotificationService.getAllNotifications(),
+            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              if(snapshot.hasError){
+                return Center(
+                  child: Text('Something Went Wrong'),
+                );
+              }
+
+              if(snapshot.data != null){
+                return ListView.builder(
+                  padding: EdgeInsets.all(8.0),
+                  itemCount: snapshot.data.length, // Replace with your desired number of items
+                  itemBuilder: (context, index) {
+
+
+                    final notification = snapshot.data[index];
+                    return _buildNotification(
+                      title: notification['title'],
+                      message: notification['body'],
+                      time: notification['date'],
+                    );
+                  },
+                );
+              }
+
+              return Container();
+            },
+          ),
         ),
       ),
     );
