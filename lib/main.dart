@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
@@ -90,13 +91,12 @@ Future initializeSocketNotificationChannel() async{
       .enableAutoConnect()
       .build()
   ); // Replace with your server address
-  socket.connect();
   socket.onConnect((_) {
     print('Connection established');
   });
   socket.onDisconnect((_) => print('Connection Disconnection'));
-  socket.onConnectError((err) => print(err));
-  socket.onError((err) => print(err));
+  socket.onConnectError((err) async =>await showFlutterNotification('Connection Error', '${err.toString()}') );
+  socket.onError((err) async => await showFlutterNotification('Error All', err.toString()));
 
   // Listen for messages from the server
   socket.on('devices', (data) async{
@@ -121,14 +121,23 @@ Future initializeSocketNotificationChannel() async{
     }
   });
 
+
+  socket.connect();
+
+
 }
 
+@pragma('vm:entry-point')
 Future onStart(ServiceInstance instance) async{
   DartPluginRegistrant.ensureInitialized();
   await requestNotificationPermission();
   await setupFlutterNotifications();
-  await initializeSocketNotificationChannel();
 
+  try{
+    await initializeSocketNotificationChannel();
+  }catch(error){
+    await showFlutterNotification('Error', error.toString());
+  }
 }
 
 Future initializeService() async{
@@ -137,9 +146,13 @@ Future initializeService() async{
       iosConfiguration: IosConfiguration(),
       androidConfiguration: AndroidConfiguration(
           onStart: onStart,
+          autoStart: true,
+          autoStartOnBoot: true,
           isForegroundMode: true
       )
   );
+
+  await service.startService();
 }
 
 class MyHttpOverrides extends HttpOverrides {
