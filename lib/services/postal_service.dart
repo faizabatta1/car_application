@@ -16,7 +16,7 @@ class PostalService{
       request.files.add(await http.MultipartFile.fromPath('violation', image));
       request.fields['number'] = number;
       request.fields['pnid'] = pnid;
-      request.fields['reason'] = reason;
+      request.fields['reason'] = Uri.encodeComponent(reason);
 
       final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
       final String? token = sharedPreferences.getString('token');
