@@ -39,12 +39,12 @@ dependencies:
   google_maps_flutter: ^2.5.0
   map_launcher: ^2.5.0+1
   flutter_background_service:
-  flutter_local_notifications:
   permission_handler:
   unique_identifier:
   cunning_document_scanner:
   fluttertoast:
   socket_io_client: 1.0.0
+  awesome_notifications:
   vibration: 
   intl:
   flutter_animated_dialog:

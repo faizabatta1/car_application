@@ -45,7 +45,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   itemBuilder: (context, index) {
 
 
-                    final notification = snapshot.data[index];
+                    final notification = (snapshot.data as List).reversed.toList()[index];
                     return _buildNotification(
                       title: notification['title'],
                       message: notification['body'],

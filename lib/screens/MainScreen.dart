@@ -194,32 +194,60 @@ class MainScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Badge(
-                      child: IconButton(
-                        onPressed: (){
-                          Navigator.push(
-                            context,
-                            PageRouteBuilder(
-                              pageBuilder: (context, animation, secondaryAnimation) {
-                                return NotificationsScreen();
-                              },
-                              transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                                return FadeTransition(
-                                  opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                                    CurvedAnimation(
-                                      parent: animation,
-                                      curve: Curves.easeInOut,
-                                    ),
-                                  ),
-                                  child: child,
-                                );
-                              },
-                              transitionDuration: Duration(seconds: 1),
+                    FutureBuilder(
+                      future: SharedPreferences.getInstance(),
+                      builder: (BuildContext context, AsyncSnapshot<SharedPreferences> snapshot) {
+                        if(snapshot.connectionState == ConnectionState.waiting){
+                          return Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.amber,
                             ),
                           );
-                        },
-                        icon: Icon(Icons.notifications,size: 40,color: ThemeHelper.buttonPrimaryColor,),
-                      ),
+                        }
+
+                        if(snapshot.hasError){
+                          return Center(
+                            child: Text(snapshot.error.toString(),style: TextStyle(
+                              fontSize: 18
+                            ),),
+                          );
+                        }
+
+                        if(snapshot.data != null){
+                          return Badge(
+                            isLabelVisible: !(snapshot.data!.getBool('notified') ?? true),
+                            child: IconButton(
+                              onPressed: ()async {
+                                SharedPreferences shared = await SharedPreferences.getInstance();
+                                await shared.remove('notified');
+                                Navigator.push(
+                                  context,
+                                  PageRouteBuilder(
+                                    pageBuilder: (context, animation, secondaryAnimation) {
+                                      return NotificationsScreen();
+                                    },
+                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                      return FadeTransition(
+                                        opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                                          CurvedAnimation(
+                                            parent: animation,
+                                            curve: Curves.easeInOut,
+                                          ),
+                                        ),
+                                        child: child,
+                                      );
+                                    },
+                                    transitionDuration: Duration(seconds: 1),
+                                  ),
+                                );
+                              },
+                              icon: Icon(Icons.notifications,size: 40,color: ThemeHelper.buttonPrimaryColor,),
+                            ),
+                          );
+                        }
+
+                        return Container();
+                      },
                     )
                   ],
                 ),

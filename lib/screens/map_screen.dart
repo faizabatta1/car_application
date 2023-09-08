@@ -8,6 +8,7 @@ import 'package:car_app/services/zones_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:map_launcher/map_launcher.dart' as MX;
+import 'package:permission_handler/permission_handler.dart';
 
 class MapsScreen extends StatefulWidget {
   static const String route = '/maps';
@@ -22,9 +23,16 @@ class _MapsScreenState extends State<MapsScreen> {
   Map? zone;
   late Future future;
 
+  void initializePermission() async{
+    if(await Permission.location.isDenied){
+      Permission.location.request();
+    }
+  }
+
   @override
   void initState() {
     future = ZoneService.getAllZones();
+    initializePermission();
     super.initState();
   }
 
@@ -59,29 +67,33 @@ class _MapsScreenState extends State<MapsScreen> {
                     );
                   }
 
-                  return Wrap(
-                    spacing: 8.0,
-                    runSpacing: 8.0,
-                    children: zones.map((e) {
-                      return ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            _chosenZone = true;
-                            zone = e;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: ThemeHelper.buttonPrimaryColor,
-                            minimumSize: Size(110, 30),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0))),
-                        child: Text(
-                          e['name'],
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                      );
-                    }).toList(),
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: zones.map((e) {
+                        return Container(
+                          margin: EdgeInsets.only(right: 8.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _chosenZone = true;
+                                zone = e;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: ThemeHelper.buttonPrimaryColor,
+                                minimumSize: Size(110, 30),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0))),
+                            child: Text(
+                              e['name'],
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   );
                 }
 
@@ -140,7 +152,8 @@ class MapSampleState extends State<MapSample> {
             initialCameraPosition: CameraPosition(
                 target: LatLng(double.parse(snapshot.data['latitude'].toString()),
                     double.parse(snapshot.data['longitude'].toString())),
-                zoom: 6),
+                zoom: 14),
+            markers: _markers,
             onMapCreated: (GoogleMapController controller) {
               _controller = controller;
 
@@ -160,7 +173,7 @@ class MapSampleState extends State<MapSample> {
                   Polygon polygon = Polygon(
                     polygonId: PolygonId('${Random().nextInt(100000000).toString()}'),
                     points: points,
-                    fillColor: HexColor.fromHex(feature['properties']['color']).withOpacity(0.3),
+                    fillColor: HexColor.fromHex(feature['properties']['color'] ?? "#5088DD").withOpacity(0.3),
                     strokeWidth: 0,
                     onTap: () async{
                       final availableMaps = await MX.MapLauncher.installedMaps;
@@ -180,10 +193,11 @@ class MapSampleState extends State<MapSample> {
                     _polygons.add(polygon);
                   });
                 }else if(feature['geometry']['type'] == 'Point'){
-                  final List<dynamic> markerData = feature['geometry']['coordinates'][0];
+                    print('a point');
+                  final List<dynamic> markerData = feature['geometry']['coordinates'];
                   final LatLng markerLatLng = LatLng(
-                    double.parse(markerData[0].toString()),
                     double.parse(markerData[1].toString()),
+                    double.parse(markerData[0].toString()),
                   );
 
                   Marker marker = Marker(

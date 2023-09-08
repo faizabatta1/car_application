@@ -1,3 +1,4 @@
+import 'package:car_app/screens/scan_violations_details.dart';
 import 'package:flutter/material.dart';
 
 import '../helpers/theme_helper.dart';
@@ -50,9 +51,7 @@ class CustomBottom extends StatelessWidget {
                             onTap: () async{
                               Navigator.pop(context);
                               Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (context) => Container(
-                                    color: Colors.red,
-                                  ))
+                                  MaterialPageRoute(builder: (context) => ScanViolationsDetails())
                               );
                             },
                           ),
