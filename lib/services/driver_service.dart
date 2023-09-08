@@ -31,7 +31,7 @@ class DriverService {
         } else {
           // Add non-file data to the request as fields
           String fieldName = entry['id'];
-          request.fields[fieldName] = jsonEncode(entry);
+          request.fields[fieldName] = Uri.encodeComponent(jsonEncode(entry));
         }
         final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
         final String? token = sharedPreferences.getString('token');

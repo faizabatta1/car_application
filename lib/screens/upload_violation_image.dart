@@ -111,7 +111,9 @@ class _UploadViolationImageState extends State<UploadViolationImage> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: _isUploading ? Center(
-                      child: CircularProgressIndicator(),
+                      child: CircularProgressIndicator(
+                        color: Colors.amber,
+                      ),
                     ) : Text(
                         'Finish And Upload',
                       style: TextStyle(

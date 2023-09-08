@@ -45,6 +45,8 @@ Future<void> setupFlutterNotifications() async {
       AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
 
+
+
   /// Update the iOS foreground notification presentation options to allow
   /// heads up notifications.
   isFlutterLocalNotificationsInitialized = true;
@@ -64,6 +66,8 @@ Future<void> showFlutterNotification(String title,String body) async {
           // TODO add a proper drawable resource to android, for now using
           //      one that already exists in example app.
           icon: 'launch_background',
+          priority: Priority.high,
+          importance: Importance.high
         ),
       ),
     );
@@ -74,29 +78,31 @@ Future<void> showFlutterNotification(String title,String body) async {
 
 
 Future<void> requestNotificationPermission() async {
-  await Permission.notification.isDenied.then((value) {
+  await Permission.notification.isDenied.then((value) async{
     if (value) {
-      Permission.notification.request();
+      await Permission.notification.request();
     }
   });
 }
 
 
 Future initializeSocketNotificationChannel() async{
+  String? identifier = await UniqueIdentifier.serial;
   // Connect to the WebSocket server
   IO.Socket socket = IO.io(
     'wss://test.bilsjekk.in',
     IO.OptionBuilder()
       .setTransports(['websocket'])
-      .enableAutoConnect()
+      .disableAutoConnect()
       .build()
   ); // Replace with your server address
   socket.onConnect((_) {
     print('Connection established');
+    socket.emit('imei', identifier);
   });
   socket.onDisconnect((_) => print('Connection Disconnection'));
-  socket.onConnectError((err) async =>await showFlutterNotification('Connection Error', '${err.toString()}') );
-  socket.onError((err) async => await showFlutterNotification('Error All', err.toString()));
+  socket.onConnectError((err) async => print(err.toString()) );
+  socket.onError((err) async => print(err.toString()));
 
   // Listen for messages from the server
   socket.on('devices', (data) async{
@@ -121,10 +127,7 @@ Future initializeSocketNotificationChannel() async{
     }
   });
 
-
   socket.connect();
-
-
 }
 
 @pragma('vm:entry-point')
@@ -142,31 +145,25 @@ Future onStart(ServiceInstance instance) async{
 
 Future initializeService() async{
   final service = FlutterBackgroundService();
-  await service.configure(
-      iosConfiguration: IosConfiguration(),
-      androidConfiguration: AndroidConfiguration(
-          onStart: onStart,
-          autoStart: true,
-          autoStartOnBoot: true,
-          isForegroundMode: true
-      )
-  );
+  if(!(await service.isRunning())){
+    await service.configure(
+        iosConfiguration: IosConfiguration(),
+        androidConfiguration: AndroidConfiguration(
+            onStart: onStart,
+            autoStart: true,
+            autoStartOnBoot: true,
+            isForegroundMode: true
+        )
+    );
 
-  await service.startService();
-}
-
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
+    await service.startService();
   }
 }
 
+
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  HttpOverrides.global = MyHttpOverrides();
+  await requestNotificationPermission();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent
   ));

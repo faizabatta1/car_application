@@ -29,10 +29,61 @@ class CustomBottom extends StatelessWidget {
               icon: Icon(Icons.policy,size: 40,),
             ),
             GestureDetector(
-              onTap: (){
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => ViolationsDetails())
+              onTap: () async {
+                await showModalBottomSheet(
+                  enableDrag: true,
+                  showDragHandle: true,
+
+                  context: context,
+                  builder: (context) {
+                    return Container(
+                      padding: EdgeInsets.all(16.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: Icon(Icons.document_scanner),
+                            title: Text("Scan"),
+                            onTap: () async{
+                              Navigator.pop(context);
+                              Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) => Container(
+                                    color: Colors.red,
+                                  ))
+                              );
+                            },
+                          ),
+                          Divider(),
+                          ListTile(
+                            leading: Icon(Icons.local_post_office),
+                            title: Text("Postal"),
+                            onTap: () async {
+                              Navigator.pop(context);
+                              Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (context) => ViolationsDetails())
+                              );
+                            },
+                          ),
+                          SizedBox(height: 16.0),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text("Avbryt", style: TextStyle(
+                                color: Colors.red,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold
+                            )),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 );
+
               },
               child: Container(
                 width: 50,

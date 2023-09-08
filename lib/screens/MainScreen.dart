@@ -94,10 +94,8 @@ class MainScreen extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {
                             // Navigate to Form 1 screen to fill the form
-                            Navigator.pushNamed(
-                              context,
-                              CarNumberChoiceScreen.route,
-                            );
+                            Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => CarNumberChoiceScreen()));
                           },
                           child: Container(
                             height: 60,

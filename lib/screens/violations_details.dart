@@ -1,6 +1,7 @@
 import 'package:car_app/helpers/theme_helper.dart';
 import 'package:car_app/screens/upload_violation_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class ViolationsDetails extends StatefulWidget {
   static const String route = '/postal';
@@ -48,7 +49,15 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
               SizedBox(height: 8),
               TextFormField(
                 controller: violationNumberController,
-                validator: (val) {
+                  keyboardType: TextInputType.number,
+                  inputFormatters: <TextInputFormatter>[
+                    // for below version 2 use this
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+// for version 2 and greater youcan also use this
+                    FilteringTextInputFormatter.digitsOnly
+
+                  ],
+                  validator: (val) {
                   if (val!.isEmpty) {
                     return "Vennligst skriv inn noe";
                   }

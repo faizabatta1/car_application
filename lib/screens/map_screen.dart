@@ -118,43 +118,9 @@ class MapSample extends StatefulWidget {
 class MapSampleState extends State<MapSample> {
   GoogleMapController? _controller;
   Set<Polygon> _polygons = Set<Polygon>();
+  Set<Marker> _markers = Set<Marker>();
 
-  List<List<LatLng>> _getPointsFromGeoJSON(Map<String, dynamic> geoJson) {
-    final List<List<LatLng>> allCoordinates = [];
-    final List<dynamic> features = geoJson['features'];
 
-    for (final feature in features) {
-      final List<dynamic> coordinates = feature['geometry']['coordinates'][0];
-      final List<LatLng> polygonCoordinates = coordinates.map((coord) {
-        final lat = coord[1];
-        final lng = coord[0];
-        return LatLng(lat, lng);
-      }).toList();
-      allCoordinates.add(polygonCoordinates);
-    }
-
-    return allCoordinates;
-  }
-
-  LatLngBounds _getPolygonBounds(Polygon polygon) {
-    final points = polygon.points;
-    double minLat = double.infinity;
-    double maxLat = -double.infinity;
-    double minLng = double.infinity;
-    double maxLng = -double.infinity;
-
-    for (final point in points) {
-      if (point.latitude < minLat) minLat = point.latitude;
-      if (point.latitude > maxLat) maxLat = point.latitude;
-      if (point.longitude < minLng) minLng = point.longitude;
-      if (point.longitude > maxLng) maxLng = point.longitude;
-    }
-
-    return LatLngBounds(
-      southwest: LatLng(minLat, minLng),
-      northeast: LatLng(maxLat, maxLng),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -184,34 +150,56 @@ class MapSampleState extends State<MapSample> {
               List features = geoJson['features'];
               print(features.length.toString());
               for(var feature in features){
-                print('yupppppppppp');
-                var coords = feature['geometry']['coordinates'];
-                List<LatLng> points = [];
-                for(var coord in coords[0]){
-                  points.add(LatLng(coord[1],coord[0]));
+                if(feature['geometry']['type'] == 'Polygon'){
+                  print('yupppppppppp');
+                  var coords = feature['geometry']['coordinates'];
+                  List<LatLng> points = [];
+                  for(var coord in coords[0]){
+                    points.add(LatLng(coord[1],coord[0]));
+                  }
+                  Polygon polygon = Polygon(
+                    polygonId: PolygonId('${Random().nextInt(100000000).toString()}'),
+                    points: points,
+                    fillColor: HexColor.fromHex(feature['properties']['color']).withOpacity(0.3),
+                    strokeWidth: 0,
+                    onTap: () async{
+                      final availableMaps = await MX.MapLauncher.installedMaps;
+                      print(availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
+
+                      await availableMaps.first.showMarker(
+                        coords: MX.Coords(points[0].latitude, points[0].longitude),
+                        title: "Ocean Beach",
+                      );
+                    },
+                    consumeTapEvents: true,
+                    zIndex: 5,
+
+                  );
+
+                  setState(() {
+                    _polygons.add(polygon);
+                  });
+                }else if(feature['geometry']['type'] == 'Point'){
+                  final List<dynamic> markerData = feature['geometry']['coordinates'][0];
+                  final LatLng markerLatLng = LatLng(
+                    double.parse(markerData[0].toString()),
+                    double.parse(markerData[1].toString()),
+                  );
+
+                  Marker marker = Marker(
+                    markerId: MarkerId('${Random().nextInt(100000000).toString()}'),
+                    position: markerLatLng,
+                    // Add other marker properties as needed
+                    infoWindow: InfoWindow(
+                      title: 'Marker Title',
+                      snippet: 'Marker Snippet',
+                    ),
+                  );
+
+                  setState(() {
+                    _markers.add(marker);
+                  });
                 }
-                Polygon polygon = Polygon(
-                  polygonId: PolygonId('${Random().nextInt(100000000).toString()}'),
-                  points: points,
-                  fillColor: HexColor.fromHex(feature['properties']['color']).withOpacity(0.3),
-                  strokeWidth: 0,
-                  onTap: () async{
-                    final availableMaps = await MX.MapLauncher.installedMaps;
-                    print(availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
-
-                    await availableMaps.first.showMarker(
-                      coords: MX.Coords(points[0].latitude, points[0].longitude),
-                      title: "Ocean Beach",
-                    );
-                  },
-                  consumeTapEvents: true,
-                  zIndex: 5,
-
-                );
-
-                setState(() {
-                  _polygons.add(polygon);
-                });
               }
 
             },
