@@ -27,8 +27,8 @@ Future<void> setupFlutterNotifications() async {
     return;
   }
   channel = const AndroidNotificationChannel(
-    'high_importance_channel', // id
-    'High Importance Notifications', // title
+    'Bilsjekk', // id
+    'Nordic Notifications', // title
     description:
     'This channel is used for important notifications.', // description
     importance: Importance.high,
@@ -166,14 +166,23 @@ Future initializeService() async{
   }
 }
 
+Future<void> requestStoragePermission() async {
+  final status = await Permission.storage.request();
+  if (status.isGranted) {
+    // Permission granted. You can now read files.
+  } else {
+    // Permission denied.
+  }
+}
 
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  await requestNotificationPermission();
+  await requestStoragePermission();
+  await initializeService();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent
   ));
-  await initializeService();
+  // await initializeService();
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   String? token = sharedPreferences.getString('token');
 

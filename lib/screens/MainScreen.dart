@@ -754,6 +754,7 @@ class _FormCardState extends State<FormCard> {
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
+                                                
                                                 ListTile(
                                                   leading: Icon(Icons.camera),
                                                   title: Text("Ta et bilde"),
