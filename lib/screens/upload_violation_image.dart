@@ -72,7 +72,7 @@ class _UploadViolationImageState extends State<UploadViolationImage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text(
-                    'Capture and Crop Image',
+                    'Capture and Crop Violation',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,

@@ -44,7 +44,7 @@ dependencies:
   cunning_document_scanner:
   fluttertoast:
   socket_io_client: 1.0.0
-  awesome_notifications:
+  flutter_local_notifications:
   vibration: 
   intl:
   flutter_animated_dialog:

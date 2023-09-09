@@ -46,8 +46,8 @@ class CustomBottom extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           ListTile(
-                            leading: Icon(Icons.document_scanner),
-                            title: Text("Scan"),
+                            leading: Icon(Icons.folder_delete),
+                            title: Text("Delete"),
                             onTap: () async{
                               Navigator.pop(context);
                               Navigator.of(context).push(

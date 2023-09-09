@@ -203,6 +203,15 @@ class MapSampleState extends State<MapSample> {
                   Marker marker = Marker(
                     markerId: MarkerId('${Random().nextInt(100000000).toString()}'),
                     position: markerLatLng,
+                    onTap: () async{
+                      final availableMaps = await MX.MapLauncher.installedMaps;
+                      print(availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
+
+                      await availableMaps.first.showMarker(
+                        coords: MX.Coords(markerData[1], markerData[0]),
+                        title: "Ocean Beach",
+                      );
+                    },
                     // Add other marker properties as needed
                     infoWindow: InfoWindow(
                       title: 'Marker Title',

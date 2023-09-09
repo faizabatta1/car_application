@@ -100,7 +100,7 @@ class _ViolationsDetailsState extends State<ScanViolationsDetails> {
               ),
               SizedBox(height: 12),
               Text(
-                'Why do you want to send it?',
+                'Why do you want to delete it?',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
