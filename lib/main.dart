@@ -6,6 +6,7 @@ import 'dart:ui';
 
 import 'package:car_app/helpers/theme_helper.dart';
 import 'package:car_app/screens/splash_screen.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -68,10 +69,6 @@ Future<void> showFlutterNotification(String title,String body) async {
           // TODO add a proper drawable resource to android, for now using
           //      one that already exists in example app.
           icon: 'launch_background',
-          playSound: true,
-          sound: RawResourceAndroidNotificationSound(
-            'alert'
-          ),
           importance: Importance.high,
           priority: Priority.max
         ),
@@ -86,14 +83,26 @@ Future<void> showFlutterNotification(String title,String body) async {
 Future<void> requestNotificationPermission() async {
   await Permission.notification.isDenied.then((value) async{
     if (value) {
-      await Permission.notification.request();
+      Permission.notification.request();
     }
   });
 }
 
+Future<String> generateUniqueIdentifier() async {
+  final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
+  try {
+
+    final AndroidDeviceInfo androidInfo = await deviceInfoPlugin.androidInfo;
+    String uniqueIdentifier = '${androidInfo.fingerprint}_${androidInfo.board}';
+    return uniqueIdentifier;
+  } catch (e) {
+    print('Error generating unique identifier: $e');
+    return "";
+  }
+}
 
 Future initializeSocketNotificationChannel() async{
-  String? identifier = await UniqueIdentifier.serial;
+  String identifier = await generateUniqueIdentifier();
   // Connect to the WebSocket server
   IO.Socket socket = IO.io(
     'wss://test.bilsjekk.in',
@@ -112,7 +121,7 @@ Future initializeSocketNotificationChannel() async{
 
   // Listen for messages from the server
   socket.on('devices', (data) async{
-    String? identifier =await UniqueIdentifier.serial;
+    String identifier = await generateUniqueIdentifier();
     Map decoded = jsonDecode(data);
     if((decoded['imeis'] as List).contains(identifier)){
       await showFlutterNotification(decoded['title'], decoded['body']);
@@ -125,7 +134,7 @@ Future initializeSocketNotificationChannel() async{
   });
 
   socket.on('zones',(data) async{
-    String? identifier =await UniqueIdentifier.serial;
+    String identifier = await generateUniqueIdentifier();
     Map decoded = jsonDecode(data);
     print(decoded);
     if((decoded['imeis'] as List).contains(identifier)){
@@ -139,12 +148,12 @@ Future initializeSocketNotificationChannel() async{
 @pragma('vm:entry-point')
 Future onStart(ServiceInstance instance) async{
   DartPluginRegistrant.ensureInitialized();
-  await requestNotificationPermission();
   await setupFlutterNotifications();
 
   try{
     await initializeSocketNotificationChannel();
   }catch(error){
+    print(error.toString());
     await showFlutterNotification('Error', error.toString());
   }
 }
@@ -175,9 +184,19 @@ Future<void> requestStoragePermission() async {
   }
 }
 
+
+Future<void> requestPhonePermission() async {
+  if(await Permission.phone.isDenied){
+    await Permission.phone.request();
+  }
+}
+
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await requestStoragePermission();
+  await requestPhonePermission();
+  await requestNotificationPermission();
+
   await initializeService();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent
