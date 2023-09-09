@@ -98,6 +98,9 @@ class _UploadViolationImageState extends State<UploadViolationImage> {
                           MaterialPageRoute(builder: (context) => MainScreen())
                         );
                       }).catchError((onError){
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(onError.toString(),style: TextStyle(fontSize: 20),))
+                        );
                         print(onError.toString());
                       });
                     }
