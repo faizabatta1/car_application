@@ -39,7 +39,7 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
             children: [
               SizedBox(height: 32),
               Text(
-                'Violation Number',
+                'K.S nr',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -65,15 +65,15 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
                 },
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
-                  labelText: 'Number',
-                  hintText: 'Violation Number',
+                  labelText: 'Nr',
+                  hintText: 'K.S nr',
                   border: OutlineInputBorder(),
                   fillColor: ThemeHelper.buttonPrimaryColor,
                 ),
               ),
               SizedBox(height: 16),
               Text(
-                'Employee Pnid',
+                'Pnid',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -83,6 +83,14 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
               SizedBox(height: 8),
               TextFormField(
                 controller: pnidController,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  // for below version 2 use this
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+// for version 2 and greater youcan also use this
+                  FilteringTextInputFormatter.digitsOnly
+
+                ],
                 validator: (val) {
                   if (val!.isEmpty) {
                     return "Vennligst skriv inn noe";
@@ -92,14 +100,14 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
                   labelText: 'Pnid',
-                  hintText: 'Employee Pnid',
+                  hintText: 'Pnid',
                   border: OutlineInputBorder(),
                   fillColor: ThemeHelper.buttonPrimaryColor,
                 ),
               ),
               SizedBox(height: 12),
               Text(
-                'Why do you want to send it?',
+                'Grunnen',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -117,8 +125,8 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
                 },
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
-                  labelText: 'Reason',
-                  hintText: 'Enter the reason',
+                  labelText: 'Grunnen',
+                  hintText: 'Grunnen',
                   border: OutlineInputBorder(),
                   fillColor: ThemeHelper.buttonPrimaryColor,
                 ),
@@ -162,10 +170,9 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
                       showDialog(
                         context: context,
                         barrierDismissible: false,
-                        barrierLabel: 'Thi slAFD',
                         builder: (context) => AlertDialog(
                           title: Text('Feil'),
-                          content: Text('Velg minst én sone, ukedag, periode, og skriv inn antall K.S.'),
+                          content: Text('Skriv inn nødvendige data først'),
                           actions: [
                             TextButton(
                               onPressed: () {
@@ -190,7 +197,7 @@ class _ViolationsDetailsState extends State<ViolationsDetails> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Text(
-                      'Next',
+                      'Neste',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

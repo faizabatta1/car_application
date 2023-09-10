@@ -84,6 +84,14 @@ class _ViolationsDetailsState extends State<ScanViolationsDetails> {
               SizedBox(height: 8),
               TextFormField(
                 controller: pnidController,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  // for below version 2 use this
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+// for version 2 and greater youcan also use this
+                  FilteringTextInputFormatter.digitsOnly
+
+                ],
                 validator: (val) {
                   if (val!.isEmpty) {
                     return "Vennligst skriv inn noe";
@@ -163,10 +171,9 @@ class _ViolationsDetailsState extends State<ScanViolationsDetails> {
                       showDialog(
                         context: context,
                         barrierDismissible: false,
-                        barrierLabel: 'Thi slAFD',
                         builder: (context) => AlertDialog(
                           title: Text('Feil'),
-                          content: Text('Velg minst én sone, ukedag, periode, og skriv inn antall K.S.'),
+                          content: Text('Skriv inn nødvendige data først'),
                           actions: [
                             TextButton(
                               onPressed: () {
@@ -191,7 +198,7 @@ class _ViolationsDetailsState extends State<ScanViolationsDetails> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     child: Text(
-                      'Next',
+                      'Neste',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

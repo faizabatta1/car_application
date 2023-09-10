@@ -48,7 +48,7 @@ class _UploadViolationImageState extends State<ScanUploadViolationImage> {
             children: [
               SizedBox(height: !_isUploaded ? 120 : 20),
               if(!_isUploaded)
-                Text('Upload your violations document to upload it to server',style: TextStyle(
+                Text('Last opp brudddokumentet for å laste det opp til serveren',style: TextStyle(
                     fontSize: 22
                 ),textAlign: TextAlign.center,),
               if (_imagePaths != null)
@@ -74,7 +74,7 @@ class _UploadViolationImageState extends State<ScanUploadViolationImage> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   child: Text(
-                    'Capture and Crop Violation',
+                    'Fange- og beskjæringsbrudd',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -117,7 +117,7 @@ class _UploadViolationImageState extends State<ScanUploadViolationImage> {
                         color: Colors.amber,
                       ),
                     ) : Text(
-                      'Finish And Upload',
+                      'Fullfør og last opp',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,

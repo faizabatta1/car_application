@@ -46,7 +46,7 @@ class _MapsScreenState extends State<MapsScreen> {
           children: [
             SizedBox(height: 30),
             Text(
-              'Select Zone First',
+              'Velg Sone først',
               style: TextStyle(fontSize: 20),
             ),
             SizedBox(height: 12),
@@ -55,7 +55,7 @@ class _MapsScreenState extends State<MapsScreen> {
               builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                 if (snapshot.hasError) {
                   return Center(
-                    child: Text('Something Went wrong'),
+                    child: Text(snapshot.error.toString()),
                   );
                 }
 
@@ -63,7 +63,7 @@ class _MapsScreenState extends State<MapsScreen> {
                   List zones = snapshot.data;
                   if (zones.isEmpty) {
                     return Center(
-                      child: Text('No Zones Yet'),
+                      child: Text('Ingen soner ennå'),
                     );
                   }
 
@@ -107,7 +107,7 @@ class _MapsScreenState extends State<MapsScreen> {
             if(!_chosenZone)
               Expanded(
                 child: Center(
-                  child: Text('No Map Was Selected',style: TextStyle(
+                  child: Text('Ingen kart ble valgt',style: TextStyle(
                     fontSize: 20
                   ),),
                 ),
@@ -164,7 +164,6 @@ class MapSampleState extends State<MapSample> {
               print(features.length.toString());
               for(var feature in features){
                 if(feature['geometry']['type'] == 'Polygon'){
-                  print('yupppppppppp');
                   var coords = feature['geometry']['coordinates'];
                   List<LatLng> points = [];
                   for(var coord in coords[0]){
@@ -193,7 +192,7 @@ class MapSampleState extends State<MapSample> {
                     _polygons.add(polygon);
                   });
                 }else if(feature['geometry']['type'] == 'Point'){
-                    print('a point');
+
                   final List<dynamic> markerData = feature['geometry']['coordinates'];
                   final LatLng markerLatLng = LatLng(
                     double.parse(markerData[1].toString()),
@@ -203,19 +202,19 @@ class MapSampleState extends State<MapSample> {
                   Marker marker = Marker(
                     markerId: MarkerId('${Random().nextInt(100000000).toString()}'),
                     position: markerLatLng,
-                    onTap: () async{
-                      final availableMaps = await MX.MapLauncher.installedMaps;
-                      print(availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
-
-                      await availableMaps.first.showMarker(
-                        coords: MX.Coords(markerData[1], markerData[0]),
-                        title: "Ocean Beach",
-                      );
-                    },
                     // Add other marker properties as needed
                     infoWindow: InfoWindow(
-                      title: 'Marker Title',
-                      snippet: 'Marker Snippet',
+                      title: feature['geometry']['properties']['title'] ?? 'Tittel',
+                      snippet: feature['geometry']['properties']['body'] ?? 'Markeringsutdrag',
+                      onTap: () async{
+                        final availableMaps = await MX.MapLauncher.installedMaps;
+                        print(availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
+
+                        await availableMaps.first.showMarker(
+                          coords: MX.Coords(markerData[1], markerData[0]),
+                          title: "Nordic",
+                        );
+                      }
                     ),
                   );
 

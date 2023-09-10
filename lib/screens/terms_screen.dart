@@ -23,7 +23,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'App Name',
+                      'App navn',
                       style: TextStyle(
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
@@ -40,7 +40,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
                     ),
                     Divider(),
                     Text(
-                      'Version',
+                      'Versjon',
                       style: TextStyle(
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
@@ -57,7 +57,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
                     ),
                     Divider(),
                     Text(
-                      'User ID',
+                      'Bruker-ID',
                       style: TextStyle(
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
@@ -74,7 +74,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
                     ),
                     Divider(),
                     Text(
-                      'Device ID',
+                      'Enhets-ID',
                       style: TextStyle(
                         fontSize: 24.0,
                         fontWeight: FontWeight.bold,
