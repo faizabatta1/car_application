@@ -49,12 +49,11 @@ class DriverService {
         // Handle success response if needed
         print('Data and files/images uploaded successfully');
       } else {
-        print(await response.stream.bytesToString());
-        // Handle error response if needed
-        print('Error uploading data and files/images. Status code: ${response.statusCode}');
+        throw await response.stream.bytesToString();
       }
     } catch (error) {
       print(error.toString());
+      throw error.toString();
     }
   }
 
