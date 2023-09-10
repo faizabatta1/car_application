@@ -6,6 +6,7 @@ import 'dart:ui';
 
 import 'package:car_app/helpers/theme_helper.dart';
 import 'package:car_app/screens/splash_screen.dart';
+import 'package:device_imei/device_imei.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:unique_identifier/unique_identifier.dart';
 
 late AndroidNotificationChannel channel;
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -89,16 +89,9 @@ Future<void> requestNotificationPermission() async {
 }
 
 Future<String> generateUniqueIdentifier() async {
-  final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-  try {
-
-    final AndroidDeviceInfo androidInfo = await deviceInfoPlugin.androidInfo;
-    String uniqueIdentifier = '${androidInfo.fingerprint}_${androidInfo.board}';
-    return uniqueIdentifier;
-  } catch (e) {
-    print('Error generating unique identifier: $e');
-    return "";
-  }
+  final devicePlugin = DeviceInfoPlugin();
+  AndroidDeviceInfo info = await devicePlugin.androidInfo;
+  return "${info.id}";
 }
 
 Future initializeSocketNotificationChannel() async{

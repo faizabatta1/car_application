@@ -40,12 +40,12 @@ dependencies:
   map_launcher: ^2.5.0+1
   flutter_background_service:
   permission_handler:
-  unique_identifier:
   cunning_document_scanner:
   fluttertoast:
-  socket_io_client: 1.0.0
-  device_info_plus:
-  flutter_local_notifications:
+  socket_io_client: ^2.0.3+1
+  flutter_local_notifications: 15.1.1
+  device_info_plus: any
+  device_imei: 0.0.4+1
   vibration: 
   intl:
   flutter_animated_dialog:

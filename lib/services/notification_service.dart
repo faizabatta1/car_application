@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:unique_identifier/unique_identifier.dart';
+// import 'package:unique_identifier/unique_identifier.dart';
 
 class NotificationService{
   static Future getAllNotifications() async{
     try{
 
-      String? serial = await UniqueIdentifier.serial;
+      String? serial = "";
       final Uri uri = Uri.parse('https://test.bilsjekk.in/api/notifications/imei/$serial');
       final response = await http.get(uri);
 
