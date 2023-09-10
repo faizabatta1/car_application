@@ -24,7 +24,7 @@ class CustomBottom extends StatelessWidget {
             IconButton(
               onPressed: (){
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => TermsScreen())
+                  MaterialPageRoute(builder: (context) => TermsAndConditionsScreen())
                 );
               },
               icon: Icon(Icons.policy,size: 40,),
@@ -47,7 +47,7 @@ class CustomBottom extends StatelessWidget {
                         children: [
                           ListTile(
                             leading: Icon(Icons.folder_delete),
-                            title: Text("Delete"),
+                            title: Text("Makulering"),
                             onTap: () async{
                               Navigator.pop(context);
                               Navigator.of(context).push(
@@ -58,7 +58,7 @@ class CustomBottom extends StatelessWidget {
                           Divider(),
                           ListTile(
                             leading: Icon(Icons.local_post_office),
-                            title: Text("Postal"),
+                            title: Text("Send per post"),
                             onTap: () async {
                               Navigator.pop(context);
                               Navigator.of(context).push(
