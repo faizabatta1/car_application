@@ -28,7 +28,7 @@ Future<void> setupFlutterNotifications() async {
     return;
   }
   channel = const AndroidNotificationChannel(
-    'Bilsjekk', // id
+    'Nordic Channel 1', // id
     'Nordic Notifications', // title
     description:
     'This channel is used for important notifications.', // description
@@ -65,6 +65,7 @@ Future<void> showFlutterNotification(String title,String body) async {
         android: AndroidNotificationDetails(
           channel.id,
           channel.name,
+          playSound: true,
           channelDescription: channel.description,
           // TODO add a proper drawable resource to android, for now using
           //      one that already exists in example app.
