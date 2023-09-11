@@ -24,7 +24,7 @@ class UserServices{
 
         SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
         await sharedPreferences.setString('token', dec['token']);
-        await sharedPreferences.setString('user', dec['user']);
+        await sharedPreferences.setString('userId', dec['user']['accountId']);
         return true;
       } else {
         print(response.body);

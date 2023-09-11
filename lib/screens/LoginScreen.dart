@@ -1,4 +1,5 @@
 import 'package:car_app/screens/MainScreen.dart';
+import 'package:car_app/screens/notifications_screen.dart';
 import 'package:car_app/services/user_service.dart';
 import 'package:flutter/material.dart';
 
@@ -17,55 +18,75 @@ class SignInScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Stack(
             children: [
-              SizedBox(height: height * 0.1,),
-              Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/test.png'), // Replace this with your logo SVG file
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: Badge(
+                    child: IconButton(
+                      onPressed: (){
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => NotificationsScreen())
+                        );
+                      },
+                      icon: Icon(Icons.notifications,size: 40,color: ThemeHelper.buttonPrimaryColor,),
+                    ),
                   ),
                 ),
               ),
-              SizedBox(height: 30),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Pn ID',
-                  prefixIcon: Icon(Icons.numbers),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: height * 0.1,),
+                  Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage('assets/test.png'), // Replace this with your logo SVG file
+                      ),
+                    ),
                   ),
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Passord',
-                  prefixIcon: Icon(Icons.lock),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+                  SizedBox(height: 30),
+                  TextFormField(
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                      labelText: 'Pn ID',
+                      prefixIcon: Icon(Icons.numbers),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
                   ),
-                ),
-                obscureText: true,
-              ),
-              SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  validateLogin(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ThemeHelper.buttonPrimaryColor,
-                  minimumSize: Size(double.infinity, 40)
-                ),
-                child: Text('Logg Inn'.toUpperCase(), style: TextStyle(fontSize: 18)),
-              ),
+                  SizedBox(height: 16),
+                  TextFormField(
+                    controller: _passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Passord',
+                      prefixIcon: Icon(Icons.lock),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                  SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () {
+                      validateLogin(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ThemeHelper.buttonPrimaryColor,
+                      minimumSize: Size(double.infinity, 40)
+                    ),
+                    child: Text('Logg Inn'.toUpperCase(), style: TextStyle(fontSize: 18)),
+                  ),
 
+                ],
+              ),
             ],
           ),
         ),

@@ -1,9 +1,55 @@
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/theme_helper.dart';
 
 
-class TermsAndConditionsScreen extends StatelessWidget {
+class TermsAndConditionsScreen extends StatefulWidget {
+  @override
+  State<TermsAndConditionsScreen> createState() => _TermsAndConditionsScreenState();
+}
+
+class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
+  String _device = "";
+  String _userId = "";
+
+  final platform = const MethodChannel('unique_id');
+
+  Future<String> getAndroidId() async {
+    try {
+      final String androidId = await platform.invokeMethod('getAndroidId');
+      return androidId;
+    } catch (e) {
+      print("Error: $e");
+      return "";
+    }
+  }
+
+  void fetchDeviceId() async{
+    String id = await getAndroidId();
+    setState(() {
+      _device = id;
+    });
+  }
+
+  void fetchUserId() async{
+    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String userId = sharedPreferences.getString('userId') ?? '';
+    setState(() {
+      _userId = userId;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDeviceId();
+    fetchUserId();
+    getAndroidId();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,7 +112,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 8.0),
                     Text(
-                      'Pn167',
+                      _userId,
                       style: TextStyle(
                         fontSize: 18.0,
                         color: Colors.grey,
@@ -83,7 +129,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 8.0),
                     Text(
-                      'TE1A.220922.010',
+                      _device,
                       style: TextStyle(
                         fontSize: 18.0,
                         color: Colors.grey,

@@ -40,7 +40,7 @@ class _ViolationsDetailsState extends State<ScanViolationsDetails> {
             children: [
               SizedBox(height: 32),
               Text(
-                'Violation Number',
+                'K.S nr',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -66,15 +66,15 @@ class _ViolationsDetailsState extends State<ScanViolationsDetails> {
                 },
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
-                  labelText: 'Number',
-                  hintText: 'Violation Number',
+                  labelText: 'Nr',
+                  hintText: 'K.S nr',
                   border: OutlineInputBorder(),
                   fillColor: ThemeHelper.buttonPrimaryColor,
                 ),
               ),
               SizedBox(height: 16),
               Text(
-                'Employee Pnid',
+                'Pnid',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -101,14 +101,14 @@ class _ViolationsDetailsState extends State<ScanViolationsDetails> {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
                   labelText: 'Pnid',
-                  hintText: 'Employee Pnid',
+                  hintText: 'Pnid',
                   border: OutlineInputBorder(),
                   fillColor: ThemeHelper.buttonPrimaryColor,
                 ),
               ),
               SizedBox(height: 12),
               Text(
-                'Why do you want to delete it?',
+                'Grunnen',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -126,8 +126,8 @@ class _ViolationsDetailsState extends State<ScanViolationsDetails> {
                 },
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
-                  labelText: 'Reason',
-                  hintText: 'Enter the reason',
+                  labelText: 'Grunnen',
+                  hintText: 'Grunnen',
                   border: OutlineInputBorder(),
                   fillColor: ThemeHelper.buttonPrimaryColor,
                 ),

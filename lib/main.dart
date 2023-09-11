@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 import 'dart:math';
 import 'dart:ui';
 
@@ -89,14 +87,20 @@ Future<void> requestNotificationPermission() async {
   });
 }
 
-Future<String> generateUniqueIdentifier() async {
-  final devicePlugin = DeviceInfoPlugin();
-  AndroidDeviceInfo info = await devicePlugin.androidInfo;
-  return "${info.id}";
+
+Future<String> getAndroidId() async {
+  try {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    String androidId = sharedPreferences.getString('androidId') ?? 'XD';
+    print(androidId);
+    return androidId;
+  }catch(error){
+    return "";
+  }
 }
 
 Future initializeSocketNotificationChannel() async{
-  String identifier = await generateUniqueIdentifier();
+  String identifier = await getAndroidId();
   // Connect to the WebSocket server
   IO.Socket socket = IO.io(
     'wss://test.bilsjekk.in',
@@ -115,7 +119,7 @@ Future initializeSocketNotificationChannel() async{
 
   // Listen for messages from the server
   socket.on('devices', (data) async{
-    String identifier = await generateUniqueIdentifier();
+    String identifier = await getAndroidId();
     Map decoded = jsonDecode(data);
     if((decoded['imeis'] as List).contains(identifier)){
       await showFlutterNotification(decoded['title'], decoded['body']);
@@ -128,7 +132,7 @@ Future initializeSocketNotificationChannel() async{
   });
 
   socket.on('zones',(data) async{
-    String identifier = await generateUniqueIdentifier();
+    String identifier = await getAndroidId();
     Map decoded = jsonDecode(data);
     print(decoded);
     if((decoded['imeis'] as List).contains(identifier)){
@@ -202,9 +206,33 @@ Future<void> main() async{
   runApp(AppEntryPoint(token: token));
 }
 
-class AppEntryPoint extends StatelessWidget {
+class AppEntryPoint extends StatefulWidget {
   final String? token;
   const AppEntryPoint({super.key,required this.token});
+
+  @override
+  State<AppEntryPoint> createState() => _AppEntryPointState();
+}
+
+class _AppEntryPointState extends State<AppEntryPoint> {
+  final platform = const MethodChannel('unique_id');
+
+  Future<void> saveAndroidId() async {
+    try {
+      final String androidId = await platform.invokeMethod('getAndroidId');
+      print(androidId);
+      SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      await sharedPreferences.setString('androidId', androidId);
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    saveAndroidId();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -218,7 +246,7 @@ class AppEntryPoint extends StatelessWidget {
         )
       ),
 
-      home: SplashScreen(token: token),
+      home: SplashScreen(token: widget.token),
     );
   }
 }
