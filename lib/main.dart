@@ -91,7 +91,7 @@ Future<void> requestNotificationPermission() async {
 Future<String> getAndroidId() async {
   try {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    String androidId = sharedPreferences.getString('androidId') ?? 'XD';
+    String androidId = sharedPreferences.getString('androidId') ?? '';
     print(androidId);
     return androidId;
   }catch(error){
