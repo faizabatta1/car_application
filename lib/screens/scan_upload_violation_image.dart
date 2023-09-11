@@ -5,6 +5,8 @@ import 'package:car_app/screens/splash_screen.dart';
 import 'package:car_app/services/postal_service.dart';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/scan_service.dart';
 
@@ -23,6 +25,58 @@ class _UploadViolationImageState extends State<ScanUploadViolationImage> {
   bool _isUploaded = false;
 
   bool _isUploading = false;
+
+  void _showSuccessPopup(BuildContext context) {
+    showAnimatedDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Takk skjemaet er sendt.'),
+          content: Text('Skjema er sendt!.',style: TextStyle(
+              backgroundColor: ThemeHelper.buttonPrimaryColor
+          ),),
+          actions: [
+            TextButton(
+              onPressed: () async{
+                Navigator.pop(context);
+                SharedPreferences shared = await SharedPreferences.getInstance();
+                if (shared.containsKey('token')) await shared.remove('token');
+
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (BuildContext context) => MainScreen())
+                );
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+      animationType: DialogTransitionType.scale,
+      curve: Curves.fastOutSlowIn,
+      duration: Duration(milliseconds: 300),
+    );
+  }
+
+  void _showErrorPopup(BuildContext context, dynamic error) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Feil'),
+        content: Text('En feil oppstod: $error'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close the dialog
+            },
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
 
 
   Future<void> _captureAndCropImages() async {
@@ -48,7 +102,7 @@ class _UploadViolationImageState extends State<ScanUploadViolationImage> {
             children: [
               SizedBox(height: !_isUploaded ? 120 : 20),
               if(!_isUploaded)
-                Text('Last opp brudddokumentet for å laste det opp til serveren',style: TextStyle(
+                Text('Last opp K.S dokumentet for å laste det opp til serveren',style: TextStyle(
                     fontSize: 22
                 ),textAlign: TextAlign.center,),
               if (_imagePaths != null)
@@ -96,11 +150,10 @@ class _UploadViolationImageState extends State<ScanUploadViolationImage> {
                         setState(() {
                           _isUploading = false;
                         });
-                        Navigator.of(context).push(
-                            MaterialPageRoute(builder: (context) => MainScreen())
-                        );
+                        _showSuccessPopup(context);
                       }).catchError((onError){
                         print(onError.toString());
+                        _showErrorPopup(context, onError.toString());
                       });
                     }
                   },

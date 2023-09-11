@@ -204,8 +204,8 @@ class MapSampleState extends State<MapSample> {
                     position: markerLatLng,
                     // Add other marker properties as needed
                     infoWindow: InfoWindow(
-                      title: feature['geometry']['properties']['title'] ?? 'Tittel',
-                      snippet: feature['geometry']['properties']['body'] ?? 'Markeringsutdrag',
+                      title: feature['properties']['title'] ?? 'Tittel',
+                      snippet: feature['properties']['body'] ?? 'Markeringsutdrag',
                       onTap: () async{
                         final availableMaps = await MX.MapLauncher.installedMaps;
                         print(availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
