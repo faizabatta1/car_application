@@ -133,48 +133,48 @@ class _UploadViolationImageState extends State<UploadViolationImage> {
                     ),
                   ),
                 ),
-              ) : ElevatedButton(
-                  onPressed: () async{
-                    if(_imagePaths != null && _imagePaths!.isNotEmpty){
-                      setState(() {
-                        _isUploading = true;
-                      });
-                      await PostalService.sendPostal(
-                          number: widget.number,
-                          pnid: widget.pnid,
-                          reason: widget.reason,
-                          image: _imagePaths!.first
-                      ).then((value){
+              ) : (
+                _isUploading ? Center(
+                  child: CircularProgressIndicator(),
+                ) : ElevatedButton(
+                    onPressed: () async{
+                      if(_imagePaths != null && _imagePaths!.isNotEmpty){
                         setState(() {
-                          _isUploading = false;
+                          _isUploading = true;
                         });
-                        _showSuccessPopup(context);
-                      }).catchError((onError){
-                        _showErrorPopup(context, onError.toString());
-                        print(onError.toString());
-                      });
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    primary: ThemeHelper.buttonPrimaryColor, // Button background color
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: _isUploading ? Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.amber,
+                        await PostalService.sendPostal(
+                            number: widget.number,
+                            pnid: widget.pnid,
+                            reason: widget.reason,
+                            image: _imagePaths!.first
+                        ).then((value){
+                          setState(() {
+                            _isUploading = false;
+                          });
+                          _showSuccessPopup(context);
+                        }).catchError((onError){
+                          _showErrorPopup(context, onError.toString());
+                          print(onError.toString());
+                        });
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: ThemeHelper.buttonPrimaryColor, // Button background color
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ) : Text(
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: Text(
                         'Fullfør og last opp',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  )
+                    )
+                )
               ),
             ],
           ),

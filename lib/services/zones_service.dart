@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 class ZoneService{
   static Future getAllZones() async{
     try{
-      final Uri uri = Uri.parse('https://test.bilsjekk.in/api/zones');
+      final Uri uri = Uri.parse('https://nordic.bilsjekk.in/api/zones');
       final response = await http.get(uri);
 
       if(response.statusCode == 200){

@@ -58,7 +58,7 @@ class MainScreen extends StatelessWidget {
                     if(snapshot.data != null){
                       return Center(
                         child: Text(
-                          'Hei ${snapshot.data!.getString('user')}',
+                          'Hei ${snapshot.data!.getString('username')}',
                           style: TextStyle(
                             fontSize: 26,
                             fontWeight: FontWeight.bold,
@@ -523,10 +523,14 @@ class _FormCardState extends State<FormCard> {
                   ElevatedButton(
                     child: Text('Tilbake'.toUpperCase(),style: TextStyle(
                       fontSize: 18,
+                      color: Colors.white
                     ),),
                     onPressed: previousPage,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryColor
+                      backgroundColor: primaryColor,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0)
+                      ),
                     ),
                   ),
                   ElevatedButton(

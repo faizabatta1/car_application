@@ -128,12 +128,31 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                       ),
                     ),
                     SizedBox(height: 8.0),
-                    Text(
-                      _device,
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Colors.grey,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          _device,
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            color: Colors.grey,
+                          ),
+                        ),
+
+                        TextButton(
+                          onPressed: (){
+                            Clipboard.setData(ClipboardData(text: _device)).then((value){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Enhets-ID kopiert'))
+                              );
+                            });
+                          },
+                          child: Text(
+                            'Kopiere'
+                          ),
+                        )
+                      ],
                     ),
                     Divider(),
 

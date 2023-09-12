@@ -1,11 +1,9 @@
-import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 
 class DataService{
-  static final String baseUrl = 'https://test.bilsjekk.in/api';
+  static final String baseUrl = 'https://nordic.bilsjekk.in/api';
   static Future<String?> getInformationData({required String part}) async{
     try{
       final url = Uri.parse('$baseUrl/info/$part');

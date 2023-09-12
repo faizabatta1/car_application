@@ -44,6 +44,8 @@ dependencies:
   fluttertoast:
   socket_io_client: ^2.0.3+1
   flutter_local_notifications: 15.1.1
+  firebase_core:
+  firebase_messaging:
   device_info_plus: any
   device_imei: 0.0.4+1
   vibration: 

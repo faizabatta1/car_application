@@ -4,14 +4,11 @@ import 'dart:ui';
 
 import 'package:car_app/helpers/theme_helper.dart';
 import 'package:car_app/screens/splash_screen.dart';
-import 'package:device_imei/device_imei.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -88,6 +85,8 @@ Future<void> requestNotificationPermission() async {
 }
 
 
+
+
 Future<String> getAndroidId() async {
   try {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -103,7 +102,7 @@ Future initializeSocketNotificationChannel() async{
   String identifier = await getAndroidId();
   // Connect to the WebSocket server
   IO.Socket socket = IO.io(
-    'wss://test.bilsjekk.in',
+    'wss://nordic.bilsjekk.in',
     IO.OptionBuilder()
       .setTransports(['websocket'])
       .disableAutoConnect()
@@ -113,7 +112,11 @@ Future initializeSocketNotificationChannel() async{
     print('Connection established');
     socket.emit('imei', identifier);
   });
-  socket.onDisconnect((_) => print('Connection Disconnection'));
+  socket.onDisconnect((_){
+    print('Connection Disconnection');
+    socket.close();
+    socket.destroy();
+  });
   socket.onConnectError((err) async => print(err.toString()) );
   socket.onError((err) async => print(err.toString()));
 
@@ -140,7 +143,9 @@ Future initializeSocketNotificationChannel() async{
     }
   });
 
-  socket.connect();
+  if(!socket.active){
+    socket.connect();
+  }
 }
 
 @pragma('vm:entry-point')
@@ -174,11 +179,8 @@ Future initializeService() async{
 }
 
 Future<void> requestStoragePermission() async {
-  final status = await Permission.storage.request();
-  if (status.isGranted) {
-    // Permission granted. You can now read files.
-  } else {
-    // Permission denied.
+  if(await Permission.storage.isDenied){
+    await Permission.storage.request();
   }
 }
 
@@ -189,11 +191,67 @@ Future<void> requestPhonePermission() async {
   }
 }
 
+// @pragma('vm:entry-point')
+// Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//   // If you're going to use other Firebase services in the background, such as Firestore,
+//   // make sure you call `initializeApp` before using other Firebase services.
+//   await Firebase.initializeApp();
+//   print(message.data['title']);
+//
+//   await showFlutterNotification(message.data['title'], message.data['body']);
+//   print("Handling a background message: ${message.messageId}");
+// }
+
+
+class AppLifecycleObserver extends WidgetsBindingObserver {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+      // App is in the foreground
+        print('App is in the foreground');
+        break;
+      case AppLifecycleState.inactive:
+      // App is in an inactive state (e.g., when a call comes in)
+        print('App is in an inactive state');
+        break;
+      case AppLifecycleState.paused:
+      // App is in the background
+        print('App is in the background');
+        break;
+      case AppLifecycleState.detached:
+      // App is detached (e.g., when the app is terminated)
+        print('App is detached');
+        break;
+      case AppLifecycleState.hidden:
+        break;
+    }
+  }
+}
+
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding.instance.addObserver(AppLifecycleObserver());
+
   await requestStoragePermission();
   await requestPhonePermission();
   await requestNotificationPermission();
+
+  // await Firebase.initializeApp();
+  //
+  //
+  //
+  // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //   print(message.data['title']);
+  //   print(message.data['body']);
+  // });
+
+  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // FirebaseMessaging.instance.subscribeToTopic('nordic');
+  // print(await FirebaseMessaging.instance.getToken());
 
   await initializeService();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
