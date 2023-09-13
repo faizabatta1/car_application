@@ -215,7 +215,6 @@ class MainScreen extends StatelessWidget {
 
                         if(snapshot.data != null){
                           return Badge(
-                            isLabelVisible: !(snapshot.data!.getBool('notified') ?? true),
                             child: IconButton(
                               onPressed: ()async {
                                 SharedPreferences shared = await SharedPreferences.getInstance();

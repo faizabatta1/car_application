@@ -44,6 +44,7 @@ dependencies:
   fluttertoast:
   socket_io_client: ^2.0.3+1
   flutter_local_notifications: 15.1.1
+  location:
   firebase_core:
   firebase_messaging:
   device_info_plus: any

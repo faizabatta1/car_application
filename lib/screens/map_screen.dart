@@ -7,6 +7,7 @@ import 'package:car_app/services/map_service.dart';
 import 'package:car_app/services/zones_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
 import 'package:map_launcher/map_launcher.dart' as MX;
 import 'package:permission_handler/permission_handler.dart';
 
@@ -19,9 +20,9 @@ class MapsScreen extends StatefulWidget {
 }
 
 class _MapsScreenState extends State<MapsScreen> {
-  bool _chosenZone = false;
   Map? zone;
   late Future future;
+
 
   void initializePermission() async{
     if(await Permission.location.isDenied){
@@ -29,11 +30,18 @@ class _MapsScreenState extends State<MapsScreen> {
     }
   }
 
+  void initializeZone(Future xc) async{
+    zone = (await future).first;
+
+    setState(() {});
+  }
+
   @override
   void initState() {
     future = ZoneService.getAllZones();
     initializePermission();
     super.initState();
+    initializeZone(future);
   }
 
   @override
@@ -66,7 +74,6 @@ class _MapsScreenState extends State<MapsScreen> {
                       child: Text('Ingen soner ennå'),
                     );
                   }
-
                   return SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -76,9 +83,9 @@ class _MapsScreenState extends State<MapsScreen> {
                           child: ElevatedButton(
                             onPressed: () {
                               setState(() {
-                                _chosenZone = true;
                                 zone = e;
                               });
+
                             },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: ThemeHelper.buttonPrimaryColor,
@@ -100,18 +107,10 @@ class _MapsScreenState extends State<MapsScreen> {
                 return Container();
               },
             ),
-            if (_chosenZone)
+              if(zone != null)
               Expanded(
                 child: MapSample(zone: zone),
               ),
-            if(!_chosenZone)
-              Expanded(
-                child: Center(
-                  child: Text('Ingen kart ble valgt',style: TextStyle(
-                    fontSize: 20
-                  ),),
-                ),
-              )
           ],
         ),
       ),
@@ -139,6 +138,12 @@ class MapSampleState extends State<MapSample> {
     return FutureBuilder(
       future: MapService.downloadMapFeatures(widget.zone!['_id']),
       builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if(snapshot.connectionState == ConnectionState.waiting){
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
         if (snapshot.hasError) {
           return Center(
             child: Text(snapshot.error.toString().replaceAll('"', ''),style: TextStyle(
@@ -147,86 +152,91 @@ class MapSampleState extends State<MapSample> {
           );
         }
         if (snapshot.data != null) {
-          return GoogleMap(
-            mapType: MapType.hybrid,
-            initialCameraPosition: CameraPosition(
-                target: LatLng(double.parse(snapshot.data['latitude'].toString()),
-                    double.parse(snapshot.data['longitude'].toString())),
-                zoom: 14),
-            markers: _markers,
-            onMapCreated: (GoogleMapController controller) {
-              _controller = controller;
+          _markers.clear();
+          _polygons.clear();
+          final geoJsonText = snapshot.data['data'];
+          final geoJson = jsonDecode(geoJsonText);
 
-              final geoJsonText = snapshot.data['data'];
-              final geoJson = jsonDecode(geoJsonText);
+          List features = geoJson['features'];
+          print(features.length.toString());
+          for(var feature in features){
+            if(feature['geometry']['type'] == 'Polygon'){
+              var coords = feature['geometry']['coordinates'];
+              List<LatLng> points = [];
+              for(var coord in coords[0]){
+                points.add(LatLng(coord[1],coord[0]));
+              }
+              Polygon polygon = Polygon(
+                polygonId: PolygonId('${Random().nextInt(100000000).toString()}'),
+                points: points,
+                fillColor: HexColor.fromHex(feature['properties']['color'] ?? "#5088DD").withOpacity(0.3),
+                strokeWidth: 0,
+                onTap: () async{
+                  final availableMaps = await MX.MapLauncher.installedMaps;
+                  print(availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
 
-              List features = geoJson['features'];
-              print(features.length.toString());
-              for(var feature in features){
-                if(feature['geometry']['type'] == 'Polygon'){
-                  var coords = feature['geometry']['coordinates'];
-                  List<LatLng> points = [];
-                  for(var coord in coords[0]){
-                    points.add(LatLng(coord[1],coord[0]));
-                  }
-                  Polygon polygon = Polygon(
-                    polygonId: PolygonId('${Random().nextInt(100000000).toString()}'),
-                    points: points,
-                    fillColor: HexColor.fromHex(feature['properties']['color'] ?? "#5088DD").withOpacity(0.3),
-                    strokeWidth: 0,
+                  await availableMaps.first.showMarker(
+                    coords: MX.Coords(points[0].latitude, points[0].longitude),
+                    title: "Ocean Beach",
+                  );
+                },
+                consumeTapEvents: true,
+                zIndex: 5,
+
+              );
+
+              // setState(() {
+                _polygons.add(polygon);
+              // });
+            }else if(feature['geometry']['type'] == 'Point'){
+
+              final List<dynamic> markerData = feature['geometry']['coordinates'];
+              final LatLng markerLatLng = LatLng(
+                double.parse(markerData[1].toString()),
+                double.parse(markerData[0].toString()),
+              );
+
+              Marker marker = Marker(
+                markerId: MarkerId('${Random().nextInt(100000000).toString()}'),
+                position: markerLatLng,
+                // Add other marker properties as needed
+                infoWindow: InfoWindow(
+                    title: feature['properties']['title'] ?? 'Tittel',
+                    snippet: feature['properties']['body'] ?? 'Markeringsutdrag',
                     onTap: () async{
                       final availableMaps = await MX.MapLauncher.installedMaps;
                       print(availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
 
                       await availableMaps.first.showMarker(
-                        coords: MX.Coords(points[0].latitude, points[0].longitude),
-                        title: "Ocean Beach",
+                        coords: MX.Coords(markerData[1], markerData[0]),
+                        title: "Nordic",
                       );
-                    },
-                    consumeTapEvents: true,
-                    zIndex: 5,
+                    }
+                ),
+              );
 
-                  );
+              // setState(() {
+                _markers.add(marker);
+              // });
+            }
+          }
 
-                  setState(() {
-                    _polygons.add(polygon);
-                  });
-                }else if(feature['geometry']['type'] == 'Point'){
-
-                  final List<dynamic> markerData = feature['geometry']['coordinates'];
-                  final LatLng markerLatLng = LatLng(
-                    double.parse(markerData[1].toString()),
-                    double.parse(markerData[0].toString()),
-                  );
-
-                  Marker marker = Marker(
-                    markerId: MarkerId('${Random().nextInt(100000000).toString()}'),
-                    position: markerLatLng,
-                    // Add other marker properties as needed
-                    infoWindow: InfoWindow(
-                      title: feature['properties']['title'] ?? 'Tittel',
-                      snippet: feature['properties']['body'] ?? 'Markeringsutdrag',
-                      onTap: () async{
-                        final availableMaps = await MX.MapLauncher.installedMaps;
-                        print(availableMaps); // [AvailableMap { mapName: Google Maps, mapType: google }, ...]
-
-                        await availableMaps.first.showMarker(
-                          coords: MX.Coords(markerData[1], markerData[0]),
-                          title: "Nordic",
-                        );
-                      }
-                    ),
-                  );
-
-                  setState(() {
-                    _markers.add(marker);
-                  });
-                }
-              }
-
+          return GoogleMap(
+            mapType: MapType.hybrid,
+            initialCameraPosition: CameraPosition(
+                target: LatLng(double.parse(snapshot.data['latitude'].toString()),
+                    double.parse(snapshot.data['longitude'].toString())),
+                zoom: 12),
+            markers: _markers,
+            onMapCreated: (GoogleMapController controller) async{
+              _controller = controller;
             },
             polygons: _polygons,
-          );
+
+            myLocationEnabled: true,
+            myLocationButtonEnabled: true,
+            mapToolbarEnabled: true,
+    );
         }
 
         return Container();
