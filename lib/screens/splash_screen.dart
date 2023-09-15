@@ -30,9 +30,17 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: ThemeHelper.buttonPrimaryColor,
+        color: Colors.white60,
         alignment: Alignment.center,
-        child: Image.asset('assets/logo.png'),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset('assets/splash.png'),
+            SizedBox(height: 16,),
+            Text('En del av Gensolv.no')
+          ],
+        ),
       ),
     );
   }

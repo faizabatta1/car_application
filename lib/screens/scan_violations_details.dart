@@ -202,6 +202,7 @@ class _ViolationsDetailsState extends State<ScanViolationsDetails> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white
                       ),
                     ),
                   ),

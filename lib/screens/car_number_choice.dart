@@ -33,8 +33,8 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
 
   Future<void> getCarData() async {
     try {
-      // Replace 'https://nordic.bilsjekk.in/api/cars' with your API endpoint
-      var response = await http.get(Uri.parse('https://nordic.bilsjekk.in/api/cars'));
+      // Replace 'https://test.bilsjekk.in/api/cars' with your API endpoint
+      var response = await http.get(Uri.parse('https://test.bilsjekk.in/api/cars'));
       if (response.statusCode == 200) {
         // Parse the response body and update the carDataList
         List<dynamic> data = jsonDecode(response.body);
@@ -66,6 +66,7 @@ class _CarNumberChoiceScreenState extends State<CarNumberChoiceScreen> {
               ), // Show the custom info dialog
             );
           },
+          shape: CircleBorder(),
           child: Icon(Icons.info_outline,size: 30,color: Colors.black,),
           backgroundColor: Colors.amber,
         ),

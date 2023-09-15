@@ -34,7 +34,8 @@ class _UploadViolationImageState extends State<ScanUploadViolationImage> {
         return AlertDialog(
           title: Text('Takk skjemaet er sendt.'),
           content: Text('Skjema er sendt!.',style: TextStyle(
-              backgroundColor: ThemeHelper.buttonPrimaryColor
+              backgroundColor: ThemeHelper.buttonPrimaryColor,
+            color: Colors.black
           ),),
           actions: [
             TextButton(
@@ -63,8 +64,12 @@ class _UploadViolationImageState extends State<ScanUploadViolationImage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Feil'),
-        content: Text('En feil oppstod: $error'),
+        title: Text('Feil',style: TextStyle(
+          color: Colors.black
+        ),),
+        content: Text('En feil oppstod: $error',style: TextStyle(
+          color: Colors.white
+        ),),
         actions: [
           TextButton(
             onPressed: () {
@@ -132,6 +137,7 @@ class _UploadViolationImageState extends State<ScanUploadViolationImage> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white
                     ),
                   ),
                 ),
@@ -174,6 +180,7 @@ class _UploadViolationImageState extends State<ScanUploadViolationImage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
+                        color: Colors.white
                       ),
                     ),
                   )

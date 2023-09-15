@@ -130,6 +130,7 @@ class _UploadViolationImageState extends State<UploadViolationImage> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
+                      color: Colors.white
                     ),
                   ),
                 ),
@@ -171,6 +172,7 @@ class _UploadViolationImageState extends State<UploadViolationImage> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
+                          color: Colors.white
                         ),
                       ),
                     )

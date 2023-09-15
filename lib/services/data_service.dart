@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 
 
 class DataService{
-  static final String baseUrl = 'https://nordic.bilsjekk.in/api';
+  static final String baseUrl = 'https://test.bilsjekk.in/api';
   static Future<String?> getInformationData({required String part}) async{
     try{
       final url = Uri.parse('$baseUrl/info/$part');

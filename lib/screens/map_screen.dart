@@ -95,7 +95,7 @@ class _MapsScreenState extends State<MapsScreen> {
                             child: Text(
                               e['name'],
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
+                                  fontSize: 18,color: Colors.white, fontWeight: FontWeight.bold),
                             ),
                           ),
                         );

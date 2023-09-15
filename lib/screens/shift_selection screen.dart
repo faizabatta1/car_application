@@ -35,7 +35,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
   List<String> selectedZones = [];
   String trafficViolations = "";
   List<Map<String, dynamic>> zones = [];
-  List<String> daysOfWeek = ['Mandag', 'Tirsdag', 'Torsdag', 'Onsdag', 'Fredag', 'Søndag', 'Lørdag'];
+  List<String> daysOfWeek = ['Mandag', 'Tirsdag','Onsdag', 'Torsdag', 'Fredag','Lørdag', 'Søndag'];
   List<String> periods = ['Dag','Kveld','Natt'];
 
   List<Map<String,dynamic>> filteredZones = [];
@@ -48,7 +48,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
 
   Future<void> getZoneData() async {
     try {
-      var response = await http.get(Uri.parse('https://nordic.bilsjekk.in/api/locations'));
+      var response = await http.get(Uri.parse('https://test.bilsjekk.in/api/locations'));
       if (response.statusCode == 200) {
         List<dynamic> data = jsonDecode(response.body);
         setState(() {
@@ -79,6 +79,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
               ), // Show the custom info dialog
             );
           },
+          shape: CircleBorder(),
           child: Icon(Icons.info_outline,size:30,color: Colors.black,),
           backgroundColor: Colors.amber,
         ),
@@ -144,7 +145,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                   ),
                   SizedBox(height: 8),
                   buildPeriodButtons(),
-                  SizedBox(height: 20),
+                  SizedBox(height: 12),
                   Row(
                     children: [
                       Text('Velg Sted',style: TextStyle(
@@ -154,9 +155,9 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
 
                     ],
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: 12),
                   buildMultiSelectZoneDropdown(),
-                  SizedBox(height: 20),
+                  SizedBox(height: 12),
                   Form(
                     key: _formKey,
                     child: TextFormField(
@@ -242,7 +243,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
                     ),
                     child: Text(
                       'Sende inn',
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 18,color: Colors.white),
                     ),
                   ),
                 ],
@@ -309,7 +310,9 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
               primary: selectedZones.contains(e['location'])? ThemeHelper.buttonPrimaryColor : Colors.black54,
               minimumSize: Size(90,30)
           ),
-          child: Text(e['location']),
+          child: Text(e['location'],style: TextStyle(
+            color: Colors.white
+          ),),
         );
       }).toList(),
     ));
@@ -457,7 +460,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
             primary: selectedDay == day ? ThemeHelper.buttonPrimaryColor : Colors.black54,
             minimumSize: Size(40,30)
           ),
-          child: Text(day),
+          child: Text(day,style: TextStyle(color: Colors.white),),
         );
       }).toList(),
     );
@@ -501,7 +504,7 @@ class _ShiftChoiceScreenState extends State<ShiftChoiceScreen> {
               primary: selectedPeriod == period ? ThemeHelper.buttonPrimaryColor : Colors.black54,
               minimumSize: Size(50, 30)
           ),
-          child: Text(period),
+          child: Text(period,style: TextStyle(color: Colors.white)),
         );
 
       }).toList(),

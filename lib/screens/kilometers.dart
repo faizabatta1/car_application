@@ -132,7 +132,9 @@ class KilometerScreen extends StatelessWidget {
                           }
                         },
                         icon: Icon(Icons.arrow_forward),
-                        label: Text('Sende inn'),
+                        label: Text('Sende inn',style: TextStyle(
+                          color: Colors.white
+                        ),),
                         style: ElevatedButton.styleFrom(
                           primary: ThemeHelper.buttonPrimaryColor,
                           textStyle: TextStyle(
@@ -172,7 +174,9 @@ class KilometerScreen extends StatelessWidget {
                           );
                         },
                         icon: Icon(Icons.skip_next),
-                        label: Text('Hopp over'),
+                        label: Text('Hopp over',style: TextStyle(
+                          color: Colors.white
+                        ),),
                         style: ElevatedButton.styleFrom(
                           primary: Colors.green,
                           textStyle: TextStyle(

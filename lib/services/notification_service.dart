@@ -22,7 +22,7 @@ class NotificationService{
     String serial = await getAndroidId();
 
     try{
-      final Uri uri = Uri.parse('https://nordic.bilsjekk.in/api/notifications/imei/$serial');
+      final Uri uri = Uri.parse('https://test.bilsjekk.in/api/notifications/imei/$serial');
       final response = await http.get(uri);
 
       if(response.statusCode == 200){

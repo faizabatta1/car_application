@@ -18,7 +18,7 @@ class PostalService{
       print(image);
 
 
-      final Uri uri = Uri.parse("https://nordic.bilsjekk.in/api/postals");
+      final Uri uri = Uri.parse("https://test.bilsjekk.in/api/postals");
       var request = http.MultipartRequest('POST', uri);
       request.files.add(await http.MultipartFile.fromPath('violation', image));
       request.fields['number'] = number;

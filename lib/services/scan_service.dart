@@ -11,7 +11,7 @@ class ScanService{
     required String image,
   }) async {
     try{
-      final Uri uri = Uri.parse("https://nordic.bilsjekk.in/api/scans");
+      final Uri uri = Uri.parse("https://test.bilsjekk.in/api/scans");
       var request = http.MultipartRequest('POST', uri);
       request.files.add(await http.MultipartFile.fromPath('violation', image));
       request.fields['number'] = number;

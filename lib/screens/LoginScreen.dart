@@ -82,7 +82,10 @@ class SignInScreen extends StatelessWidget {
                       backgroundColor: ThemeHelper.buttonPrimaryColor,
                       minimumSize: Size(double.infinity, 40)
                     ),
-                    child: Text('Logg Inn'.toUpperCase(), style: TextStyle(fontSize: 18)),
+                    child: Text('Logg Inn'.toUpperCase(), style: TextStyle(
+                        fontSize: 18,
+                      color: Colors.white
+                    )),
                   ),
 
                 ],
