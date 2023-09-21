@@ -3,17 +3,18 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:car_app/helpers/theme_helper.dart';
+import 'package:car_app/screens/machine_issue.dart';
 import 'package:car_app/screens/splash_screen.dart';
+import 'package:car_app/services/notification_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart' as SC;
 import 'package:flutter/services.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 late AndroidNotificationChannel channel;
 late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -25,7 +26,7 @@ Future<void> setupFlutterNotifications() async {
     return;
   }
   channel = const AndroidNotificationChannel(
-    'Nordic Channel 2', // id
+    'Nordic_Channel_4', // id
     'Nordic Notifications', // title
     description:
     'This channel is used for important notifications.', // description
@@ -35,6 +36,26 @@ Future<void> setupFlutterNotifications() async {
   );
 
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  AndroidInitializationSettings androidInitializationSettings =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+  InitializationSettings initializationSettings = InitializationSettings(
+    android: androidInitializationSettings,
+  );
+
+  void onDidReceiveNotificationResponse(NotificationResponse notificationResponse){
+    if(notificationResponse.payload != null){
+      Map data = jsonDecode(notificationResponse.payload!);
+
+      Navigator.of(navigatorKey.currentState!.context).push(
+          MaterialPageRoute(builder: (context) => MachineIssue())
+      );
+    }
+  }
+
+  flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+    onDidReceiveNotificationResponse: onDidReceiveNotificationResponse ,
+  );
 
   /// Create an Android Notification Channel.
   ///
@@ -53,6 +74,8 @@ Future<void> setupFlutterNotifications() async {
 }
 
 Future<void> showFlutterNotification(String title,String body) async {
+
+
   if (!kIsWeb) {
     flutterLocalNotificationsPlugin.show(
       Random().nextInt(1000000),
@@ -62,6 +85,13 @@ Future<void> showFlutterNotification(String title,String body) async {
         android: AndroidNotificationDetails(
           channel.id,
           channel.name,
+            actions: <AndroidNotificationAction>[
+              AndroidNotificationAction(
+                'id',
+                'action title',
+                showsUserInterface: true
+              )
+            ],
           playSound: true,
           channelDescription: channel.description,
           // TODO add a proper drawable resource to android, for now using
@@ -71,6 +101,58 @@ Future<void> showFlutterNotification(String title,String body) async {
           priority: Priority.max
         ),
       ),
+    );
+
+
+  }
+}
+Future<void> showFlutterFirebaseNotification(RemoteMessage message) async {
+  RemoteNotification? notification = message.notification;
+  AndroidNotification? androidNotification = notification?.android;
+
+  print(message);
+  print(notification);
+  print(androidNotification);
+  if (!kIsWeb) {
+
+    flutterLocalNotificationsPlugin.show(
+        message.data.hashCode,
+        message.data['notes'],
+        message.data['issue'],
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          channel.id,
+          channel.name,
+          playSound: true,
+          actions: <AndroidNotificationAction>[
+            AndroidNotificationAction(
+                'id',
+                'open issue',
+                showsUserInterface: true
+            )
+          ],
+
+          subText: "this is my sub text",
+          styleInformation: BigTextStyleInformation(
+            '<h1>Big Text   Content</h1>',
+            contentTitle: '<font color="red">Title Html</font>',
+            summaryText: 'Summary Text',
+            htmlFormatBigText: true,
+            htmlFormatContentTitle: true,
+            htmlFormatContent: true,
+            htmlFormatTitle: true,
+            htmlFormatSummaryText: true
+          ),
+
+          channelDescription: channel.description,
+          // TODO add a proper drawable resource to android, for now using
+          //      one that already exists in example app.
+          icon: '@drawable/ic_launcher_foreground',
+          importance: Importance.high,
+          priority: Priority.max
+        ),
+      ),
+      payload: jsonEncode(message.data)
     );
 
 
@@ -100,85 +182,6 @@ Future<String> getAndroidId() async {
   }
 }
 
-// Future initializeSocketNotificationChannel() async{
-//   String identifier = await getAndroidId();
-//   // Connect to the WebSocket server
-//   IO.Socket socket = IO.io(
-//     'wss://test.bilsjekk.in',
-//     IO.OptionBuilder()
-//       .setTransports(['websocket'])
-//       .disableAutoConnect()
-//       .build()
-//   ); // Replace with your server address
-//   socket.onConnect((_) {
-//     print('Connection established');
-//     socket.emit('imei', identifier);
-//   });
-//   socket.onDisconnect((_){
-//     print('Connection Disconnection');
-//     socket.close();
-//     socket.destroy();
-//   });
-//   socket.onConnectError((err) async => print(err.toString()) );
-//   socket.onError((err) async => print(err.toString()));
-//
-//   // Listen for messages from the server
-//   socket.on('devices', (data) async{
-//     String identifier = await getAndroidId();
-//     Map decoded = jsonDecode(data);
-//     if((decoded['imeis'] as List).contains(identifier)){
-//       await showFlutterNotification(decoded['title'], decoded['body']);
-//     }
-//   });
-//
-//   socket.on('users',(data) async{
-//     Map decoded = jsonDecode(data);
-//     await showFlutterNotification(decoded['title'], decoded['body']);
-//   });
-//
-//   socket.on('zones',(data) async{
-//     String identifier = await getAndroidId();
-//     Map decoded = jsonDecode(data);
-//     print(decoded);
-//     if((decoded['imeis'] as List).contains(identifier)){
-//       await showFlutterNotification(decoded['title'], decoded['body']);
-//     }
-//   });
-//
-//   if(!socket.active){
-//     socket.connect();
-//   }
-//}
-
-// @pragma('vm:entry-point')
-// Future onStart(ServiceInstance instance) async{
-//   DartPluginRegistrant.ensureInitialized();
-//   await setupFlutterNotifications();
-//
-//   try{
-//     await initializeSocketNotificationChannel();
-//   }catch(error){
-//     print(error.toString());
-//     await showFlutterNotification('Error', error.toString());
-//   }
-// }
-
-// Future initializeService() async{
-//   final service = FlutterBackgroundService();
-//   if(!(await service.isRunning())){
-//     await service.configure(
-//         iosConfiguration: IosConfiguration(),
-//         androidConfiguration: AndroidConfiguration(
-//             onStart: onStart,
-//             autoStart: true,
-//             autoStartOnBoot: true,
-//             isForegroundMode: true
-//         )
-//     );
-//
-//     await service.startService();
-//   }
-// }
 
 Future<void> requestStoragePermission() async {
   if(await Permission.storage.isDenied){
@@ -201,24 +204,30 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if(message.data['type'] == 'users'){
     print(message.data['title']);
     print(message.data['body']);
-    await showFlutterNotification(message.data['title'], message.data['body']);
+    await showFlutterNotification(message.data['title'],message.data['body']);
   }else if(message.data['type'] == 'device'){
     String encoded = message.data['imei'];
     List imeis = jsonDecode(encoded);
     if(imeis.contains(await getAndroidId())){
-      await showFlutterNotification(message.data['title'], message.data['body']);
+      await showFlutterNotification(message.data['title'],message.data['body']);
     }
   }else if(message.data['type'] == 'zone'){
     String encoded = message.data['imeis'];
     String imei = await getAndroidId();
     List imeis = jsonDecode(encoded);
     if(imeis.contains(imei)){
-      await showFlutterNotification(message.data['title'], message.data['body']);
+      await showFlutterNotification(message.data['title'],message.data['body']);
     }
+  }else if(message.data['type'] == 'machine'){
+    print("data is ${message.data}");
+    await showFlutterFirebaseNotification(message);
+  }else if(message.data['type'] == 'issue_closed'){
+    await showFlutterNotification(message.data['title'], message.data['body']);
   }else{
     print('not');
   }
 }
+
 
 
 class AppLifecycleObserver extends WidgetsBindingObserver {
@@ -249,15 +258,26 @@ class AppLifecycleObserver extends WidgetsBindingObserver {
   }
 }
 
+GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
   WidgetsBinding.instance.addObserver(AppLifecycleObserver());
 
   await requestStoragePermission();
   await requestPhonePermission();
-  await requestNotificationPermission();
+  // await requestNotificationPermission();
 
   await Firebase.initializeApp();
+  NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
   await setupFlutterNotifications();
 
 
@@ -265,20 +285,24 @@ Future<void> main() async{
     if(message.data['type'] == 'users'){
       print(message.data['title']);
       print(message.data['body']);
-      await showFlutterNotification(message.data['title'], message.data['body']);
+      await showFlutterNotification(message.data['title'],message.data['body']);
     }else if(message.data['type'] == 'device'){
       String encoded = message.data['imei'];
       List imeis = jsonDecode(encoded);
       if(imeis.contains(await getAndroidId())){
-        await showFlutterNotification(message.data['title'], message.data['body']);
+        await showFlutterNotification(message.data['title'],message.data['body']);
       }
     }else if(message.data['type'] == 'zone'){
       String encoded = message.data['imeis'];
       String imei = await getAndroidId();
       List imeis = jsonDecode(encoded);
       if(imeis.contains(imei)){
-        await showFlutterNotification(message.data['title'], message.data['body']);
+        await showFlutterNotification(message.data['title'],message.data['body']);
       }
+    }else if(message.data['type'] == 'machine'){
+      await showFlutterFirebaseNotification(message);
+    }else if(message.data['type'] == 'issue_closed'){
+      await showFlutterNotification(message.data['title'], message.data['body']);
     }else{
       print('not');
     }
@@ -287,7 +311,18 @@ Future<void> main() async{
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   FirebaseMessaging.instance.subscribeToTopic('nordic');
-  print(await FirebaseMessaging.instance.getToken());
+
+  NotificationAppLaunchDetails? notificationAppLaunchDetails = await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+  if(notificationAppLaunchDetails?.didNotificationLaunchApp ?? false){
+    print('Strange Act .......................');
+    if(notificationAppLaunchDetails?.notificationResponse?.payload != null){
+      Navigator.of(navigatorKey.currentState!.context).push(
+          MaterialPageRoute(builder: (context) => MachineIssue())
+      );
+    }
+  }else{
+    print('noooooooooooooooooooooooooooooo');
+  }
 
   // await initializeService();
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
@@ -331,6 +366,7 @@ class _AppEntryPointState extends State<AppEntryPoint> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'BilSjekk',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

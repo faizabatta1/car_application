@@ -1,4 +1,5 @@
 import 'package:car_app/screens/MainScreen.dart';
+import 'package:car_app/screens/machine_issue.dart';
 import 'package:car_app/screens/notifications_screen.dart';
 import 'package:car_app/services/user_service.dart';
 import 'package:flutter/material.dart';
@@ -13,9 +14,9 @@ class SignInScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
     return Scaffold(
-      backgroundColor: Color(0xFFDDDDDD),
 
-      body: Padding(
+      body: Container(
+        color: Colors.white60,
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
           child: Stack(
@@ -87,6 +88,45 @@ class SignInScreen extends StatelessWidget {
                       color: Colors.white
                     )),
                   ),
+                  SizedBox(height: 12,),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Divider(
+                          thickness: 3,
+                        ),
+                      ),
+                      SizedBox(width: 4,),
+                      Text('Or',style: TextStyle(
+                        fontSize: 18
+                      ),),
+                      SizedBox(width: 4,),
+                      Expanded(
+                        child: Divider(
+                          thickness: 3,
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 12,),
+                  Container(
+                    alignment: Alignment.center,
+                    child: TextButton(
+                      onPressed: (){
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => MachineIssue())
+                        );
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.purple,
+                        minimumSize: Size(double.infinity,40)
+                      ),
+                      child: Text('Machines Issue',style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18
+                      ),),
+                    ),
+                  )
 
                 ],
               ),

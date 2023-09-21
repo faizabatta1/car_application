@@ -11,40 +11,34 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
-
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         body: RefreshIndicator(
-          onRefresh: () async{
-            setState(() {
-
-            });
+          onRefresh: () async {
+            setState(() {});
           },
           child: FutureBuilder(
             future: NotificationService.getAllNotifications(),
             builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-              if(snapshot.connectionState == ConnectionState.waiting){
+              if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
                   child: CircularProgressIndicator(),
                 );
               }
 
-              if(snapshot.hasError){
+              if (snapshot.hasError) {
                 return Center(
                   child: Text('Something Went Wrong'),
                 );
               }
 
-              if(snapshot.data != null){
+              if (snapshot.data != null) {
                 return ListView.builder(
                   padding: EdgeInsets.all(8.0),
                   itemCount: snapshot.data.length, // Replace with your desired number of items
                   itemBuilder: (context, index) {
-
-
                     final notification = (snapshot.data as List).reversed.toList()[index];
                     return _buildNotification(
                       title: notification['title'],
@@ -67,7 +61,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 Widget _buildNotification({
   required String title,
   required String message,
-  required String time
+  required String time,
 }) {
   return Card(
     elevation: 5.0,
@@ -80,18 +74,39 @@ Widget _buildNotification({
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.notifications_none_outlined, size: 48.0, color: Colors.white),
+          Icon(
+            Icons.notifications_none_outlined,
+            size: 48.0,
+            color: Colors.white,
+          ),
           SizedBox(width: 16.0),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18.0,
+                    color: Colors.white,
+                  ),
+                ),
                 SizedBox(height: 8.0),
-                Text(message),
+                Text(
+                  message,
+                  style: TextStyle(color: Colors.white),
+                ),
                 SizedBox(height: 8.0),
                 Align(
-                    child: Text(time, style: TextStyle(fontWeight:FontWeight.bold,fontSize: 12.0, color: Colors.white)),
+                  child: Text(
+                    time,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12.0,
+                      color: Colors.white,
+                    ),
+                  ),
                   alignment: Alignment.centerRight,
                 ),
               ],
@@ -102,4 +117,3 @@ Widget _buildNotification({
     ),
   );
 }
-

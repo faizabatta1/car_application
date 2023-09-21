@@ -38,8 +38,6 @@ class _UploadViolationImageState extends State<UploadViolationImage> {
             TextButton(
               onPressed: () async{
                 Navigator.pop(context);
-                SharedPreferences shared = await SharedPreferences.getInstance();
-                if (shared.containsKey('token')) await shared.remove('token');
 
                 Navigator.push(
                     context,
