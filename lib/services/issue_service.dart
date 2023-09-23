@@ -1,69 +1,63 @@
 import 'dart:convert';
 
 import 'package:car_app/models/issue_data.dart';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class IssueService{
-
+class IssueService {
   static String baseUrl = "https://test.bilsjekk.in";
 
-  static Future getAllNotifications() async{
-
-    try{
-      final Uri uri = Uri.parse('https://test.bilsjekk.in/api/issueNotifications');
+  static Future getAllNotifications() async {
+    try {
+      final Uri uri =
+          Uri.parse('https://test.bilsjekk.in/api/issueNotifications');
       final response = await http.get(uri);
 
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         return jsonDecode(response.body);
-      }else{
+      } else {
         throw "Invalid Status Code";
       }
-    }catch(error){
+    } catch (error) {
       throw error.toString();
     }
   }
 
-  static Future<List> getAllCurrentIssues()async {
-    try{
+  static Future<List> getAllCurrentIssues() async {
+    try {
       final Uri uri = Uri.parse('https://test.bilsjekk.in/api/issues/current');
       final response = await http.get(uri);
 
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         List issues = jsonDecode(response.body);
         print(issues);
         return issues;
-      }else{
+      } else {
         throw response.body;
       }
-    }catch(error){
+    } catch (error) {
       throw error.toString();
     }
   }
 
-  static Future<List> getAllCompletedIssues()async {
-    try{
+  static Future<List> getAllCompletedIssues() async {
+    try {
       final Uri uri = Uri.parse('https://test.bilsjekk.in/api/issues/complete');
       final response = await http.get(uri);
 
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         return jsonDecode(response.body);
-      }else{
-        throw response.body ;
+      } else {
+        throw response.body;
       }
-    }catch(error){
+    } catch (error) {
       throw error.toString();
     }
   }
 
   static Future uploadMachineIssueFixReport(
-      IssueData issueData,
-      String imagePath,
-      Map<String,String> data
-      ) async{
-    try{
+      IssueData issueData, String imagePath, Map<String, String> data) async {
+    try {
       final Uri uri = Uri.parse("$baseUrl/api/issues/${issueData.id}/report");
       var request = http.MultipartRequest('POST', uri);
 
@@ -81,7 +75,8 @@ class IssueService{
         'serial': issueData.serial
       });
 
-      final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+      final SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
       final String? token = sharedPreferences.getString('token');
       request.headers['token'] = token ?? '';
 
@@ -93,32 +88,25 @@ class IssueService{
       } else {
         throw await response.stream.bytesToString();
       }
-    }catch(error){
+    } catch (error) {
       print(error.toString());
       throw error.toString();
     }
   }
 
-
-  static Future notifyExternalSource(String reason,String id) async{
-    try{
+  static Future notifyExternalSource(String reason, String id) async {
+    try {
       final Uri uri = Uri.parse('$baseUrl/api/issues/$id/external/notify');
-      final response = await http.post(
-        uri,
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8'
-        },
-        body: jsonEncode({
-          'reason': reason
-        })
-      );
+      final response = await http.post(uri,
+          headers: {'Content-Type': 'application/json; charset=utf-8'},
+          body: jsonEncode({'reason': reason}));
 
-      if(response.statusCode == 200){
+      if (response.statusCode == 200) {
         return;
-      }else{
+      } else {
         throw response.body;
       }
-    }catch(error){
+    } catch (error) {
       throw error.toString();
     }
   }

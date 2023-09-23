@@ -62,7 +62,7 @@
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="Nordic_Channel_4" />
+            android:value="Nordic_Channel_5" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"

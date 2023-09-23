@@ -1,14 +1,13 @@
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/theme_helper.dart';
 
-
 class TermsAndConditionsScreen extends StatefulWidget {
   @override
-  State<TermsAndConditionsScreen> createState() => _TermsAndConditionsScreenState();
+  State<TermsAndConditionsScreen> createState() =>
+      _TermsAndConditionsScreenState();
 }
 
 class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
@@ -27,15 +26,16 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
     }
   }
 
-  void fetchDeviceId() async{
+  void fetchDeviceId() async {
     String id = await getAndroidId();
     setState(() {
       _device = id;
     });
   }
 
-  void fetchUserId() async{
-    final SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+  void fetchUserId() async {
+    final SharedPreferences sharedPreferences =
+        await SharedPreferences.getInstance();
     String userId = sharedPreferences.getString('userId') ?? '';
     setState(() {
       _userId = userId;
@@ -139,23 +139,19 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                             color: Colors.grey,
                           ),
                         ),
-
                         TextButton(
-                          onPressed: (){
-                            Clipboard.setData(ClipboardData(text: _device)).then((value){
+                          onPressed: () {
+                            Clipboard.setData(ClipboardData(text: _device))
+                                .then((value) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Enhets-ID kopiert'))
-                              );
+                                  SnackBar(content: Text('Enhets-ID kopiert')));
                             });
                           },
-                          child: Text(
-                            'Kopiere'
-                          ),
+                          child: Text('Kopiere'),
                         )
                       ],
                     ),
                     Divider(),
-
                     SizedBox(height: 120.0),
                     Container(
                       alignment: Alignment.center,

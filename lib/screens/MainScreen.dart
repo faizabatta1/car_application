@@ -7,18 +7,13 @@ import 'package:car_app/screens/car_number_choice.dart';
 import 'package:car_app/screens/notifications_screen.dart';
 import 'package:car_app/screens/splash_screen.dart';
 import 'package:car_app/screens/swipper_switch.dart';
-import 'package:car_app/screens/map_screen.dart';
-import 'package:car_app/screens/violations_details.dart';
 import 'package:car_app/services/driver_service.dart';
 import 'package:car_app/widgets/custom_bottom.dart';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-
 
 class MainScreen extends StatelessWidget {
   @override
@@ -35,27 +30,27 @@ class MainScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Image.asset(
-                    'assets/bil.png',
+                  'assets/bil.png',
                   width: 220,
                   height: 220,
                 ),
-
                 FutureBuilder(
                   future: SharedPreferences.getInstance(),
-                  builder: (BuildContext context, AsyncSnapshot<SharedPreferences> snapshot) {
-                    if(snapshot.connectionState == ConnectionState.waiting){
+                  builder: (BuildContext context,
+                      AsyncSnapshot<SharedPreferences> snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return Center(
                         child: CircularProgressIndicator(),
                       );
                     }
 
-                    if(snapshot.hasError){
+                    if (snapshot.hasError) {
                       return Center(
                         child: Text("Noe gikk galt"),
                       );
                     }
 
-                    if(snapshot.data != null){
+                    if (snapshot.data != null) {
                       return Center(
                         child: Text(
                           'Hei ${snapshot.data!.getString('username')}',
@@ -75,17 +70,22 @@ class MainScreen extends StatelessWidget {
                   height: 170,
                   padding: EdgeInsets.all(4.0),
                   decoration: BoxDecoration(
-                    color: Color(0xFFECE9E9),
-                    borderRadius: BorderRadius.circular(12.0)
-                  ),
+                      color: Color(0xFFECE9E9),
+                      borderRadius: BorderRadius.circular(12.0)),
                   child: Text(
                     'Du skal alltid se over bilen og forsikre deg om at den er iht. Reglement før du kjører ut. Det erdu som sjåfør som er ansvarlig for at bilen du kjører er I forsvalig stand.Blir du stoppet av politi / bilsakkyndig I bil som ikke er I forsvarlig stand, er det du som sjåførsom blir holdt ansvarlig',
                     textAlign: TextAlign.justify,
                     textWidthBasis: TextWidthBasis.parent,
-                    style: TextStyle(fontSize: 18, fontFamily:'Birco',color: Colors.black,fontWeight: FontWeight.w400),
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontFamily: 'Birco',
+                        color: Colors.black,
+                        fontWeight: FontWeight.w400),
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 SizedBox(
                   height: 60,
                   child: Row(
@@ -94,8 +94,11 @@ class MainScreen extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () {
                             // Navigate to Form 1 screen to fill the form
-                            Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => CarNumberChoiceScreen()));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        CarNumberChoiceScreen()));
                           },
                           child: Container(
                             height: 60,
@@ -105,74 +108,92 @@ class MainScreen extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.drive_eta,color: Colors.white,),
-                                Text('Skjema',style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white
-                                ),)
+                                Icon(
+                                  Icons.drive_eta,
+                                  color: Colors.white,
+                                ),
+                                Text(
+                                  'Skjema',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                )
                               ],
                             ),
                           ),
-
                         ),
                       ),
-
-                      SizedBox(width: 8,),
+                      SizedBox(
+                        width: 8,
+                      ),
                       Expanded(
                         child: GestureDetector(
-                          onTap: () async{
-                            if(await canLaunchUrl(Uri.parse('https://skademelding.naf.no/opprett'))){
-                              launchUrl(Uri.parse('https://skademelding.naf.no/opprett'));
+                          onTap: () async {
+                            if (await canLaunchUrl(Uri.parse(
+                                'https://skademelding.naf.no/opprett'))) {
+                              launchUrl(Uri.parse(
+                                  'https://skademelding.naf.no/opprett'));
                             }
                           },
                           child: Container(
-                            height: 60,
+                              height: 60,
                               color: ThemeHelper.buttonPrimaryColor,
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.web,color: Colors.white,),
-                                  SizedBox(width: 8.0,),
-                                  Text('Skademelding',style: TextStyle(
-                                    fontSize: 16,
+                                  Icon(
+                                    Icons.web,
                                     color: Colors.white,
-                                    fontWeight: FontWeight.bold
-                                  ),)
+                                  ),
+                                  SizedBox(
+                                    width: 8.0,
+                                  ),
+                                  Text(
+                                    'Skademelding',
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  )
                                 ],
-                              )
-                          ),
+                              )),
                         ),
                       ),
-
                     ],
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
               ],
             ),
-
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Align(
                 alignment: Alignment.topLeft,
-                child:                   Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
-                      onTap: () async{
-                        SharedPreferences shared = await SharedPreferences.getInstance();
-                        if (shared.containsKey('token')) await shared.remove('token');
+                      onTap: () async {
+                        SharedPreferences shared =
+                            await SharedPreferences.getInstance();
+                        if (shared.containsKey('token'))
+                          await shared.remove('token');
 
                         Navigator.pushReplacement(
                           context,
                           PageRouteBuilder(
-                            pageBuilder: (context, animation, secondaryAnimation) {
+                            pageBuilder:
+                                (context, animation, secondaryAnimation) {
                               return SplashScreen(token: null);
                             },
-                            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                            transitionsBuilder: (context, animation,
+                                secondaryAnimation, child) {
                               return FadeTransition(
-                                opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                                opacity:
+                                    Tween<double>(begin: 0.0, end: 1.0).animate(
                                   CurvedAnimation(
                                     parent: animation,
                                     curve: Curves.easeInOut,
@@ -188,16 +209,21 @@ class MainScreen extends StatelessWidget {
                       child: Container(
                         height: 40,
                         width: 40,
-                        child: Icon(Icons.logout,color: Colors.red,size: 40,),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(50)
+                        child: Icon(
+                          Icons.logout,
+                          color: Colors.red,
+                          size: 40,
                         ),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50)),
                       ),
                     ),
                     FutureBuilder(
                       future: SharedPreferences.getInstance(),
-                      builder: (BuildContext context, AsyncSnapshot<SharedPreferences> snapshot) {
-                        if(snapshot.connectionState == ConnectionState.waiting){
+                      builder: (BuildContext context,
+                          AsyncSnapshot<SharedPreferences> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return Center(
                             child: CircularProgressIndicator(
                               color: Colors.amber,
@@ -205,29 +231,35 @@ class MainScreen extends StatelessWidget {
                           );
                         }
 
-                        if(snapshot.hasError){
+                        if (snapshot.hasError) {
                           return Center(
-                            child: Text(snapshot.error.toString(),style: TextStyle(
-                              fontSize: 18
-                            ),),
+                            child: Text(
+                              snapshot.error.toString(),
+                              style: TextStyle(fontSize: 18),
+                            ),
                           );
                         }
 
-                        if(snapshot.data != null){
+                        if (snapshot.data != null) {
                           return Badge(
                             child: IconButton(
-                              onPressed: ()async {
-                                SharedPreferences shared = await SharedPreferences.getInstance();
+                              onPressed: () async {
+                                SharedPreferences shared =
+                                    await SharedPreferences.getInstance();
                                 await shared.remove('notified');
                                 Navigator.push(
                                   context,
                                   PageRouteBuilder(
-                                    pageBuilder: (context, animation, secondaryAnimation) {
+                                    pageBuilder: (context, animation,
+                                        secondaryAnimation) {
                                       return NotificationsScreen();
                                     },
-                                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                                    transitionsBuilder: (context, animation,
+                                        secondaryAnimation, child) {
                                       return FadeTransition(
-                                        opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
+                                        opacity:
+                                            Tween<double>(begin: 0.0, end: 1.0)
+                                                .animate(
                                           CurvedAnimation(
                                             parent: animation,
                                             curve: Curves.easeInOut,
@@ -240,7 +272,11 @@ class MainScreen extends StatelessWidget {
                                   ),
                                 );
                               },
-                              icon: Icon(Icons.notifications,size: 40,color: ThemeHelper.buttonPrimaryColor,),
+                              icon: Icon(
+                                Icons.notifications,
+                                size: 40,
+                                color: ThemeHelper.buttonPrimaryColor,
+                              ),
                             ),
                           );
                         }
@@ -250,10 +286,8 @@ class MainScreen extends StatelessWidget {
                     )
                   ],
                 ),
-
               ),
             ),
-
           ],
         ),
       ),
@@ -267,44 +301,44 @@ class Form1Screen extends StatefulWidget {
 }
 
 class _Form1ScreenState extends State<Form1Screen> {
-
-
   List<Map<String, dynamic>> form1Results = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFEEEEEE),
-
       body: FutureBuilder(
-        future: DriverService.getFormFields(formName: 'First'), builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting){
+        future: DriverService.getFormFields(formName: 'First'),
+        builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
               alignment: Alignment.center,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-
                 children: [
                   CircularProgressIndicator(
                     backgroundColor: ThemeHelper.buttonPrimaryColor,
                   ),
-                  SizedBox(height: 12.0,),
-                  Text('Laster inn bilskjema',style: TextStyle(
-                    fontSize: 20
-                  ),)
+                  SizedBox(
+                    height: 12.0,
+                  ),
+                  Text(
+                    'Laster inn bilskjema',
+                    style: TextStyle(fontSize: 20),
+                  )
                 ],
               ),
             );
           }
 
-          if(snapshot.hasError){
+          if (snapshot.hasError) {
             return Center(
               child: Text("Noe gikk galt"),
             );
           }
 
-          if(snapshot.data != null){
+          if (snapshot.data != null) {
             return FormCard(
               formFields: snapshot.data!,
               results: form1Results,
@@ -315,7 +349,8 @@ class _Form1ScreenState extends State<Form1Screen> {
                     pageBuilder: (context, animation, secondaryAnimation) {
                       return Form2Screen(form1Results);
                     },
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                    transitionsBuilder:
+                        (context, animation, secondaryAnimation, child) {
                       return FadeTransition(
                         opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
                           CurvedAnimation(
@@ -331,12 +366,10 @@ class _Form1ScreenState extends State<Form1Screen> {
                 );
               },
             );
-
-          }else{
+          } else {
             return Text('');
           }
-
-      },
+        },
       ),
     );
   }
@@ -352,7 +385,6 @@ class Form2Screen extends StatefulWidget {
 }
 
 class _Form2ScreenState extends State<Form2Screen> {
-
   List<Map<String, dynamic>> form2Results = [];
 
   @override
@@ -360,40 +392,45 @@ class _Form2ScreenState extends State<Form2Screen> {
     return Scaffold(
       backgroundColor: Color(0xFFEEEEEE),
       body: FutureBuilder(
-        future: DriverService.getFormFields(formName: 'Second'), builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting){
+        future: DriverService.getFormFields(formName: 'Second'),
+        builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
               alignment: Alignment.center,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-
                 children: [
                   CircularProgressIndicator(
                     backgroundColor: ThemeHelper.buttonPrimaryColor,
                   ),
-                  SizedBox(height: 12.0,),
-                  Text('Laster inn dagenskjema',style: TextStyle(
-                      fontSize: 20
-                  ),)
+                  SizedBox(
+                    height: 12.0,
+                  ),
+                  Text(
+                    'Laster inn dagenskjema',
+                    style: TextStyle(fontSize: 20),
+                  )
                 ],
               ),
             );
           }
 
-          if(snapshot.hasError){
+          if (snapshot.hasError) {
             return Center(
               child: Text("Noe gikk galt"),
             );
           }
-
 
           return FormCard(
             formFields: snapshot.data!,
             results: form2Results,
             onFormSubmitted: () {
               // Merge Form 1 and Form 2 results before navigating to DriverProfileScreen
-              List<Map<String, dynamic>> combinedResults = [...widget.form1Results, ...form2Results];
+              List<Map<String, dynamic>> combinedResults = [
+                ...widget.form1Results,
+                ...form2Results
+              ];
 
               Navigator.push(
                 context,
@@ -401,7 +438,8 @@ class _Form2ScreenState extends State<Form2Screen> {
                   pageBuilder: (context, animation, secondaryAnimation) {
                     return DriverProfileScreen(combinedResults);
                   },
-                  transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                  transitionsBuilder:
+                      (context, animation, secondaryAnimation, child) {
                     return FadeTransition(
                       opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
                         CurvedAnimation(
@@ -417,24 +455,21 @@ class _Form2ScreenState extends State<Form2Screen> {
               );
             },
           );
-      },
+        },
       ),
     );
   }
 }
-
-
 
 class FormCard extends StatefulWidget {
   final List formFields;
   final List<Map<String, dynamic>> results;
   final VoidCallback onFormSubmitted;
 
-
-
-
-
-  FormCard({required this.formFields, required this.results, required this.onFormSubmitted});
+  FormCard(
+      {required this.formFields,
+      required this.results,
+      required this.onFormSubmitted});
 
   @override
   _FormCardState createState() => _FormCardState();
@@ -455,22 +490,29 @@ class _FormCardState extends State<FormCard> {
       currentIndex++;
       _formKey = null;
       setState(() {});
-      _pageController.nextPage(duration: Duration(milliseconds: 1000), curve: Curves.easeInOut);
-    }else{
-          widget.results.clear();
-          _formKey = null;
-          for (var key in _formValues.keys) {
-            widget.results.add({
-              'title': key,
-              'value': _formValues[key],
-              'answerDataType': widget.formFields.firstWhere((field) => field['title'] == key)['answerDataType'],
-              'hasRequiredDescription': widget.formFields.firstWhere((field) => field['title'] == key)['hasRequiredDescription'],
-              'whenToGetDescription': widget.formFields.firstWhere((field) => field['title'] == key)['whenToGetDescription'],
-              'id': widget.formFields.firstWhere((field) => field['title'] == key)['_id'],
-              'group': widget.formFields.firstWhere((field) => field['title'] == key)['group']['_id'],
-              'form': widget.formFields.firstWhere((field) => field['title'] == key)['form'],
-            });
-          }
+      _pageController.nextPage(
+          duration: Duration(milliseconds: 1000), curve: Curves.easeInOut);
+    } else {
+      widget.results.clear();
+      _formKey = null;
+      for (var key in _formValues.keys) {
+        widget.results.add({
+          'title': key,
+          'value': _formValues[key],
+          'answerDataType': widget.formFields
+              .firstWhere((field) => field['title'] == key)['answerDataType'],
+          'hasRequiredDescription': widget.formFields.firstWhere(
+              (field) => field['title'] == key)['hasRequiredDescription'],
+          'whenToGetDescription': widget.formFields.firstWhere(
+              (field) => field['title'] == key)['whenToGetDescription'],
+          'id': widget.formFields
+              .firstWhere((field) => field['title'] == key)['_id'],
+          'group': widget.formFields
+              .firstWhere((field) => field['title'] == key)['group']['_id'],
+          'form': widget.formFields
+              .firstWhere((field) => field['title'] == key)['form'],
+        });
+      }
 
       widget.onFormSubmitted();
     }
@@ -479,7 +521,8 @@ class _FormCardState extends State<FormCard> {
   void previousPage() {
     if (currentIndex > 0) {
       currentIndex--;
-      _pageController.previousPage(duration: Duration(milliseconds: 1000), curve: Curves.easeInOutCubic);
+      _pageController.previousPage(
+          duration: Duration(milliseconds: 1000), curve: Curves.easeInOutCubic);
       setState(() {});
     }
   }
@@ -503,16 +546,17 @@ class _FormCardState extends State<FormCard> {
     color: Colors.white,
   );
 
-
   @override
   Widget build(BuildContext context) {
-    Map<String,dynamic> field_ = widget.formFields.isEmpty ? {} : widget.formFields[currentIndex];
+    Map<String, dynamic> field_ =
+        widget.formFields.isEmpty ? {} : widget.formFields[currentIndex];
     bool showYesField = _showYesFields[field_['title']] ?? false;
     _formKey = GlobalKey<FormState>();
 
     return Scaffold(
       bottomNavigationBar: Visibility(
-          visible: currentIndex < widget.formFields.length || widget.formFields.isNotEmpty,
+          visible: currentIndex < widget.formFields.length ||
+              widget.formFields.isNotEmpty,
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Row(
@@ -520,36 +564,33 @@ class _FormCardState extends State<FormCard> {
               children: [
                 if (currentIndex > 0)
                   ElevatedButton(
-                    child: Text('Tilbake'.toUpperCase(),style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white
-                    ),),
+                    child: Text(
+                      'Tilbake'.toUpperCase(),
+                      style: TextStyle(fontSize: 18, color: Colors.white),
+                    ),
                     onPressed: previousPage,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryColor,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0)
-                      ),
+                          borderRadius: BorderRadius.circular(8.0)),
                     ),
                   ),
-                  ElevatedButton(
-                    child: Text('Neste'.toUpperCase(),style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.white
-                    ),),
-                    onPressed: (){
-                      if(_formKey!.currentState!.validate()){
-                        nextPage();
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryColor,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.0)
-                      ),
-
-                    ),
+                ElevatedButton(
+                  child: Text(
+                    'Neste'.toUpperCase(),
+                    style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
+                  onPressed: () {
+                    if (_formKey!.currentState!.validate()) {
+                      nextPage();
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0)),
+                  ),
+                ),
               ],
             ),
           )),
@@ -558,38 +599,47 @@ class _FormCardState extends State<FormCard> {
           PageView(
             controller: _pageController,
             physics: NeverScrollableScrollPhysics(),
-            children: widget.formFields.map((field){
+            children: widget.formFields.map((field) {
               return Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    if(widget.formFields.isNotEmpty)
+                    if (widget.formFields.isNotEmpty)
                       Form(
                         key: _formKey,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            if(field['answerDataType'] == 'yes_no')
+                            if (field['answerDataType'] == 'yes_no')
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.check, size: 30, color: accentColor),
-                                  Text(' -- ', style: TextStyle(fontSize: 30, color: Colors.black)),
+                                  Icon(Icons.check,
+                                      size: 30, color: accentColor),
+                                  Text(' -- ',
+                                      style: TextStyle(
+                                          fontSize: 30, color: Colors.black)),
                                   Icon(Icons.close, color: Colors.red),
                                 ],
                               ),
-                            if(field['answerDataType'] == 'image')
+                            if (field['answerDataType'] == 'image')
                               Container(
                                 alignment: Alignment.centerLeft,
-                                child: Icon(Icons.image_outlined,size: 30,),
+                                child: Icon(
+                                  Icons.image_outlined,
+                                  size: 30,
+                                ),
                               ),
-                            if(field['answerDataType'] == 'text')
+                            if (field['answerDataType'] == 'text')
                               Container(
                                 alignment: Alignment.centerLeft,
-                                child: Icon(Icons.text_fields,size: 30,),
+                                child: Icon(
+                                  Icons.text_fields,
+                                  size: 30,
+                                ),
                               ),
                             SizedBox(height: 20),
                             Text(
@@ -604,7 +654,8 @@ class _FormCardState extends State<FormCard> {
                                   color: Colors.grey[600],
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
-                                  fontFamily: 'Birco', // Replace with your custom font's name
+                                  fontFamily:
+                                      'Birco', // Replace with your custom font's name
                                   letterSpacing: 1.2,
                                 ),
                               ),
@@ -621,7 +672,8 @@ class _FormCardState extends State<FormCard> {
                                   }
                                   return null;
                                 },
-                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
                                 decoration: InputDecoration(
                                   labelText: 'Skriv inn tekst her',
                                   hintText: field['requiredDescription'],
@@ -634,7 +686,8 @@ class _FormCardState extends State<FormCard> {
                                 onChanged: (value) {
                                   _formValues[field['title']] = value;
                                 },
-                                autovalidateMode: AutovalidateMode.onUserInteraction,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
                                 validator: (val) {
                                   // Add your number validation logic here
                                   return null; // Return null or an error message based on validation result
@@ -654,11 +707,15 @@ class _FormCardState extends State<FormCard> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       ElevatedButton(
-                                        child: Text('Ja', style: buttonTextStyle),
+                                        child:
+                                            Text('Ja', style: buttonTextStyle),
                                         onPressed: () {
-                                          if (field['hasRequiredDescription'] && field['whenToGetDescription'] == true) {
+                                          if (field['hasRequiredDescription'] &&
+                                              field['whenToGetDescription'] ==
+                                                  true) {
                                             setState(() {
-                                              _showYesFields[field['title']] = true;
+                                              _showYesFields[field['title']] =
+                                                  true;
                                             });
                                           } else {
                                             _formValues[field['title']] = 'Ja';
@@ -668,19 +725,24 @@ class _FormCardState extends State<FormCard> {
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: primaryColor,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                           ),
                                         ),
                                       ),
                                       SizedBox(width: 20),
                                       ElevatedButton(
-                                        child: Text('Nei', style: buttonTextStyle),
+                                        child:
+                                            Text('Nei', style: buttonTextStyle),
                                         onPressed: () {
                                           setState(() {
-                                            if(field['whenToGetDescription'] == false){
-                                              _showYesFields[field['title']] = true;
-                                            }else{
-                                              _formValues[field['title']] = 'Nei';
+                                            if (field['whenToGetDescription'] ==
+                                                false) {
+                                              _showYesFields[field['title']] =
+                                                  true;
+                                            } else {
+                                              _formValues[field['title']] =
+                                                  'Nei';
                                               nextPage();
                                             }
                                           });
@@ -688,7 +750,8 @@ class _FormCardState extends State<FormCard> {
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: primaryColor,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8.0),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                           ),
                                         ),
                                       ),
@@ -700,7 +763,8 @@ class _FormCardState extends State<FormCard> {
                                       onChanged: (value) {
                                         _formValues[field['title']] = value;
                                       },
-                                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
                                       validator: (val) {
                                         if (val!.isEmpty) {
                                           return "Skriv inn noe";
@@ -746,28 +810,36 @@ class _FormCardState extends State<FormCard> {
                                       await showModalBottomSheet(
                                         enableDrag: true,
                                         showDragHandle: true,
-
                                         context: context,
                                         builder: (context) {
                                           return Container(
                                             padding: EdgeInsets.all(16.0),
                                             decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
+                                              borderRadius:
+                                                  BorderRadius.vertical(
+                                                      top: Radius.circular(
+                                                          16.0)),
                                             ),
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                
                                                 ListTile(
                                                   leading: Icon(Icons.camera),
                                                   title: Text("Ta et bilde"),
-                                                  onTap: () async{
-                                                    final picker = ImagePicker();
-                                                    final pickedImage = await picker.pickImage(source: ImageSource.camera);
+                                                  onTap: () async {
+                                                    final picker =
+                                                        ImagePicker();
+                                                    final pickedImage =
+                                                        await picker.pickImage(
+                                                            source: ImageSource
+                                                                .camera);
                                                     if (pickedImage != null) {
                                                       setState(() {
-                                                        _imageFilePaths.add(pickedImage.path);
-                                                        _formValues[field['title']] = _imageFilePaths;
+                                                        _imageFilePaths.add(
+                                                            pickedImage.path);
+                                                        _formValues[field[
+                                                                'title']] =
+                                                            _imageFilePaths;
                                                       });
                                                     }
                                                     // Implement the logic for taking a picture
@@ -776,36 +848,46 @@ class _FormCardState extends State<FormCard> {
                                                 ),
                                                 Divider(),
                                                 ListTile(
-                                                  leading: Icon(Icons.photo_library),
-                                                  title: Text("Velg fra Galleri"),
+                                                  leading:
+                                                      Icon(Icons.photo_library),
+                                                  title:
+                                                      Text("Velg fra Galleri"),
                                                   onTap: () async {
-                                                    final picker = ImagePicker();
-                                                    final pickedImages = await picker.pickMultiImage();
-                                                    if (pickedImages.isNotEmpty) {
+                                                    final picker =
+                                                        ImagePicker();
+                                                    final pickedImages =
+                                                        await picker
+                                                            .pickMultiImage();
+                                                    if (pickedImages
+                                                        .isNotEmpty) {
                                                       setState(() {
-                                                        for (var pickedImage in pickedImages) {
-                                                          _imageFilePaths.add(pickedImage.path);
-                                                          _formValues[field['title']] = _imageFilePaths;
+                                                        for (var pickedImage
+                                                            in pickedImages) {
+                                                          _imageFilePaths.add(
+                                                              pickedImage.path);
+                                                          _formValues[field[
+                                                                  'title']] =
+                                                              _imageFilePaths;
                                                         }
                                                       });
-
                                                     }
-                                                          Navigator.pop(context);
-                                                    },
+                                                    Navigator.pop(context);
+                                                  },
                                                 ),
                                                 SizedBox(height: 16.0),
                                                 TextButton(
                                                   onPressed: () {
                                                     Navigator.pop(context);
                                                   },
-                                                  child: Text("Avbryt", style: TextStyle(color: Colors.red)),
+                                                  child: Text("Avbryt",
+                                                      style: TextStyle(
+                                                          color: Colors.red)),
                                                 ),
                                               ],
                                             ),
                                           );
                                         },
                                       );
-
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: primaryColor,
@@ -818,13 +900,16 @@ class _FormCardState extends State<FormCard> {
                                   SizedBox(height: 20),
                                   if (_imageFilePaths.isNotEmpty)
                                     SizedBox(
-                                      height:200,
+                                      height: 200,
                                       child: GridView(
-
-                                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: _imageFilePaths.length > 3 ? 3 : _imageFilePaths.length
-                                        ),
-                                        children: _imageFilePaths.map((e){
+                                        gridDelegate:
+                                            SliverGridDelegateWithFixedCrossAxisCount(
+                                                crossAxisCount:
+                                                    _imageFilePaths.length > 3
+                                                        ? 3
+                                                        : _imageFilePaths
+                                                            .length),
+                                        children: _imageFilePaths.map((e) {
                                           return Container(
                                             width: double.infinity,
                                             height: 160,
@@ -835,7 +920,8 @@ class _FormCardState extends State<FormCard> {
                                                   fit: BoxFit.cover,
                                                 ).image,
                                               ),
-                                              borderRadius: BorderRadius.circular(12.0),
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
                                             ),
                                           );
                                         }).toList(),
@@ -874,15 +960,18 @@ class _FormCardState extends State<FormCard> {
                             SizedBox(height: 16),
                           ],
                         ),
-                      )
-                    ,
+                      ),
                   ],
                 ),
               );
             }).toList(),
           ),
           Positioned(
-            child: Image.asset('assets/bil.png',width: 100,height: 100,),
+            child: Image.asset(
+              'assets/bil.png',
+              width: 100,
+              height: 100,
+            ),
             top: 10,
             left: 10,
           )
@@ -891,7 +980,6 @@ class _FormCardState extends State<FormCard> {
     );
   }
 }
-
 
 class DriverProfileScreen extends StatelessWidget {
   final List<Map<String, dynamic>> results;
@@ -905,23 +993,28 @@ class DriverProfileScreen extends StatelessWidget {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Takk skjemaet er sendt.'),
-          content: Text('ved å klikke ok blir du logget ut.',style: TextStyle(
-            backgroundColor: ThemeHelper.buttonPrimaryColor
-          ),),
+          content: Text(
+            'ved å klikke ok blir du logget ut.',
+            style: TextStyle(backgroundColor: ThemeHelper.buttonPrimaryColor),
+          ),
           actions: [
             TextButton(
-              onPressed: () async{
+              onPressed: () async {
                 Navigator.pop(context);
-                SharedPreferences shared = await SharedPreferences.getInstance();
+                SharedPreferences shared =
+                    await SharedPreferences.getInstance();
                 if (shared.containsKey('token')) await shared.remove('token');
 
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (BuildContext context) => SignInScreen()),
-                        (Route<dynamic> route) => false
-                );
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => SignInScreen()),
+                    (Route<dynamic> route) => false);
               },
-              child: Text('OK'),
+              child: Text(
+                'OK',
+                style: TextStyle(color: Colors.black),
+              ),
             ),
           ],
         );
@@ -965,16 +1058,16 @@ class DriverProfileScreen extends StatelessWidget {
         Navigator.pop(context);
 
         _showSuccessPopup(context);
-      }).catchError((onError){
+      }).catchError((onError) {
         _showErrorPopup(context, onError.toString());
       });
     } catch (error) {
       // Handle the error if the createNewDriver function throws an exception
       Navigator.pop(context); // Close the loading dialog
-      _showErrorPopup(context, error); // Show an error popup or handle the error
+      _showErrorPopup(
+          context, error); // Show an error popup or handle the error
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -982,7 +1075,7 @@ class DriverProfileScreen extends StatelessWidget {
       bottomSheet: Container(
         padding: const EdgeInsets.all(8.0),
         child: SwipeToUnlockSwitch(
-          onSwipeEnd: (){
+          onSwipeEnd: () {
             _uploadData(context);
           },
         ),
@@ -995,20 +1088,21 @@ class DriverProfileScreen extends StatelessWidget {
             children: [
               FutureBuilder(
                 future: SharedPreferences.getInstance(),
-                builder: (BuildContext context, AsyncSnapshot<SharedPreferences> snapshot) {
-                  if(snapshot.connectionState == ConnectionState.waiting){
+                builder: (BuildContext context,
+                    AsyncSnapshot<SharedPreferences> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(
                       child: CircularProgressIndicator(),
                     );
                   }
 
-                  if(snapshot.hasError){
+                  if (snapshot.hasError) {
                     return Center(
                       child: Text("Noe gikk galt"),
                     );
                   }
 
-                  if(snapshot.data != null){
+                  if (snapshot.data != null) {
                     Map data = jsonDecode(snapshot.data!.getString('data')!);
                     return Container(
                       color: Colors.black12,
@@ -1023,12 +1117,14 @@ class DriverProfileScreen extends StatelessWidget {
                           ListTile(
                             leading: Icon(Icons.local_taxi),
                             title: Text('Bil'),
-                            subtitle: Text("${data['boardNumber']}  -  ${data['privateNumber']}"),
+                            subtitle: Text(
+                                "${data['boardNumber']}  -  ${data['privateNumber']}"),
                           ),
                           ListTile(
                             leading: Icon(Icons.access_time),
                             title: Text('Skifte'),
-                            subtitle: Text("${data['day']}  -  ${data['period']}"),
+                            subtitle:
+                                Text("${data['day']}  -  ${data['period']}"),
                           ),
                           ListTile(
                             leading: Icon(Icons.error),
@@ -1052,7 +1148,8 @@ class DriverProfileScreen extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    if (entry['answerDataType'] == 'text' || entry['answerDataType'] == 'number')
+                    if (entry['answerDataType'] == 'text' ||
+                        entry['answerDataType'] == 'number')
                       ListTile(
                         leading: Icon(Icons.text_fields),
                         title: Text(entry['title']),
@@ -1080,12 +1177,15 @@ class DriverProfileScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Icon(Icons.image,color: Colors.black38,),
+                                Icon(
+                                  Icons.image,
+                                  color: Colors.black38,
+                                ),
                                 Text(entry['title'])
                               ],
                             ),
                             Row(
-                              children: (entry['value'] as List).map((e){
+                              children: (entry['value'] as List).map((e) {
                                 print(e);
                                 return Expanded(
                                   child: Padding(
@@ -1103,8 +1203,9 @@ class DriverProfileScreen extends StatelessWidget {
                     Divider(),
                   ],
                 ),
-
-              SizedBox(height: 30,)
+              SizedBox(
+                height: 30,
+              )
             ],
           ),
         ),
