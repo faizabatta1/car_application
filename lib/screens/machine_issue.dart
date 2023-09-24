@@ -7,10 +7,14 @@ import '../widgets/notifications_tab.dart';
 import 'machine_issue_control_screen.dart';
 
 class MachineIssue extends StatelessWidget {
+  final int? initialIndex;
+
+  const MachineIssue({super.key, this.initialIndex});
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3, // Number of tabs
+      initialIndex: initialIndex ?? 0,
       child: Scaffold(
         body: Column(
           children: [

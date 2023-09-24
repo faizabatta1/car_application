@@ -68,6 +68,14 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Image.asset(
+                        'assets/splash.png',
+                        width: 200,
+                        height: 200,
+                      ),
+                    ),
                     Text(
                       'App navn',
                       style: TextStyle(
@@ -95,7 +103,7 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                     ),
                     SizedBox(height: 8.0),
                     Text(
-                      '1.6.1 beta',
+                      '1.7.1 beta',
                       style: TextStyle(
                         fontSize: 18.0,
                         color: Colors.grey,
@@ -147,7 +155,12 @@ class _TermsAndConditionsScreenState extends State<TermsAndConditionsScreen> {
                                   SnackBar(content: Text('Enhets-ID kopiert')));
                             });
                           },
-                          child: Text('Kopiere'),
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.blue
+                          ),
+                          child: Text('Kopiere',style: TextStyle(
+                            color: Colors.white
+                          ),),
                         )
                       ],
                     ),

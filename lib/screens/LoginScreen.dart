@@ -42,11 +42,15 @@ class SignInScreen extends StatelessWidget {
                 children: [
                   SizedBox(height: height * 0.1,),
                   Container(
-                    width: 150,
-                    height: 150,
+                    width: 180,
+                    height: 180,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/test.png'), // Replace this with your logo SVG file
+                        image: AssetImage(
+                            'assets/splash.png',
+                        ), // Replace this with your logo SVG file
+                        filterQuality: FilterQuality.high,
+                        fit: BoxFit.cover
                       ),
                     ),
                   ),

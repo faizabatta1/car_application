@@ -62,9 +62,19 @@ Future<void> setupFlutterNotifications() async {
     }
   }
 
+  void onIssueNotification(NotificationResponse notificationResponse){
+    Navigator.of(navigatorKey.currentState!.context)
+        .push(MaterialPageRoute(builder: (context) => MachineIssue(initialIndex: 2,)));
+  }
+
   flutterLocalNotificationsPlugin.initialize(
     initializationSettings,
     onDidReceiveNotificationResponse: onDidReceiveNotificationResponse,
+  );
+
+  customIssueNotificationPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: onIssueNotification
   );
 
   /// Create an Android Notification Channel.
@@ -131,41 +141,6 @@ Future<void> showFlutterNotification(String title, String body) async {
   }
 }
 
-Future<void> showFlutterFirebaseNotification(RemoteMessage message) async {
-  RemoteNotification? notification = message.notification;
-  AndroidNotification? androidNotification = notification?.android;
-
-  print(message);
-  print(notification);
-  print(androidNotification);
-  if (!kIsWeb) {
-    flutterLocalNotificationsPlugin.show(
-        message.data.hashCode,
-        message.data['notes'],
-        message.data['issue'],
-        NotificationDetails(
-          android: AndroidNotificationDetails(channel.id, channel.name,
-              playSound: true,
-              subText: "this is my sub text",
-              styleInformation: BigTextStyleInformation(
-                  '<h1>Big Text   Content</h1>',
-                  contentTitle: '<font color="red">Title Html</font>',
-                  summaryText: 'Summary Text',
-                  htmlFormatBigText: true,
-                  htmlFormatContentTitle: true,
-                  htmlFormatContent: true,
-                  htmlFormatTitle: true,
-                  htmlFormatSummaryText: true),
-              channelDescription: channel.description,
-              // TODO add a proper drawable resource to android, for now using
-              //      one that already exists in example app.
-              icon: '@drawable/ic_launcher_foreground',
-              importance: Importance.high,
-              priority: Priority.max),
-        ),
-        payload: jsonEncode(message.data));
-  }
-}
 
 Future<void> requestNotificationPermission() async {
   await Permission.notification.isDenied.then((value) async {
@@ -224,7 +199,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     }
   } else if (message.data['type'] == 'issue') {
     print("data is ${message.data}");
-    await showFlutterFirebaseNotification(message);
+    await showFlutterIssueNotification(message.data['title'],message.data['body']);
   } else if (message.data['type'] == 'issue_closed') {
     await showFlutterIssueNotification(
         message.data['title'], message.data['body']);
@@ -309,7 +284,8 @@ Future<void> main() async {
             message.data['title'], message.data['body']);
       }
     } else if (message.data['type'] == 'issue') {
-      await showFlutterFirebaseNotification(message);
+      await showFlutterIssueNotification(
+          message.data['title'], message.data['body']);
     } else if (message.data['type'] == 'issue_closed') {
       await showFlutterIssueNotification(
           message.data['title'], message.data['body']);
@@ -379,6 +355,7 @@ class _AppEntryPointState extends State<AppEntryPoint> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'BilSjekk',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
